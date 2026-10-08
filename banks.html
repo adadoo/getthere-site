@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GetThere for banks · Getting started</title>
+<meta name="description" content="Offer the GetThere Flight Delay Pass to your cardholders under your own brand. How to go live after signing the agreement.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="./">Get<span>There</span></a>
+    <nav class="links">
+      <a class="hide-sm" href="#start">Getting started</a>
+      <a class="hide-sm" href="#api">API</a>
+      <a href="./">For travellers</a>
+      <a class="pill" href="#configure">Set up your channel</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap narrow">
+    <p class="eyebrow">GetThere for banks</p>
+    <h1>Give your cardholders a way out of a delayed flight.</h1>
+    <p class="lede">Offer the Flight Delay Pass under your own brand. Your cardholders forward a booking, buy a pass, and get a card for a new flight if theirs is 3+ hours late. You've signed the agreement; this page takes you from there to live.</p>
+    <div class="btns">
+      <a class="btn" href="#start">Getting started</a>
+      <a class="btn ghost" href="#configure">Set up your channel</a>
+    </div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <h2>What you get</h2>
+    <div class="grid3" style="margin-top:24px">
+      <div class="tile">
+        <h3>Your brand on every touchpoint</h3>
+        <p class="muted">Your name, logo, colours and font on the quote email, checkout, pass and card pages, under your own address like <code>yourbank.getthere.now</code>.</p>
+      </div>
+      <div class="tile">
+        <h3>Your plans and your share</h3>
+        <p class="muted">Name your plans and pick card sizes from 1× to 3× the fare. Your commission from the agreement is applied to every pass sold.</p>
+      </div>
+      <div class="tile">
+        <h3>Bookings proven by your card</h3>
+        <p class="muted">Purchase match lets your systems confirm a cardholder paid the airline with your card. GetThere sends only what it needs to match; no transaction data comes back.</p>
+      </div>
+      <div class="tile">
+        <h3>Alerts in your app</h3>
+        <p class="muted">Show "pass bought", "card ready" and "card used" as pushes in your own app. The card itself always goes to the traveller by email.</p>
+      </div>
+      <div class="tile">
+        <h3>No claims to handle</h3>
+        <p class="muted">GetThere watches every flight, issues the card when it's late, and answers your cardholders' questions.</p>
+      </div>
+      <div class="tile">
+        <h3>Works for any airline trip</h3>
+        <p class="muted">The card works on any airline or travel agency. Bookings from Singapore Airlines and Virgin Australia today, with more airlines added for every channel at once.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap narrow">
+    <p class="eyebrow">Getting started</p>
+    <h2>From signed agreement to live</h2>
+    <p class="muted" style="margin-bottom:36px">Steps marked <span class="who you" style="margin:0">You</span> are yours; steps marked <span class="who us" style="margin:0">GetThere</span> happen on our side once the step before is done.</p>
+    <ol class="steps">
+      <li>
+        <h3>Agree the commercials <span class="who us">GetThere</span></h3>
+        <p class="muted">Done offline when you sign: your commission, which card sizes you can offer, and your launch markets.</p>
+      </li>
+      <li>
+        <h3>Set up your channel <span class="who you">You</span></h3>
+        <p class="muted">Use the <a href="#configure">channel setup form</a> below: your handle, look, plans, cover and APIs. You see a live preview as you go, then send it to us.</p>
+      </li>
+      <li>
+        <h3>Your address goes live <span class="who us">GetThere</span></h3>
+        <p class="muted">We create <code>&lt;handle&gt;.getthere.now</code>: the forwarding address <code>quote@&lt;handle&gt;.getthere.now</code>, the sending domain, your pages and HTTPS. It finishes once DNS has spread, usually within a few hours.</p>
+      </li>
+      <li>
+        <h3>Receive your keys <span class="who us">GetThere</span></h3>
+        <p class="muted">Two secrets, shared over a secure channel: a <b>partner key</b> you send when calling GetThere, and a <b>bank token</b> GetThere sends when calling you. Until then, the sandbox key <code>stub-&lt;handle&gt;</code> works.</p>
+      </li>
+      <li>
+        <h3>Connect purchase match <span class="who you">You · recommended</span></h3>
+        <p class="muted">One endpoint that answers yes or no: did this cardholder pay this airline about this much? See the <a href="#api">API</a>.</p>
+      </li>
+      <li>
+        <h3>Connect app pushes <span class="who you">You · optional</span></h3>
+        <p class="muted">One endpoint that accepts a message for your app, plus delivery receipts back to us.</p>
+      </li>
+      <li>
+        <h3>Test end to end <span class="who you">You</span></h3>
+        <p class="muted">Forward a real Singapore Airlines or Virgin Australia booking to <code>quote@&lt;handle&gt;.getthere.now</code>. You get a quote in your brand, a test checkout, and a pass. Ask us to simulate a delay and you'll see the card arrive.</p>
+      </li>
+      <li>
+        <h3>Launch to cardholders <span class="who you">You</span></h3>
+        <p class="muted">Call <code>GET /partner/v1/offer</code> for your offer page and forwarding address, and put them where cardholders see them: a "Just booked a flight?" push after an airline purchase, your app's travel section, or your statements.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="configure" class="tint">
+  <div class="wrap">
+    <p class="eyebrow">Step 2</p>
+    <h2>Set up your channel</h2>
+    <p class="muted" style="max-width:640px;margin-bottom:32px">Fill this in and watch the preview. When you're happy, send it to us; nothing is saved in your browser or on this site. You can change any of it later.</p>
+
+    <div class="config">
+      <form id="cfg" autocomplete="off" onsubmit="return false">
+        <fieldset>
+          <legend>Your bank</legend>
+          <div class="row2">
+            <div class="field"><label for="name">Bank name</label><input type="text" id="name" value="Your Bank"></div>
+            <div class="field"><label for="handle">Handle</label>
+              <div class="input-suffix"><input type="text" id="handle" value="yourbank" pattern="[a-z0-9-]+"><span>.getthere.now</span></div>
+              <div class="hint">Lower case letters, digits and dashes.</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Look</legend>
+          <div class="field"><label for="logo">Logo URL</label><input type="url" id="logo" placeholder="https://yourbank.com/logo.png"><div class="hint">PNG or SVG on a transparent background, at least 56px tall. Leave blank to show your name as text.</div></div>
+          <div class="row3">
+            <div class="field"><label for="accent">Main colour</label><div class="colour"><input type="color" id="accentPick" value="#0f766e"><input type="text" id="accent" value="#0f766e"></div></div>
+            <div class="field"><label for="ink">Text colour</label><div class="colour"><input type="color" id="inkPick" value="#14213d"><input type="text" id="ink" value="#14213d"></div></div>
+            <div class="field"><label for="soft">Soft tint</label><div class="colour"><input type="color" id="softPick" value="#e6f4f2"><input type="text" id="soft" value="#e6f4f2"></div></div>
+          </div>
+          <div class="row3">
+            <div class="field"><label for="font">Font</label>
+              <select id="font">
+                <option value="">System default</option>
+                <option>Inter</option><option>Open Sans</option><option>Roboto</option><option>Lato</option>
+                <option>Montserrat</option><option>Source Sans 3</option><option>Nunito Sans</option><option>Poppins</option>
+              </select>
+              <div class="hint">From Google Fonts.</div>
+            </div>
+            <div class="field"><label for="radius">Card corners</label><select id="radius"><option value="18">Round (18px)</option><option value="12">Soft (12px)</option><option value="8">Tight (8px)</option><option value="2">Square (2px)</option></select></div>
+            <div class="field"><label for="btnradius">Buttons</label><select id="btnradius"><option value="26">Pill</option><option value="10">Rounded</option><option value="6">Tight</option><option value="2">Square</option></select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Plans</legend>
+          <p class="fine">Up to three. Card size is a multiple of the traveller's fare; your agreement may limit which sizes you can offer.</p>
+          <div id="tiers"></div>
+          <button type="button" class="copy" id="addTier">Add a plan</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Cover</legend>
+          <div class="field"><label for="trigger">Card is sent when a flight is</label>
+            <select id="trigger"><option value="180">3+ hours late or cancelled</option><option value="120">2+ hours late or cancelled</option></select>
+            <div class="hint">2 hours prices higher. Your agreement decides which you can choose.</div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contacts</legend>
+          <div class="field"><label for="tech">Technical contact</label><input type="email" id="tech" placeholder="api-team@yourbank.com"><div class="hint">We send your keys here, through a secure channel.</div></div>
+          <p class="fine">Emails to your cardholders come from <b>GetThere for &lt;your bank&gt;</b>, and GetThere answers their questions at <b>help@&lt;handle&gt;.getthere.now</b>.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Your APIs</legend>
+          <div class="field"><label for="matchurl">Purchase match base URL</label><input type="url" id="matchurl" placeholder="https://api.yourbank.com/getthere"><div class="hint">We call <code>POST &lt;this&gt;/v1/getthere/purchase-match</code>. Blank: bookings aren't checked against your card.</div></div>
+          <div class="field"><label for="pushurl">App push URL</label><input type="url" id="pushurl" placeholder="https://push.yourbank.com/getthere"><div class="hint">Blank: no pushes in your app.</div></div>
+          <div class="field"><label><input type="checkbox" id="mtls"> We need mutual TLS on calls to us</label></div>
+        </fieldset>
+      </form>
+
+      <div class="sticky">
+        <div class="preview" id="preview">
+          <div class="pcard">
+            <div class="plogo" id="pLogo"></div>
+            <h4>Don't miss a single moment of your trip.</h4>
+            <div style="font-size:13px;color:#5c6b80" id="pIntro"></div>
+            <div class="pflight"><b>YOUR FLIGHT · 19 DEC</b><div style="font-size:20px;font-weight:800;margin-top:4px">SIN → BOM</div></div>
+            <div id="pPlans"></div>
+            <div class="pbtn">Choose your pass</div>
+            <div class="pfine" id="pFine"></div>
+          </div>
+        </div>
+        <p class="fine" style="margin:10px 4px 18px">Preview of your quote email and checkout. Prices are examples.</p>
+
+        <div class="callout" style="margin-bottom:14px">Travellers forward to <b id="pAddr"></b> and see your pages at <b id="pHost"></b>.</div>
+        <textarea class="out" id="out" readonly aria-label="Your channel settings"></textarea>
+        <div class="btns" style="margin-top:12px">
+          <a class="btn" id="send" href="#">Send to GetThere</a>
+          <button type="button" class="copy" id="copyOut">Copy settings</button>
+        </div>
+        <p class="fine" style="margin-top:10px">Opens an email to <b>partners@getthere.now</b> with your settings. We reply when your address is live.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="wrap narrow">
+    <p class="eyebrow">API</p>
+    <h2>Integration reference</h2>
+    <p class="muted">JSON over HTTPS. Every call carries a bearer token. Your partner key decides your channel, so you only ever see your own data.</p>
+
+    <h3 style="margin-top:36px">Calls you make to GetThere</h3>
+    <p class="muted">Base URL <code>https://&lt;handle&gt;.getthere.now/partner/v1</code>, header <code>Authorization: Bearer &lt;partner key&gt;</code>.</p>
+    <div class="table-scroll"><table>
+      <tr><th>Call</th><th>What it does</th></tr>
+      <tr><td><code>GET /ping</code></td><td>Checks your key. Returns your channel and whether it's in <code>stub</code> or <code>live</code> mode.</td></tr>
+      <tr><td><code>GET /offer</code></td><td>Your offer page and forwarding address, for a push or button in your app.</td></tr>
+      <tr><td><code>POST /push-receipts</code></td><td>Tells us whether pushes reached your cardholders. <code>opted_out</code> stops further pushes to that person.</td></tr>
+    </table></div>
+<pre>GET /partner/v1/offer
+→ 200 {"offer_url": "https://yourbank.getthere.now/offer",
+       "forward_to": "quote@yourbank.getthere.now",
+       "product_name": "GetThere"}
+
+POST /partner/v1/push-receipts
+{"receipts": [{"push_id": "9b2e…", "status": "delivered",
+               "at": "2026-11-20T07:41:05Z"}]}
+→ 200 {"results": [{"push_id": "9b2e…", "result": "ok"}]}</pre>
+
+    <h3 style="margin-top:36px">Calls GetThere makes to you</h3>
+    <p class="muted">Header <code>Authorization: Bearer &lt;bank token&gt;</code>; mutual TLS on top if you ask for it. We wait up to 5 seconds; a timeout or error is treated as "unknown", never as "no".</p>
+
+    <p style="margin-top:20px"><b>Purchase match</b> <span class="fine">· recommended</span></p>
+    <p class="muted">Did this cardholder pay this airline about this amount since this date? A charge within 1% of the fare is a match. Answer only yes or no; someone you can't find by email is <code>false</code>.</p>
+<pre>POST {purchase match base URL}/v1/getthere/purchase-match
+{"email": "mia@example.com", "airline": "SQ",
+ "amount": "1550.00", "currency": "SGD",
+ "booked_after": "2025-10-09T00:00:00Z"}
+→ 200 {"match": true}</pre>
+
+    <p style="margin-top:20px"><b>App push</b> <span class="fine">· optional</span></p>
+    <p class="muted">A message to show in your app. <code>push_id</code> is also the <code>Idempotency-Key</code> header, so a retry never shows twice. <code>kind</code> is <code>pass_purchased</code>, <code>card_issued</code> or <code>card_used</code>.</p>
+<pre>POST {app push URL}
+Idempotency-Key: 9b2e…
+{"push_id": "9b2e…", "customer": {"email": "mia@example.com"},
+ "kind": "card_issued", "title": "Your card is ready",
+ "body": "GetThere has sent it to you by email. Use it for a new flight on any airline.",
+ "link": "https://yourbank.getthere.now/pass/…"}
+→ 202 {"accepted": true, "reference": "your-id-123"}</pre>
+
+    <h3 style="margin-top:36px">Sandbox</h3>
+    <p class="muted">Until your live keys are issued, use <code>stub-&lt;handle&gt;</code> as your partner key. Purchase match and pushes are simulated on our side, so you can try the whole journey before your endpoints exist.</p>
+
+    <div class="callout" style="margin-top:28px">Questions about the integration? Write to <b>partners@getthere.now</b>.</div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="logo" href="./">Get<span>There</span></a>
+      <p style="margin-top:10px;max-width:320px">The Flight Delay Pass. A card for a new flight when yours is 3+ hours late.</p>
+    </div>
+    <div class="cols">
+      <div><b style="color:#fff">Travellers</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
+      <div><b style="color:#fff">Partners</b><a href="#start">Getting started</a><a href="#configure">Set up your channel</a><a href="#api">API</a></div>
+      <div><b style="color:#fff">Contact</b><a href="mailto:partners@getthere.now">partners@getthere.now</a></div>
+    </div>
+    <div class="legal">© 2026 GetThere.</div>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
