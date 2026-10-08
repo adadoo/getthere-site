@@ -14,7 +14,7 @@
     {
       "code": "direct",
       "name": "GT Direct",
-      "version": 10,
+      "version": 11,
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
@@ -64,7 +64,7 @@
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 11,
+      "version": 12,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
@@ -114,7 +114,7 @@
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 11,
+      "version": 12,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",

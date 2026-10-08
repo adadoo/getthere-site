@@ -2,11 +2,11 @@
 export_channels.py). Writes:
 
   terms/<code>/<effective>-v<channel version>.html   one page per terms version. The app
-      records this URL on every policy sold, so once published it never changes: the
+      records this URL on every pass sold, so once published it never changes: the
       build refuses to overwrite one with different content. Change the wording by
       bumping brand.TERMS_EFFECTIVE in the app (and EFFECTIVE below), then re-export.
   terms/<code>.html     the current version, for the website's own links
-  privacy.html          one privacy policy for every channel
+  privacy.html          one privacy notice for every channel
   legal.html            the list of channels
 
     python3 tools/build_legal.py
@@ -105,7 +105,7 @@ def meta(c):
     return (f'<p class="doc-meta">{escape(label(c))} · Version {version_id(c)} · Effective {EFFECTIVE}'
             f' · <span class="draft">{STATUS}</span><br>'
             f'If you bought a pass, the terms linked from your pass and emails are the ones that apply to it. '
-            f'How we use your data is in our <a href="{{up}}privacy.html">Privacy Policy</a>.</p>')
+            f'How we use your data is in our <a href="{{up}}privacy.html">Privacy Notice</a>.</p>')
 
 
 def value_table(c):
@@ -137,7 +137,7 @@ def terms(c, depth=1):
         messages.append(f"as notifications in {escape(partner or 'your bank')}'s app, if you use it")
     topup = (f"<li>If the new flight costs more than the card holds, you can add your own money to the card. "
              f"Anything you add and don't spend is refunded to you when the card closes.</li>" if c["allow_topup"] else "")
-    takeoff = ("<p>When each covered flight takes off on time, we'll email you to say your pass for that flight is complete.</p>"
+    takeoff = ("<p>When each flight on your pass takes off on time, we'll email you to say your pass for that flight is complete.</p>"
                if c["takeoff_signoff"] else "")
     body = f"""
     <p class="eyebrow">Terms and conditions</p>
@@ -156,8 +156,8 @@ def terms(c, depth=1):
     {partner_intro}
 
     <h2>2. What the {PASS} is</h2>
-    <p>The {PASS} is a paid rebooking service. If a covered flight is badly delayed or cancelled, we give you a
-    single-use virtual payment card, funded by us, to buy a new flight. It is not an insurance policy, and it does
+    <p>The {PASS} is a paid rebooking service. If a flight on your pass is badly delayed or cancelled, we give you a
+    single-use virtual payment card, funded by us, to buy a new flight. It is not insurance, and it does
     not replace any rights you have against the airline, such as refunds, care or compensation under
     passenger-rights laws.</p>
     <p><b>The card buys new flights only and is never paid out as cash.</b> Any amount you don't spend is not paid to you.</p>
@@ -166,7 +166,9 @@ def terms(c, depth=1):
     <ul>
       <li>Forward the booking confirmation or e-ticket email your airline sent you to
       <a href="mailto:{c['forward_to']}">{c['forward_to']}</a>. We read bookings from the airlines listed on our website.</li>
-      <li>We reply by email with a price for each plan. A price holds for {hours(G['quote_valid_hours'])}, or until sales
+      <li>If the email doesn't show your airfare (what you paid the airline), we email you a link to enter it, and show
+      you the price of each plan once you have.</li>
+      <li>Otherwise we reply by email with a price for each plan. A price holds for {hours(G['quote_valid_hours'])}, or until sales
       close if that's sooner. After that, forward the booking again for a new price.</li>
       <li>Sales close {hours(G['sales_close_hours'])} before the first flight on the booking.</li>
       <li>We can decline to offer a pass. We do this when the booking is outside the values below; the fare is more than
@@ -182,18 +184,18 @@ def terms(c, depth=1):
     <p>You choose one plan:</p>
     <ul>{tiers}</ul>
     <p>"The fare you paid" is the total shown on your booking for its flights and taxes, in the booking's currency.
-    One pass covers every flight and every traveller on the booking you forwarded. You pay by card at checkout.
+    One pass includes every flight and every traveller on the booking you forwarded. You pay by card at checkout.
     {"We ask for a mobile number at checkout so we can send your card there. " if c["phone_required"] else ""}
     The information you give us, and the booking you forward, must be real and accurate.</p>
 
     <h2>5. When you get a card</h2>
     <ul>
-      <li>We start watching each covered flight {hours(c['watch_from_hours'])} before its scheduled departure.</li>
-      <li>You get a card if a covered flight departs {trig} or more after its scheduled time, or is cancelled by the airline.
+      <li>We start watching each flight on your pass {hours(c['watch_from_hours'])} before its scheduled departure.</li>
+      <li>You get a card if a flight on your pass departs {trig} or more after its scheduled time, or is cancelled by the airline.
       "Scheduled time" is the airline's time for the flight when we start watching it.</li>
       <li>If the airline changes the time of a flight before we start watching it, your pass moves to the new time.
       We'll email you. A schedule change like this is not a delay.</li>
-      <li>One pass gives one card, for the first covered flight that is delayed or cancelled. The card is sent to the
+      <li>One pass gives one card, for the first flight on your pass that is delayed or cancelled. The card is sent to the
       person who bought the pass.</li>
       <li>Before we issue a card, we may check with the airline that the booking is still active. If the airline tells us
       it was cancelled or never existed, no card is issued and the pass ends.</li>
@@ -268,7 +270,7 @@ def privacy():
     <ul>{bank_items}</ul>""" if bank_items else "")
     n = 6 if bank_items else 5
     body = f"""
-    <p class="eyebrow">Privacy policy</p>
+    <p class="eyebrow">Privacy notice</p>
     <h1>How we use your data</h1>
     <p class="doc-meta">Every channel · Effective {EFFECTIVE} · <span class="draft">{STATUS}</span><br>
     Terms for each channel are listed on the <a href="legal.html">legal page</a>.</p>
@@ -337,9 +339,9 @@ def privacy():
     <p>Our pages don't use cookies for tracking or advertising.</p>
 
     <h2>{n + 4}. Changes</h2>
-    <p>We'll post any changes to this policy on this page with a new effective date.</p>
+    <p>We'll post any changes to this notice on this page with a new effective date.</p>
 """
-    return page("Privacy policy · GetThere", "How GetThere uses your data, on every channel.", body, depth=0)
+    return page("Privacy notice · GetThere", "How GetThere uses your data, on every channel.", body, depth=0)
 
 
 def index():
@@ -351,9 +353,9 @@ def index():
     <h1>Terms and privacy</h1>
     <p class="muted">Each place you can buy the {PASS} has its own terms, built from that channel's plans and rules. If you forwarded your booking to quote@my.getthere.now, the Direct pages apply.</p>
     <div class="table-scroll"><table><tr><th>Where you bought</th><th></th></tr>{rows}</table></div>
-    <p style="margin-top:24px">One <a href="privacy.html">Privacy Policy</a> covers every channel.</p>
+    <p style="margin-top:24px">One <a href="privacy.html">Privacy Notice</a> applies to every channel.</p>
 """
-    return page("Terms and privacy · GetThere", "Terms and privacy policies for every GetThere channel.", body, depth=0)
+    return page("Terms and privacy · GetThere", "Terms and privacy notice for every GetThere channel.", body, depth=0)
 
 
 for c in DATA["channels"]:
@@ -362,7 +364,7 @@ for c in DATA["channels"]:
     versioned = ROOT / "terms" / c["code"] / f"{version_id(c)}.html"
     html = terms(c, depth=2)
     if versioned.exists() and versioned.read_text() != html:
-        raise SystemExit(f"{versioned.relative_to(ROOT)} is already published and policies point at it. "
+        raise SystemExit(f"{versioned.relative_to(ROOT)} is already published and passes point at it. "
                          "Bump TERMS_EFFECTIVE (app) or the channel's version instead of changing it.")
     versioned.write_text(html)
 (ROOT / "privacy.html").write_text(privacy())

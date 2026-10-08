@@ -11,10 +11,10 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
-Terms, the Privacy Policy (`privacy.html`, every channel) and `legal.html` are
+Terms, the Privacy Notice (`privacy.html`, every channel) and `legal.html` are
 built from the app's channel settings. Each terms version gets its own page,
 `terms/<channel>/<effective date>-v<channel version>.html`, which the app records
-on every policy sold, so a published version is never changed (the build and the
+on every pass sold, so a published version is never changed (the build and the
 Publish workflow both refuse). `terms/<channel>.html` is the current version.
 
 After a channel's version changes in the app, re-run both commands and push
