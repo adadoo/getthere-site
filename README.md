@@ -7,7 +7,9 @@ Plain HTML, CSS and a little JavaScript; no build step.
 | Page | For |
 | --- | --- |
 | `index.html` | Travellers: what the Flight Delay Pass is and how to forward a booking to `quote@my.getthere.now`. |
-| `banks.html` | Card issuers: the Flight Delay Pass story from the Head of Cards deck, a share calculator and the pilot offer. Contact us goes to partner@getthere.now. |
+| `issuers.html` | Card issuers: the Flight Delay Pass story from the Head of Cards deck, a share calculator and the pilot offer. Contact us goes to partner@getthere.now. |
+| `api.html` | API reference for card issuers: the calls a bank makes to GetThere and the calls GetThere makes to the bank. |
+| `banks.html` | Redirects to `issuers.html`, so old links keep working. |
 
 Phone screens in `images/` come from the Head of Cards deck.
 

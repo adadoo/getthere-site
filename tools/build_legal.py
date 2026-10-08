@@ -69,7 +69,7 @@ def page(title, description, body, depth=1):
     <a class="logo" href="{up}./">Get<span>There</span></a>
     <nav class="links">
       <a class="hide-sm" href="{up}./">For travellers</a>
-      <a href="{up}banks.html">For card issuers</a>
+      <a href="{up}issuers.html">For card issuers</a>
       <a class="pill" href="{up}legal.html">Legal</a>
     </nav>
   </div>
