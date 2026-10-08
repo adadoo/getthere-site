@@ -1,6 +1,13 @@
-"""Build the Terms and Privacy pages, one of each per channel, from
-tools/channels.json (see export_channels.py). Writes terms/<code>.html,
-privacy.html (one for every channel) and legal.html (the list of channels).
+"""Build the Terms and Privacy pages from tools/channels.json (see
+export_channels.py). Writes:
+
+  terms/<code>/<effective>-v<channel version>.html   one page per terms version. The app
+      records this URL on every policy sold, so once published it never changes: the
+      build refuses to overwrite one with different content. Change the wording by
+      bumping brand.TERMS_EFFECTIVE in the app (and EFFECTIVE below), then re-export.
+  terms/<code>.html     the current version, for the website's own links
+  privacy.html          one privacy policy for every channel
+  legal.html            the list of channels
 
     python3 tools/build_legal.py
 """
@@ -14,7 +21,9 @@ DATA = json.loads((ROOT / "tools" / "channels.json").read_text())
 G = DATA["global"]
 PASS = DATA["pass_name"]
 
-EFFECTIVE = "8 October 2026"
+import datetime as _dt
+EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTIVE
+EFFECTIVE = _dt.date.fromisoformat(EFFECTIVE_ISO).strftime("%-d %B %Y")
 STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
 GOVERNING_LAW = "Singapore"
@@ -88,10 +97,15 @@ def page(title, description, body, depth=1):
 """
 
 
+def version_id(c):
+    return f"{EFFECTIVE_ISO}-v{c['version']}"
+
+
 def meta(c):
-    return (f'<p class="doc-meta">{escape(label(c))} · Effective {EFFECTIVE} · Channel settings v{c["version"]}'
+    return (f'<p class="doc-meta">{escape(label(c))} · Version {version_id(c)} · Effective {EFFECTIVE}'
             f' · <span class="draft">{STATUS}</span><br>'
-            f'How we use your data is in our <a href="../privacy.html">Privacy Policy</a>.</p>')
+            f'If you bought a pass, the terms linked from your pass and emails are the ones that apply to it. '
+            f'How we use your data is in our <a href="{{up}}privacy.html">Privacy Policy</a>.</p>')
 
 
 def value_table(c):
@@ -102,7 +116,7 @@ def value_table(c):
             f"{rows}</table></div>")
 
 
-def terms(c):
+def terms(c, depth=1):
     svc = escape(service_name(c))
     partner = c["partner_name"]
     trig = hours(c["trigger_minutes"] / 60)
@@ -128,7 +142,7 @@ def terms(c):
     body = f"""
     <p class="eyebrow">Terms and conditions</p>
     <h1>{PASS} terms</h1>
-    {meta(c)}
+    {meta(c).replace("{up}", "../" * depth)}
 
     <div class="callout key">
       <b>The short version.</b> If a flight on your booking is {trig} or more late, or cancelled, we send you a virtual card
@@ -228,7 +242,8 @@ def terms(c):
     <p>These terms are governed by the laws of {GOVERNING_LAW}. Before going to court, please contact us at {help_}
     so we can try to put things right.</p>
 """
-    return page(f"{PASS} terms · {label(c)}", f"Terms and conditions for the {PASS}, {label(c)}.", body)
+    return page(f"{PASS} terms · {label(c)} · {version_id(c)}", f"Terms and conditions for the {PASS}, {label(c)}.",
+                body, depth=depth)
 
 
 def privacy():
@@ -341,9 +356,15 @@ def index():
     return page("Terms and privacy · GetThere", "Terms and privacy policies for every GetThere channel.", body, depth=0)
 
 
-(ROOT / "terms").mkdir(exist_ok=True)
 for c in DATA["channels"]:
+    (ROOT / "terms" / c["code"]).mkdir(parents=True, exist_ok=True)
     (ROOT / "terms" / f"{c['code']}.html").write_text(terms(c))
+    versioned = ROOT / "terms" / c["code"] / f"{version_id(c)}.html"
+    html = terms(c, depth=2)
+    if versioned.exists() and versioned.read_text() != html:
+        raise SystemExit(f"{versioned.relative_to(ROOT)} is already published and policies point at it. "
+                         "Bump TERMS_EFFECTIVE (app) or the channel's version instead of changing it.")
+    versioned.write_text(html)
 (ROOT / "privacy.html").write_text(privacy())
 (ROOT / "legal.html").write_text(index())
-print("built", ", ".join(c["code"] for c in DATA["channels"]))
+print("built", ", ".join(f"{c['code']} {version_id(c)}" for c in DATA["channels"]))

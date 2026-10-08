@@ -1,6 +1,7 @@
 {
   "product": "GetThere",
   "pass_name": "Flight Delay Pass",
+  "terms_effective": "2026-10-08",
   "global": {
     "sales_close_hours": 48,
     "quote_valid_hours": 24,

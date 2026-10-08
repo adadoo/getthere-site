@@ -11,10 +11,15 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
-Terms (one page per channel, `terms/<code>.html`), the Privacy Policy
-(`privacy.html`, every channel) and `legal.html` are built from the app's
-channel settings. Re-run both after a channel changes, and edit wording in
-`tools/build_legal.py`, not in the generated pages:
+Terms, the Privacy Policy (`privacy.html`, every channel) and `legal.html` are
+built from the app's channel settings. Each terms version gets its own page,
+`terms/<channel>/<effective date>-v<channel version>.html`, which the app records
+on every policy sold, so a published version is never changed (the build and the
+Publish workflow both refuse). `terms/<channel>.html` is the current version.
+
+After a channel's version changes in the app, re-run both commands and push
+before deploying the app. To change the wording, edit `tools/build_legal.py`
+and bump `TERMS_EFFECTIVE` in the app's `getthere/brand.py` first:
 
     python3 tools/export_channels.py ../getthere   # path to the app checkout
     python3 tools/build_legal.py

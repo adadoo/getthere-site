@@ -18,6 +18,7 @@ R = risk.RISK
 out = {
     "product": brand.PRODUCT_NAME,
     "pass_name": brand.PASS_NAME,
+    "terms_effective": brand.TERMS_EFFECTIVE,     # with each channel's version, names the terms page
     "global": {
         "sales_close_hours": R.sales_close_hours,
         "quote_valid_hours": R.quote_valid_hours,
