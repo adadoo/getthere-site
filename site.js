@@ -19,16 +19,30 @@ document.querySelectorAll(".tabs button").forEach(tab => {
 // Share calculator on the card issuers page
 const calc = document.querySelector(".calc");
 if (calc) {
-  const pick = group => +group.querySelector("[aria-pressed=true]").dataset.v;
-  const money = n => n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(n / 1e3) + "K";
+  const $ = id => document.getElementById(id);
+  const num = s => parseFloat(String(s).replace(/[^0-9.]/g, ""));
+  const money = n => n >= 1e9 ? "$" + +(n / 1e9).toFixed(2) + "B"
+    : n >= 1e6 ? "$" + +(n / 1e6).toFixed(2) + "M"
+    : n >= 1e3 ? "$" + Math.round(n / 1e3) + "K" : "$" + Math.round(n);
+  const count = n => Math.round(n).toLocaleString("en-US");
   const update = () => {
-    document.getElementById("share").textContent = money(pick(airfare) * pick(takeup) * 0.0675 * 0.2);
+    const airfare = num($("airfare").value) * +$("unit").value;
+    const takeup = num($("takeup").value) / 100;
+    $("takeupPresets").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === takeup * 100));
+    if (!(airfare > 0) || !(takeup > 0) || takeup > 1) {
+      $("share").textContent = "–"; $("passes").textContent = "–"; $("rescues").textContent = "–";
+      return;
+    }
+    const passes = airfare / 500 * takeup;
+    $("share").textContent = money(airfare * takeup * 0.0675 * 0.2);
+    $("passes").textContent = count(passes);
+    $("rescues").textContent = count(passes * 0.02);
   };
-  const airfare = document.getElementById("airfare"), takeup = document.getElementById("takeup");
-  [airfare, takeup].forEach(group => group.addEventListener("click", e => {
+  ["airfare", "unit", "takeup"].forEach(id => $(id).addEventListener("input", update));
+  $("takeupPresets").addEventListener("click", e => {
     if (!e.target.dataset.v) return;
-    group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === e.target));
+    $("takeup").value = e.target.dataset.v;
     update();
-  }));
+  });
   update();
 }

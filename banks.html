@@ -151,15 +151,21 @@
     <div class="grid2" style="gap:40px;align-items:start;margin-top:24px">
       <div class="tile calc">
         <label for="airfare">Airfare on your cards a year</label>
-        <div class="choices" id="airfare" role="group">
-          <button data-v="250e6">$250M</button><button data-v="500e6">$500M</button><button data-v="1e9">$1B</button><button data-v="2e9" aria-pressed="true">$2B</button><button data-v="5e9">$5B</button>
+        <div class="amount">
+          <span>$</span><input type="text" inputmode="decimal" id="airfare" value="2" aria-label="Airfare amount">
+          <select id="unit" aria-label="Unit"><option value="1e6">million</option><option value="1e9" selected>billion</option></select>
         </div>
         <label for="takeup">Take-up</label>
-        <div class="choices" id="takeup" role="group">
-          <button data-v="0.02">2%</button><button data-v="0.05" aria-pressed="true">5%</button><button data-v="0.10">10%</button>
+        <div class="takeup-row">
+          <div class="amount small"><input type="text" inputmode="decimal" id="takeup" value="5" aria-label="Take-up percent"><span>%</span></div>
+          <div class="choices" id="takeupPresets"><button type="button" data-v="2">2%</button><button type="button" data-v="5" aria-pressed="true">5%</button><button type="button" data-v="10">10%</button></div>
         </div>
         <div class="result"><span class="big" id="share">$1.35M</span><span class="muted">your bank's share a year</span></div>
-        <p class="fine">Share = airfare × take-up × 6.75% pass price × 20%.</p>
+        <div class="result-row">
+          <div><b id="passes">200,000</b><span class="fine">passes a year</span></div>
+          <div><b id="rescues">4,000</b><span class="fine">cardholders rescued a year</span></div>
+        </div>
+        <p class="fine" id="calcNote">Share = airfare × take-up × 6.75% pass price × 20%. Passes assume a $500 average booking; 2 in 100 passes end in a rescue card.</p>
       </div>
       <div class="points">
         <div><h3>Start with your airfare</h3><p class="muted">The airline and travel-site spend on your cards in a year.</p></div>

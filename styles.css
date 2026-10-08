@@ -182,3 +182,18 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
   .board th:nth-child(4), .board td:nth-child(4), .board th:nth-child(2), .board td:nth-child(2) { display: none; }
   .board td { padding: 10px 8px 10px 0; }
 }
+.amount { display: flex; align-items: center; border: 1px solid #cfd7e2; border-radius: 12px; background: #fff; margin-bottom: 20px; overflow: hidden; }
+.amount:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.amount span { padding: 0 4px 0 14px; font-size: 22px; font-weight: 700; color: var(--muted); }
+.amount input { flex: 1; min-width: 0; border: 0; outline: 0; font: 800 24px var(--font); color: var(--ink); padding: 10px 6px; background: transparent; }
+.amount select { border: 0; border-left: 1px solid var(--line); border-radius: 0; background: var(--bg); font: 600 15px var(--font); color: var(--ink); padding: 0 14px; align-self: stretch; width: auto; }
+.amount.small { width: 110px; margin: 0; flex: none; }
+.amount.small span { padding: 0 14px 0 0; }
+.amount.small input { padding-left: 14px; }
+.takeup-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+.takeup-row .choices { margin: 0; }
+.result-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.result-row > div { background: var(--bg); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; }
+.result-row b { font-size: 20px; }
+.grid2 > *, .grid3 > * { min-width: 0; }
+.amount input { width: 100%; }
