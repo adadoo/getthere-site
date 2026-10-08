@@ -13,18 +13,17 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
-`terms.html` is the Direct channel's terms, word for word as the app serves them at
-my.getthere.now/terms.html. Every other channel's terms live only on that channel's own
-address (for example sq.getthere.now/terms.html), served by the app; they are never on
-this website. `privacy.html` is the one Privacy Notice for every channel.
-`legal.html` and `terms/direct.html` redirect to `terms.html`.
+The website holds no terms. Every channel's terms are served by the app on that
+channel's own address, and the website's Terms links go to the Direct channel's page,
+https://my.getthere.now/terms.html, so the website and the app always show the same terms.
+`terms.html`, `legal.html` and `terms/direct.html` redirect there.
+`privacy.html` is the one Privacy Notice for every channel.
 
 `terms/<channel>/<version>.html` are terms pages passes were sold under before the
 terms moved to the app. The app's `initdb` moves those passes to their channel's
 address, word for word; the files can be deleted once that has run in production.
 
-After the terms wording (the app's `getthere/legal.py`, with `TERMS_EFFECTIVE` bumped in
-`getthere/brand.py`) or the Direct channel's settings change, rebuild and push:
+After a channel's settings change, rebuild the Privacy Notice and push:
 
     python3 tools/export_channels.py ../getthere   # path to the app checkout
     python3 tools/build_legal.py

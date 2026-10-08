@@ -1,9 +1,9 @@
-"""Build the website's legal pages from what export_channels.py exported:
+"""Build the website's Privacy Notice (privacy.html, one for every channel) from
+tools/channels.json (see export_channels.py).
 
-  terms.html      the Direct channel's terms, word for word as the app serves them
-                  (my.getthere.now/terms.html). Other channels' terms live only on
-                  their own addresses, never on this website.
-  privacy.html    the one Privacy Notice for every channel
+The website has no copy of any terms: its Terms links go to the Direct channel's
+terms on the app, https://my.getthere.now/terms.html, so they are always the same
+page. terms.html, legal.html and terms/direct.html redirect there.
 
     python3 tools/build_legal.py
 """
@@ -66,7 +66,7 @@ def page(title, description, body, depth=1):
     <nav class="links">
       <a class="hide-sm" href="{up}./">For travellers</a>
       <a href="{up}issuers.html">For card issuers</a>
-      <a class="pill" href="{up}terms.html">Terms</a>
+      <a class="pill" href="https://my.getthere.now/terms.html">Terms</a>
     </nav>
   </div>
 </header>
@@ -83,7 +83,7 @@ def page(title, description, body, depth=1):
     </div>
     <div class="cols">
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
-      <div><b style="color:#fff">Legal</b><a href="{up}terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
+      <div><b style="color:#fff">Legal</b><a href="https://my.getthere.now/terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
     </div>
     <div class="legal">© 2026 GetThere.</div>
   </div>
@@ -91,16 +91,6 @@ def page(title, description, body, depth=1):
 </body>
 </html>
 """
-
-
-def terms():
-    """The Direct channel's terms, exactly as the app serves them."""
-    t = DATA["direct_terms"]
-    body = (ROOT / "tools" / "direct_terms.html").read_text()
-    note = (f'<p class="doc-meta">These are the terms for passes bought by forwarding to quote@my.getthere.now. '
-            f'They are also at <a href="{t["current_url"]}">{t["current_url"]}</a>. If you bought through a bank or an '
-            f'airline, the terms linked from your emails apply.</p>')
-    return page(f"{PASS} terms · {t['version']}", f"Terms and conditions for the {PASS}.", body + note, depth=0)
 
 
 def privacy():
@@ -199,6 +189,5 @@ def privacy():
     return page("Privacy notice · GetThere", "How GetThere uses your data, on every channel.", body, depth=0)
 
 
-(ROOT / "terms.html").write_text(terms())
 (ROOT / "privacy.html").write_text(privacy())
-print("built terms.html", DATA["direct_terms"]["version"], "and privacy.html")
+print("built privacy.html")
