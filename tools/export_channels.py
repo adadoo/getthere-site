@@ -1,5 +1,8 @@
-"""Export each channel's settings from the app into channels.json, for the
-Terms and Privacy pages. Run from the site folder after a channel changes:
+"""Export from the app what the website's legal pages need: each channel's
+settings (channels.json, for the Privacy Notice) and the Direct channel's terms
+exactly as the app serves them on my.getthere.now (direct_terms.html). Other
+channels' terms are only on their own addresses. Run from the site folder after
+a channel or the terms wording changes:
 
     python3 tools/export_channels.py ../getthere     (path to the app checkout)
     python3 tools/build_legal.py
@@ -12,7 +15,7 @@ from pathlib import Path
 
 app = Path(sys.argv[1] if len(sys.argv) > 1 else "../getthere").resolve()
 sys.path.insert(0, str(app))
-from getthere import brand, channels, risk  # noqa: E402
+from getthere import brand, channels, legal, risk  # noqa: E402
 
 R = risk.RISK
 out = {
@@ -54,6 +57,11 @@ for c in channels.CHANNELS.values():
         "purchase_match": bool(c.partner_api_url),
         "app_push": bool(c.push_url),
     })
+
+direct = channels.CHANNELS["direct"]
+out["direct_terms"] = {"url": direct.terms_url, "current_url": f"{direct.site_url}/terms.html",
+                       "version": legal.version_id(direct)}
+Path(__file__).with_name("direct_terms.html").write_text(legal.body(direct))
 
 dest = Path(__file__).with_name("channels.json")
 dest.write_text(json.dumps(out, indent=2) + "\n")

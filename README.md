@@ -13,15 +13,18 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
-Terms, the Privacy Notice (`privacy.html`, every channel) and `legal.html` are
-built from the app's channel settings. Each terms version gets its own page,
-`terms/<channel>/<effective date>-v<channel version>.html`, which the app records
-on every pass sold, so a published version is never changed (the build and the
-Publish workflow both refuse). `terms/<channel>.html` is the current version.
+`terms.html` is the Direct channel's terms, word for word as the app serves them at
+my.getthere.now/terms.html. Every other channel's terms live only on that channel's own
+address (for example sq.getthere.now/terms.html), served by the app; they are never on
+this website. `privacy.html` is the one Privacy Notice for every channel.
+`legal.html` and `terms/direct.html` redirect to `terms.html`.
 
-After a channel's version changes in the app, re-run both commands and push
-before deploying the app. To change the wording, edit `tools/build_legal.py`
-and bump `TERMS_EFFECTIVE` in the app's `getthere/brand.py` first:
+`terms/<channel>/<version>.html` are terms pages passes were sold under before the
+terms moved to the app. The app's `initdb` moves those passes to their channel's
+address, word for word; the files can be deleted once that has run in production.
+
+After the terms wording (the app's `getthere/legal.py`, with `TERMS_EFFECTIVE` bumped in
+`getthere/brand.py`) or the Direct channel's settings change, rebuild and push:
 
     python3 tools/export_channels.py ../getthere   # path to the app checkout
     python3 tools/build_legal.py

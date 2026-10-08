@@ -1,13 +1,9 @@
-"""Build the Terms and Privacy pages from tools/channels.json (see
-export_channels.py). Writes:
+"""Build the website's legal pages from what export_channels.py exported:
 
-  terms/<code>/<effective>-v<channel version>.html   one page per terms version. The app
-      records this URL on every pass sold, so once published it never changes: the
-      build refuses to overwrite one with different content. Change the wording by
-      bumping brand.TERMS_EFFECTIVE in the app (and EFFECTIVE below), then re-export.
-  terms/<code>.html     the current version, for the website's own links
-  privacy.html          one privacy notice for every channel
-  legal.html            the list of channels
+  terms.html      the Direct channel's terms, word for word as the app serves them
+                  (my.getthere.now/terms.html). Other channels' terms live only on
+                  their own addresses, never on this website.
+  privacy.html    the one Privacy Notice for every channel
 
     python3 tools/build_legal.py
 """
@@ -70,7 +66,7 @@ def page(title, description, body, depth=1):
     <nav class="links">
       <a class="hide-sm" href="{up}./">For travellers</a>
       <a href="{up}issuers.html">For card issuers</a>
-      <a class="pill" href="{up}legal.html">Legal</a>
+      <a class="pill" href="{up}terms.html">Terms</a>
     </nav>
   </div>
 </header>
@@ -87,7 +83,7 @@ def page(title, description, body, depth=1):
     </div>
     <div class="cols">
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
-      <div><b style="color:#fff">Legal</b><a href="{up}terms/direct.html">Terms</a><a href="{up}privacy.html">Privacy</a><a href="{up}legal.html">All channels</a></div>
+      <div><b style="color:#fff">Legal</b><a href="{up}terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
     </div>
     <div class="legal">© 2026 GetThere.</div>
   </div>
@@ -97,155 +93,14 @@ def page(title, description, body, depth=1):
 """
 
 
-def version_id(c):
-    return f"{EFFECTIVE_ISO}-v{c['version']}"
-
-
-def meta(c):
-    return (f'<p class="doc-meta">{escape(label(c))} · Version {version_id(c)} · Effective {EFFECTIVE}'
-            f' · <span class="draft">{STATUS}</span><br>'
-            f'If you bought a pass, the terms linked from your pass and emails are the ones that apply to it. '
-            f'How we use your data is in our <a href="{{up}}privacy.html">Privacy Notice</a>.</p>')
-
-
-def value_table(c):
-    rows = "".join(
-        f"<tr><td>{cur}</td><td>{money(lo)}</td><td>{money(c['max_booking_value'].get(cur, 0))}</td></tr>"
-        for cur, lo in c["min_booking_value"].items())
-    return ('<div class="table-scroll"><table><tr><th>Currency</th><th>Smallest booking</th><th>Largest booking</th></tr>'
-            f"{rows}</table></div>")
-
-
-def terms(c, depth=1):
-    svc = escape(service_name(c))
-    partner = c["partner_name"]
-    trig = hours(c["trigger_minutes"] / 60)
-    tiers = "".join(f"<li><b>{escape(t['label'])}</b>: a card for up to {mult(t['cap'])} times the fare you paid.</li>"
-                    for t in c["tiers"])
-    help_ = f'<a href="mailto:{c["support_email"]}">{c["support_email"]}</a>'
-    excluded = (f" We don't offer passes for flights to or from {', '.join(c['excluded_airports'])}."
-                if c["excluded_airports"] else "")
-    partner_intro = (
-        f"<p>{escape(partner)} introduces the {PASS} to its customers. {OPERATOR} provides the service and is "
-        f"responsible for it under these terms. {escape(partner)} is not a party to your agreement with us."
-        + (f" Some of the {PASS}'s alerts may reach you in {escape(partner)}'s app." if c["app_push"] else "")
-        + "</p>" if partner else "")
-    messages = ["by email to the address you forwarded your booking from"]
-    if c["phone_required"]:
-        messages.append("by WhatsApp, or text message if WhatsApp isn't available, to the mobile number you give us at checkout")
-    if c["app_push"]:
-        messages.append(f"as notifications in {escape(partner or 'your bank')}'s app, if you use it")
-    topup = (f"<li>If the new flight costs more than the card holds, you can add your own money to the card. "
-             f"Anything you add and don't spend is refunded to you when the card closes.</li>" if c["allow_topup"] else "")
-    takeoff = ("<p>When each flight on your pass takes off on time, we'll email you to say your pass for that flight is complete.</p>"
-               if c["takeoff_signoff"] else "")
-    body = f"""
-    <p class="eyebrow">Terms and conditions</p>
-    <h1>{PASS} terms</h1>
-    {meta(c).replace("{up}", "../" * depth)}
-
-    <div class="callout key">
-      <b>The short version.</b> If a flight on your booking is {trig} or more late, or cancelled, we send you a virtual card
-      to book a new flight on any airline. <b>The card buys new flights only and is never paid out as cash.</b>
-      Buy at least {hours(G['sales_close_hours'])} before your first flight.
-    </div>
-
-    <h2>1. Who we are</h2>
-    <p>These terms are an agreement between you and {OPERATOR} ("we", "us"), which runs the {PASS} as {svc}.
-    You can reach us at {help_}.</p>
-    {partner_intro}
-
-    <h2>2. What the {PASS} is</h2>
-    <p>The {PASS} is a paid rebooking service. If a flight on your pass is badly delayed or cancelled, we give you a
-    single-use virtual payment card, funded by us, to buy a new flight. It is not insurance, and it does
-    not replace any rights you have against the airline, such as refunds, care or compensation under
-    passenger-rights laws.</p>
-    <p><b>The card buys new flights only and is never paid out as cash.</b> Any amount you don't spend is not paid to you.</p>
-
-    <h2>3. Getting a price</h2>
-    <ul>
-      <li>Forward the booking confirmation or e-ticket email your airline sent you to
-      <a href="mailto:{c['forward_to']}">{c['forward_to']}</a>. We read bookings from the airlines listed on our website.</li>
-      <li>If the email doesn't show your airfare (what you paid the airline), we email you a link to enter it, and show
-      you the price of each plan once you have.</li>
-      <li>Otherwise we reply by email with a price for each plan. A price holds for {hours(G['quote_valid_hours'])}, or until sales
-      close if that's sooner. After that, forward the booking again for a new price.</li>
-      <li>Sales close {hours(G['sales_close_hours'])} before the first flight on the booking.</li>
-      <li>We can decline to offer a pass. We do this when the booking is outside the values below; the fare is more than
-      {mult(G['max_fare_vs_market'])} times the usual highest fare for those flights; we can't find the flights in the
-      airline's schedule or confirm the booking; disruption on the travel date is already very likely; a traveller on the
-      booking has received {G['max_claims_per_year']} or more cards in the last 12 months; or you have bought passes for more
-      than {c['max_other_people_bookings_per_year']} bookings in the last 12 months that you're not travelling on.{excluded}
-      We'll email you if we decline.</li>
-    </ul>
-    {value_table(c)}
-
-    <h2>4. Buying a pass</h2>
-    <p>You choose one plan:</p>
-    <ul>{tiers}</ul>
-    <p>"The fare you paid" is the total shown on your booking for its flights and taxes, in the booking's currency.
-    One pass includes every flight and every traveller on the booking you forwarded. You pay by card at checkout.
-    {"We ask for a mobile number at checkout so we can send your card there. " if c["phone_required"] else ""}
-    The information you give us, and the booking you forward, must be real and accurate.</p>
-
-    <h2>5. When you get a card</h2>
-    <ul>
-      <li>We start watching each flight on your pass {hours(c['watch_from_hours'])} before its scheduled departure.</li>
-      <li>You get a card if a flight on your pass departs {trig} or more after its scheduled time, or is cancelled by the airline.
-      "Scheduled time" is the airline's time for the flight when we start watching it.</li>
-      <li>If the airline changes the time of a flight before we start watching it, your pass moves to the new time.
-      We'll email you. A schedule change like this is not a delay.</li>
-      <li>One pass gives one card, for the first flight on your pass that is delayed or cancelled. The card is sent to the
-      person who bought the pass.</li>
-      <li>Before we issue a card, we may check with the airline that the booking is still active. If the airline tells us
-      it was cancelled or never existed, no card is issued and the pass ends.</li>
-      <li>Once a card is issued, it stands, even if the airline later shortens the delay.</li>
-    </ul>
-    <p>You don't get a card for a delay shorter than {trig}, a flight you miss or don't take, a booking you cancel or
-    change yourself, or a flight that isn't on the booking you forwarded.</p>
-
-    <h2>6. Using the card</h2>
-    <ul>
-      <li>The card holds up to your plan's multiple of the fare you paid. We tell you the amount when we send it.</li>
-      <li>It works for {hours(G['card_validity_hours'])} from when we send it, at airlines and travel agencies only.</li>
-      <li>It works for one purchase, then closes. Book everything you need for the rest of the trip, such as
-      connections or a return, in that one purchase.</li>
-      {topup}
-      <li>Any amount left on the card when it closes or expires is not refunded or paid out.</li>
-      <li>Airlines often cancel the rest of a booking when you don't take a flight on it. When we send your card we'll
-      tell you if later flights on your booking are at risk, so you can rebook them too.</li>
-    </ul>
-
-    <h2>7. How we contact you</h2>
-    <p>We send your price, your pass, alerts and your card {"; ".join(messages)}.</p>
-    {takeoff}
-
-    <h2>8. Changes and refunds</h2>
-    <ul>
-      <li>You can cancel your pass for a full refund until we start watching your first flight. Email {help_}.</li>
-      <li>If you are charged twice for the same booking, we refund the second payment.</li>
-      <li>If you change or cancel your booking with the airline, tell us. The pass doesn't move to a new booking.</li>
-    </ul>
-
-    <h2>9. Fair use</h2>
-    <p>If we reasonably believe a booking, a claim or a card purchase is false or fraudulent, we can refuse a pass,
-    end it without a card, stop a card, and recover any amount wrongly paid. We may also refuse future passes.</p>
-
-    <h2>10. Our responsibility to you</h2>
-    <p>We are responsible for providing the service as described in these terms. We are not responsible for what airlines
-    or travel agencies do, including whether seats are available or what they charge. To the extent the law allows,
-    our total liability to you for a pass is limited to the fee you paid for it plus the card amount it promised.
-    Nothing in these terms limits rights you have under consumer law that can't be limited.</p>
-
-    <h2>11. Changes to these terms</h2>
-    <p>We may update these terms. A pass you've already bought stays under the terms in force when you bought it.</p>
-
-    <h2>12. Law</h2>
-    <p>These terms are governed by the laws of {GOVERNING_LAW}. Before going to court, please contact us at {help_}
-    so we can try to put things right.</p>
-"""
-    return page(f"{PASS} terms · {label(c)} · {version_id(c)}", f"Terms and conditions for the {PASS}, {label(c)}.",
-                body, depth=depth)
+def terms():
+    """The Direct channel's terms, exactly as the app serves them."""
+    t = DATA["direct_terms"]
+    body = (ROOT / "tools" / "direct_terms.html").read_text()
+    note = (f'<p class="doc-meta">These are the terms for passes bought by forwarding to quote@my.getthere.now. '
+            f'They are also at <a href="{t["current_url"]}">{t["current_url"]}</a>. If you bought through a bank or an '
+            f'airline, the terms linked from your emails apply.</p>')
+    return page(f"{PASS} terms · {t['version']}", f"Terms and conditions for the {PASS}.", body + note, depth=0)
 
 
 def privacy():
@@ -273,7 +128,7 @@ def privacy():
     <p class="eyebrow">Privacy notice</p>
     <h1>How we use your data</h1>
     <p class="doc-meta">Every channel · Effective {EFFECTIVE} · <span class="draft">{STATUS}</span><br>
-    Terms for each channel are listed on the <a href="legal.html">legal page</a>.</p>
+    Your terms are linked from every email we send you.</p>
 
     <div class="callout key">
       <b>The short version.</b> We use the booking you forward to price your pass, watch your flights and send your
@@ -344,29 +199,6 @@ def privacy():
     return page("Privacy notice · GetThere", "How GetThere uses your data, on every channel.", body, depth=0)
 
 
-def index():
-    rows = "".join(
-        f'<tr><td>{escape(label(c))}</td><td><a href="terms/{c["code"]}.html">Terms</a></td>'
-        '</tr>' for c in DATA["channels"])
-    body = f"""
-    <p class="eyebrow">Legal</p>
-    <h1>Terms and privacy</h1>
-    <p class="muted">Each place you can buy the {PASS} has its own terms, built from that channel's plans and rules. If you forwarded your booking to quote@my.getthere.now, the Direct pages apply.</p>
-    <div class="table-scroll"><table><tr><th>Where you bought</th><th></th></tr>{rows}</table></div>
-    <p style="margin-top:24px">One <a href="privacy.html">Privacy Notice</a> applies to every channel.</p>
-"""
-    return page("Terms and privacy · GetThere", "Terms and privacy notice for every GetThere channel.", body, depth=0)
-
-
-for c in DATA["channels"]:
-    (ROOT / "terms" / c["code"]).mkdir(parents=True, exist_ok=True)
-    (ROOT / "terms" / f"{c['code']}.html").write_text(terms(c))
-    versioned = ROOT / "terms" / c["code"] / f"{version_id(c)}.html"
-    html = terms(c, depth=2)
-    if versioned.exists() and versioned.read_text() != html:
-        raise SystemExit(f"{versioned.relative_to(ROOT)} is already published and passes point at it. "
-                         "Bump TERMS_EFFECTIVE (app) or the channel's version instead of changing it.")
-    versioned.write_text(html)
+(ROOT / "terms.html").write_text(terms())
 (ROOT / "privacy.html").write_text(privacy())
-(ROOT / "legal.html").write_text(index())
-print("built", ", ".join(f"{c['code']} {version_id(c)}" for c in DATA["channels"]))
+print("built terms.html", DATA["direct_terms"]["version"], "and privacy.html")

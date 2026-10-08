@@ -165,5 +165,10 @@
       "purchase_match": true,
       "app_push": true
     }
-  ]
+  ],
+  "direct_terms": {
+    "url": "https://my.getthere.now/terms/2026-10-08-v11.html",
+    "current_url": "https://my.getthere.now/terms.html",
+    "version": "2026-10-08-v11"
+  }
 }

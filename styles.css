@@ -220,3 +220,7 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .api table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .api th, .api td { text-align: left; padding: 8px 10px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
 .api .dir { font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent); margin-top: 44px; }
+
+/* Terms text exported from the app (legal.body) */
+.legal-doc .meta { font-size: 14px; color: var(--muted); }
+.legal-doc .key { background: var(--soft); border-radius: 14px; padding: 16px 18px; font-size: 15px; margin: 22px 0 8px; line-height: 1.6; }
