@@ -251,3 +251,32 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
   .car-count { font-size: 14px; color: var(--muted); min-width: 60px; text-align: center; }
 }
 @media (min-width: 761px) { .car-count { display: none; } }
+
+/* API reference: who builds what, and the journey call by call */
+.api .who { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 8px; }
+.api .who-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; }
+.api .who-card.you { border-top: 4px solid #7c3aed; }
+.api .who-card.gt { border-top: 4px solid var(--accent); }
+.api .who-card ul { padding-left: 18px; margin: 6px 0 0; } .api .who-card li { margin-bottom: 8px; font-size: 15px; }
+.api .who-tag { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin: 0; }
+.api .who-card.you .who-tag { color: #7c3aed; } .api .who-card.gt .who-tag { color: var(--accent); }
+.api .opt { font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; background: #fef3c7; color: #92400e; border-radius: 5px; padding: 2px 6px; }
+.api .journey { list-style: none; padding: 0; margin: 14px 0 0; counter-reset: step; }
+.api .journey li { position: relative; padding: 0 0 22px 44px; margin: 0; counter-increment: step; }
+.api .journey li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ink); color: #fff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.api .journey li::after { content: ""; position: absolute; left: 13px; top: 32px; bottom: 2px; width: 2px; background: var(--line); }
+.api .journey li:last-child::after { display: none; }
+.api .journey h3 { font-size: 17px; margin: 6px 0 4px; }
+.api .journey p { margin: 0 0 4px; font-size: 15px; }
+.api .lanes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 28px; }
+.api .lane { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; }
+.api .lane.card { background: #e0f2fe; color: #075985; }
+.api .lane.you { background: #ede9fe; color: #5b21b6; }
+.api .lane.gt { background: var(--soft); color: var(--accent); }
+.api .lanes .arrow { color: var(--muted); font-weight: 700; }
+.api .call { font-size: 13px !important; color: var(--muted); }
+.api .builder { font-weight: 700; } .api .builder.you { color: #7c3aed; } .api .builder.gt { color: var(--accent); }
+.api .meta { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+.api .glance td:first-child { white-space: nowrap; }
+@media (max-width: 700px) { .api .who { grid-template-columns: 1fr; } .api .glance td:first-child { white-space: normal; } .api .glance { display: block; overflow-x: auto; } }

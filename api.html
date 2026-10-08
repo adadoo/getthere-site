@@ -27,19 +27,101 @@
     <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every endpoint runs in test mode today: nothing is sent to your systems until we switch your channel to live.</p>
 
     <div class="callout key">
-      <b>What you connect.</b> Four pushes in your app, a link to your offer page, and an optional purchase
-      check. That's the whole integration: GetThere runs pricing, checkout, flight watching, rebooking cards and support.
+      <b>The short version.</b> You build two endpoints and send one push of your own. GetThere builds everything
+      else: the offer page, pricing, checkout, flight watching, rebooking cards, messages to the cardholder and support.
     </div>
 
-    <h2>Overview</h2>
-    <table>
-      <tr><th>Direction</th><th>Endpoint</th><th>Needed?</th></tr>
-      <tr><td>Your app → GetThere</td><td><code>https://&lt;handle&gt;.getthere.now/offer</code></td><td>Yes: the "Just booked a flight?" push opens it</td></tr>
-      <tr><td>Card issuer → GetThere</td><td><code>GET /partner/v1/ping</code></td><td>For testing your key</td></tr>
-      <tr><td>Card issuer → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>Optional: the offer link and forwarding address</td></tr>
-      <tr><td>Card issuer → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>Yes, if you send pushes</td></tr>
-      <tr><td>GetThere → card issuer</td><td><code>POST &lt;your push URL&gt;</code></td><td>Yes: three of the four pushes</td></tr>
-      <tr><td>GetThere → card issuer</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>Optional: confirms the booking and its airfare</td></tr>
+    <h2>Who builds what</h2>
+    <div class="who">
+      <div class="who-card you">
+        <p class="who-tag">You build</p>
+        <ul>
+          <li><b>The "Just booked a flight?" push.</b> Your own push, from your own card data, after an airline
+          charge. It links to your offer page. No call to GetThere is needed.</li>
+          <li><b>A push endpoint</b> that receives GetThere's three messages (pass bought, card ready, card used)
+          and shows them in your app.</li>
+          <li><b>A purchase-match endpoint</b> <span class="opt">optional</span> that answers yes or no: did this
+          cardholder pay this airline this amount?</li>
+          <li><b>Push receipts:</b> a call back to GetThere saying which pushes reached the cardholder.</li>
+        </ul>
+      </div>
+      <div class="who-card gt">
+        <p class="who-tag">GetThere provides</p>
+        <ul>
+          <li><b>Your offer page</b> at <code>https://&lt;issuer&gt;.getthere.now/offer</code>, in your colours.</li>
+          <li><b>Your forwarding address</b> <code>quote@&lt;issuer&gt;.getthere.now</code>, where cardholders send their booking.</li>
+          <li><b>The partner API</b> at <code>https://&lt;issuer&gt;.getthere.now/partner/v1</code>: a key check,
+          your offer link, and push receipts.</li>
+          <li><b>Every message to the cardholder:</b> the price email, the pass confirmation, and the rebooking card on WhatsApp and by email.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>The journey, call by call</h2>
+    <p>One cardholder, Mia, from booking to rebooking. Each step shows who acts and which call is made.</p>
+    <ol class="journey">
+      <li>
+        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane you">Your systems</span></div>
+        <h3>Mia pays an airline with your card</h3>
+        <p>Your systems see the airline charge. Nothing reaches GetThere: card data stays with you.</p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>You send "Just booked a flight?"</h3>
+        <p>Your own push, sent when you decide (for example, airline charges on premium cards). It opens your offer page.</p>
+        <p class="call">Link: <code>https://&lt;issuer&gt;.getthere.now/offer</code> · <span class="builder you">you send it</span></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
+        <h3>Mia forwards her booking email</h3>
+        <p>She forwards the airline's confirmation to <code>quote@&lt;issuer&gt;.getthere.now</code>. GetThere reads every flight and traveller on it.</p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your API</span><span class="opt">optional</span></div>
+        <h3>GetThere checks the charge with you</h3>
+        <p>When the booking email shows the airfare, GetThere asks within seconds whether Mia paid that airline that amount. You answer yes or no.</p>
+        <p class="call"><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code> · <span class="builder you">you build it</span></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>Mia gets a price and buys a pass</h3>
+        <p>GetThere emails her a price within a minute. She pays at checkout on <code>&lt;issuer&gt;.getthere.now</code>.</p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>Push 1: pass bought</h3>
+        <p>The moment she pays, GetThere calls your push endpoint and your app confirms the purchase.</p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "pass_purchased"</code> · <span class="builder you">you build it</span></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>Push 2: her flight is late, her card is ready</h3>
+        <p>When her flight is 3+ hours late or cancelled, GetThere sends the card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_issued"</code> · <span class="builder you">you build it</span></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>Push 3: she has rebooked</h3>
+        <p>When Mia uses the card for a new flight, GetThere calls your push endpoint and your app thanks her.</p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_used"</code> · <span class="builder you">you build it</span></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
+        <h3>You report which pushes arrived</h3>
+        <p>Whenever you have them, in batches, you tell GetThere which pushes were delivered, and which cardholders turned GetThere pushes off.</p>
+        <p class="call"><code>POST /partner/v1/push-receipts</code> · <span class="builder gt">GetThere provides it</span></p>
+      </li>
+    </ol>
+
+    <h2>Every call at a glance</h2>
+    <table class="glance">
+      <tr><th>When</th><th>Who calls</th><th>Endpoint</th><th>Who builds it</th></tr>
+      <tr><td>While you set up</td><td>You → GetThere</td><td><code>GET /partner/v1/ping</code></td><td>GetThere</td></tr>
+      <tr><td>Optional, at setup</td><td>You → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>GetThere</td></tr>
+      <tr><td>After an airline charge</td><td>Your app → cardholder</td><td><code>https://&lt;issuer&gt;.getthere.now/offer</code> (a link)</td><td>GetThere hosts the page</td></tr>
+      <tr><td>A booking is forwarded</td><td>GetThere → you</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>You (optional)</td></tr>
+      <tr><td>Pass bought, card ready, card used</td><td>GetThere → you</td><td><code>POST &lt;your push URL&gt;</code></td><td>You</td></tr>
+      <tr><td>After you deliver pushes</td><td>You → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>GetThere</td></tr>
     </table>
 
     <h2>Your channel</h2>
@@ -60,25 +142,29 @@
     <p><b>GetThere calling you.</b> You give us a token for your API, and we send it the same way, as
     <code>Authorization: Bearer &lt;token&gt;</code>. We can add mutual TLS if you need it. Calls are JSON over HTTPS.</p>
 
-    <p class="dir">You call GetThere</p>
+    <p class="dir">You call GetThere · GetThere builds these</p>
 
-    <div class="ep"><span class="verb get">LINK</span><h3>https://&lt;handle&gt;.getthere.now/offer</h3></div>
+    <div class="ep"><span class="verb get">LINK</span><h3>https://&lt;issuer&gt;.getthere.now/offer</h3></div>
+    <p class="meta"><b>Who:</b> your app links to it · <b>When:</b> in your "Just booked a flight?" push · <b>Built by:</b> GetThere</p>
     <p>The page your "Just booked a flight?" push opens. It explains the Flight Delay Pass and shows the cardholder
     where to forward their booking email. No key needed: it's a public page. You decide when to send this push,
     for example after an airline charge on a premium card.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/ping</h3></div>
+    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> while you set up, to test your key · <b>Built by:</b> GetThere</p>
     <p>Checks your key and connection.</p>
 <pre><code>200 {"ok": true, "channel": "&lt;issuer&gt;", "mode": "stub"}</code></pre>
     <p><code>mode</code> is <code>stub</code> while GetThere runs in test mode and <code>live</code> after.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
+    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> optional, once at setup or before each push · <b>Built by:</b> GetThere</p>
     <p>The offer link and forwarding address for your channel, if you'd rather not hard-code them.</p>
 <pre><code>200 {"offer_url": "https://&lt;issuer&gt;.getthere.now/offer",
      "forward_to": "quote@&lt;issuer&gt;.getthere.now",
      "product_name": "GetThere"}</code></pre>
 
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/push-receipts</h3></div>
+    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> after you deliver GetThere's pushes, in batches · <b>Built by:</b> GetThere</p>
     <p>Tells us what happened to the pushes we asked you to show. Send receipts in batches, whenever you have them.</p>
 <pre><code>{"receipts": [
   {"push_id": "5b1f…", "status": "delivered", "at": "2026-11-20T07:41:05Z"},
@@ -95,9 +181,10 @@
     <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your channel's
     pushes). A body without a <code>receipts</code> list gets <code>422</code>.</p>
 
-    <p class="dir">GetThere calls you</p>
+    <p class="dir">GetThere calls you · you build these</p>
 
     <div class="ep"><span class="verb">POST</span><h3>&lt;your push URL&gt;</h3></div>
+    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> a pass is bought, a card is ready, a card is used · <b>Built by:</b> you</p>
     <p>Shows a GetThere message as a push in your app. You give us one URL. We call it when a pass is bought, when
     a rebooking card is ready and after the cardholder rebooks. Pushes are alerts only: the card itself always goes
     to the cardholder on WhatsApp and by email.</p>
@@ -121,6 +208,7 @@
 <pre><code>202 {"accepted": true, "reference": "&lt;your id for the push&gt;"}</code></pre>
 
     <div class="ep"><span class="verb">POST</span><h3>&lt;your API&gt;/v1/getthere/purchase-match</h3></div>
+    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> each time a cardholder forwards a booking that shows its airfare · <b>Built by:</b> you (optional)</p>
     <p>Optional. When a cardholder forwards a booking, we ask whether you saw a matching airline charge on their
     card. A match confirms the booking is real and its airfare is right, so we can offer a pass even when the airfare
     looks unusually high for the route. We send only what's needed to match, and you answer yes or no: no transaction data
