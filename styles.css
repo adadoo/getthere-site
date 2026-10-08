@@ -197,3 +197,14 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .result-row b { font-size: 20px; }
 .grid2 > *, .grid3 > * { min-width: 0; }
 .amount input { width: 100%; }
+
+/* legal pages */
+.legal-doc h1 { font-size: clamp(30px, 4.4vw, 44px); }
+.legal-doc h2 { font-size: 21px; letter-spacing: -0.2px; margin: 34px 0 10px; }
+.legal-doc p, .legal-doc li { color: #2f3d52; }
+.legal-doc ul { padding-left: 20px; margin: 0 0 14px; }
+.legal-doc li { margin-bottom: 8px; }
+.legal-doc table { margin: 8px 0 14px; }
+.doc-meta { font-size: 14px; color: var(--muted) !important; }
+.draft { background: #fef3c7; color: #92400e; border-radius: 6px; padding: 1px 7px; font-weight: 600; }
+.callout.key { margin: 22px 0 8px; line-height: 1.6; }
