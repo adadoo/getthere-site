@@ -53,7 +53,6 @@ for c in channels.CHANNELS.values():
         "excluded_airports": list(r.excluded_airports),
         "purchase_match": bool(c.partner_api_url),
         "app_push": bool(c.push_url),
-        "underwriter": dataclasses.asdict(c.underwriter),
     })
 
 dest = Path(__file__).with_name("channels.json")

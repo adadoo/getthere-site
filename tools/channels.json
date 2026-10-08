@@ -14,7 +14,7 @@
     {
       "code": "direct",
       "name": "GT Direct",
-      "version": 9,
+      "version": 10,
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
@@ -59,19 +59,12 @@
       "max_other_people_bookings_per_year": 3,
       "excluded_airports": [],
       "purchase_match": false,
-      "app_push": false,
-      "underwriter": {
-        "code": "chubb",
-        "name": "Chubb",
-        "legal_entity": null,
-        "licence_notice": null,
-        "policy_wording_url": null
-      }
+      "app_push": false
     },
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 10,
+      "version": 11,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
@@ -116,19 +109,12 @@
       "max_other_people_bookings_per_year": 3,
       "excluded_airports": [],
       "purchase_match": false,
-      "app_push": false,
-      "underwriter": {
-        "code": "chubb",
-        "name": "Chubb",
-        "legal_entity": null,
-        "licence_notice": null,
-        "policy_wording_url": null
-      }
+      "app_push": false
     },
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 10,
+      "version": 11,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
@@ -177,14 +163,7 @@
       "max_other_people_bookings_per_year": 3,
       "excluded_airports": [],
       "purchase_match": true,
-      "app_push": true,
-      "underwriter": {
-        "code": "chubb",
-        "name": "Chubb",
-        "legal_entity": null,
-        "licence_notice": null,
-        "policy_wording_url": null
-      }
+      "app_push": true
     }
   ]
 }
