@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>API reference · GetThere for card issuers</title>
-<meta name="description" content="Every endpoint a card issuer connects to offer the Flight Delay Pass: the calls your bank makes to GetThere and the calls GetThere makes to your bank.">
+<meta name="description" content="Every endpoint a card issuer connects to offer the Flight Delay Pass: the calls you make to GetThere and the calls GetThere makes to you.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -24,10 +24,10 @@
 
     <p class="eyebrow">For card issuers</p>
     <h1>API reference</h1>
-    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every endpoint runs in test mode today: nothing is sent to your systems until we switch your bank to live.</p>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every endpoint runs in test mode today: nothing is sent to your systems until we switch your channel to live.</p>
 
     <div class="callout key">
-      <b>What your bank connects.</b> Four pushes in your app, a link to your offer page, and an optional purchase
+      <b>What you connect.</b> Four pushes in your app, a link to your offer page, and an optional purchase
       check. That's the whole integration: GetThere runs pricing, checkout, flight watching, rebooking cards and support.
     </div>
 
@@ -35,32 +35,32 @@
     <table>
       <tr><th>Direction</th><th>Endpoint</th><th>Needed?</th></tr>
       <tr><td>Your app → GetThere</td><td><code>https://&lt;handle&gt;.getthere.now/offer</code></td><td>Yes: the "Just booked a flight?" push opens it</td></tr>
-      <tr><td>Your bank → GetThere</td><td><code>GET /partner/v1/ping</code></td><td>For testing your key</td></tr>
-      <tr><td>Your bank → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>Optional: the offer link and forwarding address</td></tr>
-      <tr><td>Your bank → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>Yes, if you send pushes</td></tr>
-      <tr><td>GetThere → your bank</td><td><code>POST &lt;your push URL&gt;</code></td><td>Yes: three of the four pushes</td></tr>
-      <tr><td>GetThere → your bank</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>Optional: confirms the booking and its airfare</td></tr>
+      <tr><td>Card issuer → GetThere</td><td><code>GET /partner/v1/ping</code></td><td>For testing your key</td></tr>
+      <tr><td>Card issuer → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>Optional: the offer link and forwarding address</td></tr>
+      <tr><td>Card issuer → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>Yes, if you send pushes</td></tr>
+      <tr><td>GetThere → card issuer</td><td><code>POST &lt;your push URL&gt;</code></td><td>Yes: three of the four pushes</td></tr>
+      <tr><td>GetThere → card issuer</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>Optional: confirms the booking and its airfare</td></tr>
     </table>
 
     <h2>Your channel</h2>
-    <p>Each bank is its own channel with a short handle, for example <code>dbs</code>. The handle gives your bank its
+    <p>Each card issuer is its own channel with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your
     own addresses, all in your colours:</p>
     <ul>
-      <li>Pages: <code>https://dbs.getthere.now</code> (offer, checkout, pass and card pages)</li>
-      <li>Booking forwarding address: <code>quote@dbs.getthere.now</code></li>
-      <li>API base URL: <code>https://dbs.getthere.now/partner/v1</code></li>
+      <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and card pages)</li>
+      <li>Booking forwarding address: <code>quote@&lt;issuer&gt;.getthere.now</code></li>
+      <li>API base URL: <code>https://&lt;issuer&gt;.getthere.now/partner/v1</code></li>
     </ul>
 
     <h2>Authentication</h2>
-    <p><b>Your bank calling GetThere.</b> Every channel has its own API key. Send it on every call:</p>
+    <p><b>You calling GetThere.</b> Every channel has its own API key. Send it on every call:</p>
 <pre><code>Authorization: Bearer &lt;your channel's API key&gt;</code></pre>
-    <p>The key identifies your channel, so your bank only ever sees its own data. A missing or wrong key gets
+    <p>The key identifies your channel, so you only ever see your own data. A missing or wrong key gets
     <code>401 {"detail": "invalid partner key"}</code>. We issue keys by email for now and rotate them on request;
     a self-serve page for keys comes later.</p>
-    <p><b>GetThere calling your bank.</b> You give us a token for your API, and we send it the same way, as
-    <code>Authorization: Bearer &lt;token&gt;</code>. We can add mutual TLS if your bank needs it. Calls are JSON over HTTPS.</p>
+    <p><b>GetThere calling you.</b> You give us a token for your API, and we send it the same way, as
+    <code>Authorization: Bearer &lt;token&gt;</code>. We can add mutual TLS if you need it. Calls are JSON over HTTPS.</p>
 
-    <p class="dir">Your bank calls GetThere</p>
+    <p class="dir">You call GetThere</p>
 
     <div class="ep"><span class="verb get">LINK</span><h3>https://&lt;handle&gt;.getthere.now/offer</h3></div>
     <p>The page your "Just booked a flight?" push opens. It explains the Flight Delay Pass and shows the cardholder
@@ -69,13 +69,13 @@
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/ping</h3></div>
     <p>Checks your key and connection.</p>
-<pre><code>200 {"ok": true, "channel": "dbs", "mode": "stub"}</code></pre>
+<pre><code>200 {"ok": true, "channel": "&lt;issuer&gt;", "mode": "stub"}</code></pre>
     <p><code>mode</code> is <code>stub</code> while GetThere runs in test mode and <code>live</code> after.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
     <p>The offer link and forwarding address for your channel, if you'd rather not hard-code them.</p>
-<pre><code>200 {"offer_url": "https://dbs.getthere.now/offer",
-     "forward_to": "quote@dbs.getthere.now",
+<pre><code>200 {"offer_url": "https://&lt;issuer&gt;.getthere.now/offer",
+     "forward_to": "quote@&lt;issuer&gt;.getthere.now",
      "product_name": "GetThere"}</code></pre>
 
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/push-receipts</h3></div>
@@ -95,7 +95,7 @@
     <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your channel's
     pushes). A body without a <code>receipts</code> list gets <code>422</code>.</p>
 
-    <p class="dir">GetThere calls your bank</p>
+    <p class="dir">GetThere calls you</p>
 
     <div class="ep"><span class="verb">POST</span><h3>&lt;your push URL&gt;</h3></div>
     <p>Shows a GetThere message as a push in your app. You give us one URL. We call it when a pass is bought, when
@@ -121,7 +121,7 @@
 <pre><code>202 {"accepted": true, "reference": "&lt;your id for the push&gt;"}</code></pre>
 
     <div class="ep"><span class="verb">POST</span><h3>&lt;your API&gt;/v1/getthere/purchase-match</h3></div>
-    <p>Optional. When a cardholder forwards a booking, we ask whether your bank saw a matching airline charge on their
+    <p>Optional. When a cardholder forwards a booking, we ask whether you saw a matching airline charge on their
     card. A match confirms the booking is real and its airfare is right, so we can offer a pass even when the airfare
     looks unusually high for the route. We send only what's needed to match, and you answer yes or no: no transaction data
     comes back.</p>

@@ -109,8 +109,8 @@ def privacy():
                         "and link, and you can turn these alerts off in the app")
         bank_items += f"<li><b>{p}</b>, if you bought through {escape(c['host'])}: " + "; and ".join(uses) + ".</li>"
     bank_section = (f"""
-    <h2>5. If you bought through a bank</h2>
-    <p>Some banks offer the {PASS} to their customers. The bank is a separate organisation with its own privacy notice.
+    <h2>5. If you bought through a card issuer</h2>
+    <p>Some card issuers offer the {PASS} to their cardholders. The card issuer is a separate organisation with its own privacy notice.
     We share data with it only as follows:</p>
     <ul>{bank_items}</ul>""" if bank_items else "")
     n = 6 if bank_items else 5
@@ -133,7 +133,7 @@ def privacy():
     <h2>2. What we collect</h2>
     <ul>
       <li><b>The booking email you forward</b>, including its attachments: the names of the travellers, the booking
-      reference, flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
+      reference (PNR), flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
       digits of the card used.</li>
       <li>Your <b>name and email address</b>, from the email you forward.</li>
       <li>Your <b>mobile number</b>, if you give it at checkout so we can send your card there.</li>
