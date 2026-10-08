@@ -1,6 +1,7 @@
 # getthere-site
 
-The GetThere marketing website, served by GitHub Pages from the `main` branch.
+The GetThere marketing website, served by GitHub Pages from the `gh-pages` branch, which
+`.github/workflows/publish.yml` copies from `main` on every push. Edit `main`.
 Plain HTML, CSS and a little JavaScript; no build step.
 
 | Page | For |
