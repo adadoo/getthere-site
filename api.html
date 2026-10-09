@@ -114,15 +114,32 @@
     </ol>
 
     <h2>Every call at a glance</h2>
-    <table class="glance">
-      <tr><th>When</th><th>Who calls</th><th>Endpoint</th><th>Who builds it</th></tr>
-      <tr><td>While you set up</td><td>You → GetThere</td><td><code>GET /partner/v1/ping</code></td><td>GetThere</td></tr>
-      <tr><td>Optional, at setup</td><td>You → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>GetThere</td></tr>
-      <tr><td>After an airline charge</td><td>Your app → cardholder</td><td><code>https://&lt;issuer&gt;.getthere.now/offer</code> (a link)</td><td>GetThere hosts the page</td></tr>
-      <tr><td>A booking is forwarded</td><td>GetThere → you</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>You (optional)</td></tr>
-      <tr><td>Pass bought, pre-loaded rescue card ready, pre-loaded rescue card used</td><td>GetThere → you</td><td><code>POST &lt;your push URL&gt;</code></td><td>You</td></tr>
-      <tr><td>After you deliver pushes</td><td>You → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>GetThere</td></tr>
-    </table>
+    <div class="glance">
+      <div class="g-row">
+        <div class="g-when"><b>While you set up</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
+        <div class="g-call"><code>GET /partner/v1/ping</code><span class="builder gt">GetThere builds it</span></div>
+      </div>
+      <div class="g-row">
+        <div class="g-when"><b>Optional, at setup</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
+        <div class="g-call"><code>GET /partner/v1/offer</code><span class="builder gt">GetThere builds it</span></div>
+      </div>
+      <div class="g-row">
+        <div class="g-when"><b>After an airline charge</b><div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Cardholder</span></div></div>
+        <div class="g-call"><code>https://&lt;issuer&gt;.getthere.now/offer</code><span class="builder gt">A link to a page GetThere hosts</span></div>
+      </div>
+      <div class="g-row">
+        <div class="g-when"><b>A booking is forwarded</b><div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">You</span></div></div>
+        <div class="g-call"><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code><span class="builder you">You build it (optional)</span></div>
+      </div>
+      <div class="g-row">
+        <div class="g-when"><b>Pass bought, pre-loaded rescue card ready or used</b><div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">You</span></div></div>
+        <div class="g-call"><code>POST &lt;your push URL&gt;</code><span class="builder you">You build it</span></div>
+      </div>
+      <div class="g-row">
+        <div class="g-when"><b>After you deliver pushes</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
+        <div class="g-call"><code>POST /partner/v1/push-receipts</code><span class="builder gt">GetThere builds it</span></div>
+      </div>
+    </div>
 
     <h2>Your channel</h2>
     <p>Each card issuer is its own channel with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your

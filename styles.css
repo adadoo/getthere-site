@@ -278,5 +278,11 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .api .call { font-size: 13px !important; color: var(--muted); }
 .api .builder { font-weight: 700; } .api .builder.you { color: #7c3aed; } .api .builder.gt { color: var(--accent); }
 .api .meta { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
-.api .glance td:first-child { white-space: nowrap; }
-@media (max-width: 700px) { .api .who { grid-template-columns: 1fr; } .api .glance td:first-child { white-space: normal; } .api .glance { display: block; overflow-x: auto; } }
+.api .glance { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 14px 0 0; }
+.api .g-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 8px 24px; padding: 14px 18px; border-top: 1px solid var(--line); align-items: start; }
+.api .g-row:first-child { border-top: 0; }
+.api .g-when b { display: block; font-size: 15px; margin-bottom: 6px; }
+.api .g-call { display: flex; flex-direction: column; gap: 6px; padding-top: 2px; }
+.api .g-call code { font-size: 13px; overflow-wrap: anywhere; align-self: flex-start; }
+.api .g-call .builder { font-size: 13px; }
+@media (max-width: 700px) { .api .who { grid-template-columns: 1fr; } .api .g-row { grid-template-columns: 1fr; } }
