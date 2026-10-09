@@ -38,7 +38,7 @@
 
     <p class="eyebrow">For card issuers</p>
     <h1>API reference</h1>
-    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every endpoint runs in test mode today: nothing is sent to your systems until we switch your channel to live.</p>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every channel starts in test mode: build and test with a test key, and we switch your channel to live together.</p>
 
     <div class="callout key">
       <b>The short version.</b> You build two endpoints and send one push of your own. GetThere builds everything
@@ -161,18 +161,26 @@
     <ul>
       <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and pre-loaded rescue card pages)</li>
       <li>Booking forwarding address: <code>quote@&lt;issuer&gt;.getthere.now</code></li>
+      <li>Test forwarding address: <code>test@&lt;issuer&gt;.getthere.now</code> (always makes test passes)</li>
     </ul>
     <p>The API has one address for every card issuer, <code>https://api.getthere.now/partner/v1</code>.
     Your API key tells GetThere which issuer is calling, so you only ever see your own data.</p>
 
     <h2>Authentication</h2>
-    <p><b>You calling GetThere.</b> Every channel has its own API key. Send it on every call:</p>
-<pre><code>Authorization: Bearer &lt;your channel's API key&gt;</code></pre>
-    <p>The key identifies your channel, so you only ever see your own data. A missing or wrong key gets
-    <code>401 {"detail": "invalid partner key"}</code>. We issue keys by email for now and rotate them on request;
-    a self-serve page for keys comes later.</p>
+    <p><b>You calling GetThere.</b> Each channel gets two kinds of API key. Send one on every call:</p>
+<pre><code>Authorization: Bearer gt_test_…   (test key)
+Authorization: Bearer gt_live_…   (live key)</code></pre>
+    <ul>
+      <li><b>Test keys</b> (<code>gt_test_</code>) only ever see test passes and test pushes, and work at any time.</li>
+      <li><b>Live keys</b> (<code>gt_live_</code>) see real cardholders, and work once your channel is live. Before that they get
+      <code>403</code>.</li>
+    </ul>
+    <p>The key identifies your channel, so you only ever see your own data. A missing, wrong or revoked key gets
+    <code>401 {"detail": "invalid partner key"}</code>. We issue keys securely, show each one once, and can revoke and
+    reissue one at any time.</p>
     <p><b>GetThere calling you.</b> You give us a token for your API, and we send it the same way, as
-    <code>Authorization: Bearer &lt;token&gt;</code>. We can add mutual TLS if you need it. Calls are JSON over HTTPS.</p>
+    <code>Authorization: Bearer &lt;token&gt;</code>. If you have a test system, give us its addresses and a separate test
+    token too. We can add mutual TLS if you need it. Calls are JSON over HTTPS.</p>
 
     <p class="dir">You call GetThere · GetThere builds these</p>
 
@@ -185,12 +193,13 @@
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/ping</h3></div>
     <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> while you set up, to test your key · <b>Built by:</b> GetThere</p>
     <p>Checks your key and connection.</p>
-<pre><code>200 {"ok": true, "channel": "&lt;issuer&gt;", "mode": "stub"}</code></pre>
-    <p><code>mode</code> is <code>stub</code> while GetThere runs in test mode and <code>live</code> after.</p>
+<pre><code>200 {"ok": true, "channel": "&lt;issuer&gt;", "mode": "test"}</code></pre>
+    <p><code>mode</code> is <code>test</code> for a test key and <code>live</code> for a live key.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
     <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> optional, once at setup or before each push · <b>Built by:</b> GetThere</p>
-    <p>The offer link and forwarding address for your channel, if you'd rather not hard-code them.</p>
+    <p>The offer link and forwarding address for your channel, if you'd rather not hard-code them. With a test key,
+    <code>forward_to</code> is <code>test@&lt;issuer&gt;.getthere.now</code>, so bookings forwarded from your test app make test passes.</p>
 <pre><code>200 {"offer_url": "https://&lt;issuer&gt;.getthere.now/offer",
      "forward_to": "quote@&lt;issuer&gt;.getthere.now",
      "product_name": "GetThere"}</code></pre>
@@ -205,13 +214,13 @@
     <table>
       <tr><th>Field</th><th>Meaning</th></tr>
       <tr><td><code>push_id</code></td><td>The <code>push_id</code> we sent you with the push</td></tr>
-      <tr><td><code>status</code></td><td><code>delivered</code>, <code>not_delivered</code> or <code>opted_out</code>. <code>opted_out</code> stops all further pushes to that cardholder.</td></tr>
+      <tr><td><code>status</code></td><td><code>delivered</code>, <code>not_delivered</code> or <code>opted_out</code>. <code>opted_out</code> stops all further pushes to that cardholder (an opt-out in your test app only stops test pushes).</td></tr>
       <tr><td><code>at</code></td><td>Optional, ISO 8601. Defaults to when we receive it.</td></tr>
     </table>
 <pre><code>200 {"results": [{"push_id": "5b1f…", "result": "ok"},
                  {"push_id": "9c2e…", "result": "ok"}]}</code></pre>
     <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your channel's
-    pushes). A body without a <code>receipts</code> list gets <code>422</code>.</p>
+    pushes, or a push of the other mode: test keys report test pushes, live keys real ones). A body without a <code>receipts</code> list gets <code>422</code>.</p>
 
     <p class="dir">GetThere calls you · you build these</p>
 
@@ -260,8 +269,18 @@
     </ul>
 
     <h2>Test mode</h2>
-    <p>Until we switch your channel to live, every endpoint above works against test data. Calls to GetThere answer
-    normally, and nothing is sent to your push URL or purchase-match API. Ask us for a test key at
+    <p>Test passes run the whole journey with nothing real: a test payment page instead of a card payment, a test
+    pre-loaded rescue card that can't be charged, and emails whose subject starts with "[Test]". We can simulate a
+    delay on a test pass's flight, so you see the pre-loaded rescue card push minutes later instead of on travel day.</p>
+    <ul>
+      <li>Test passes come from bookings forwarded to <code>test@&lt;issuer&gt;.getthere.now</code>, and from your
+      channel's own address until it goes live.</li>
+      <li>Their pushes go to your test push URL if you gave us one; otherwise we only record them.</li>
+      <li>Their purchase checks go to your test purchase-match API if you gave us one; otherwise we use test purchases
+      we set up with you. A test pass is never checked against your real cardholders.</li>
+      <li>Test passes stay test passes after your channel goes live, so you can keep testing.</li>
+    </ul>
+    <p>Ask us for a test key at
     <a href="mailto:partner@getthere.now?subject=API%20test%20key">partner@getthere.now</a>.</p>
 
   </div>
