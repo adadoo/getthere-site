@@ -94,25 +94,21 @@ def page(title, description, body, depth=1):
 
 
 def privacy():
-    help_ = '<a href="mailto:help@my.getthere.now">help@my.getthere.now</a>'
+    help_ = '<a href="mailto:privacy@getthere.now">privacy@getthere.now</a>'
     banks = [c for c in DATA["channels"] if c["partner_name"] and (c["purchase_match"] or c["app_push"])]
-    bank_items = ""
-    for c in banks:
-        p = escape(c["partner_name"])
-        uses = []
-        if c["purchase_match"]:
-            uses.append(f"to confirm the booking was paid with your {p} card: we send only your email address, the airline, "
-                        f"the amount, the currency and the booking date range, and {p} answers yes or no, sharing no "
-                        "transaction data with us")
-        if c["app_push"]:
-            uses.append(f"to show alerts about your pass in {p}'s app: we send your email address and the alert's wording "
-                        "and link, and you can turn these alerts off in the app")
-        bank_items += f"<li><b>{p}</b>, if you bought through {escape(c['host'])}: " + "; and ".join(uses) + ".</li>"
+    # Generic: no card issuer is named, whichever channels exist.
+    bank_items = "".join([
+        "\n      <li><b>To confirm the booking was paid with that issuer's card:</b> we send only your email address, "
+        "the airline, the amount, the currency and the booking date range. The card issuer answers yes or no and "
+        "shares no transaction data with us.</li>" if any(c["purchase_match"] for c in banks) else "",
+        "\n      <li><b>To show alerts about your pass in the card issuer's app:</b> we send your email address and the "
+        "alert's wording and link. You can turn these alerts off in the app.</li>" if any(c["app_push"] for c in banks) else ""])
     bank_section = (f"""
     <h2>5. If you bought through a card issuer</h2>
     <p>Some card issuers offer the {PASS} to their cardholders. The card issuer is a separate organisation with its own privacy notice.
-    We share data with it only as follows:</p>
-    <ul>{bank_items}</ul>""" if bank_items else "")
+    If you bought through a card issuer's GetThere page, we share data with it only as follows:</p>
+    <ul>{bank_items}
+    </ul>""" if bank_items else "")
     n = 6 if bank_items else 5
     body = f"""
     <p class="eyebrow">Privacy notice</p>
@@ -158,6 +154,8 @@ def privacy():
       <li>Service providers who work for us under contract: hosting (Render, servers in Singapore), file storage,
       email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and pre-loaded rescue card issuing,
       and flight data (FlightAware).</li>
+      <li>When you forward a booking from an airline or travel site we haven't seen before, an AI service
+      (Anthropic's Claude) reads it for us to find the flights, travellers and fare.</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
       <li>Authorities, when the law requires it.</li>
     </ul>
