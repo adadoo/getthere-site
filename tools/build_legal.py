@@ -156,7 +156,7 @@ def privacy():
     <h2>4. Who we share it with</h2>
     <ul>
       <li>Service providers who work for us under contract: hosting (Render, servers in Singapore), file storage,
-      email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and rescue card issuing,
+      email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and pre-loaded rescue card issuing,
       and flight data (FlightAware).</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
       <li>Authorities, when the law requires it.</li>
@@ -170,9 +170,9 @@ def privacy():
 
     <h2>{n + 1}. How long we keep it</h2>
     <ul>
-      <li>Links in our emails to your pass and rescue card keep working for 12 months after your trip, then stop.</li>
+      <li>Links in our emails to your pass and pre-loaded rescue card keep working for 12 months after your trip, then stop.</li>
       <li>We keep booking emails and booking data for 12 months after your last flight, then delete them.</li>
-      <li>We keep payment and rescue card records for as long as the law requires.</li>
+      <li>We keep payment and pre-loaded rescue card records for as long as the law requires.</li>
     </ul>
 
     <h2>{n + 2}. Your choices and rights</h2>

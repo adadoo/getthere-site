@@ -38,7 +38,7 @@
         <ul>
           <li><b>The "Just booked a flight?" push.</b> Your own push, from your own card data, after an airline
           charge. It links to your offer page. No call to GetThere is needed.</li>
-          <li><b>A push endpoint</b> that receives GetThere's three messages (pass bought, rescue card ready, rescue card used)
+          <li><b>A push endpoint</b> that receives GetThere's three messages (pass bought, pre-loaded rescue card ready, pre-loaded rescue card used)
           and shows them in your app.</li>
           <li><b>A purchase-match endpoint</b> <span class="opt">optional</span> that answers yes or no: did this
           cardholder pay this airline this amount?</li>
@@ -95,14 +95,14 @@
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
-        <h3>Push 2: her flight is late, her rescue card is ready</h3>
+        <h3>Push 2: her flight is late, her pre-loaded rescue card is ready</h3>
         <p>When her flight is 3+ hours late or cancelled, GetThere sends the pre-loaded rescue card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
         <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_issued"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>Push 3: she has rebooked</h3>
-        <p>When Mia uses the rescue card for a new flight, GetThere calls your push endpoint and your app thanks her.</p>
+        <p>When Mia uses the pre-loaded rescue card for a new flight, GetThere calls your push endpoint and your app thanks her.</p>
         <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_used"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
@@ -120,7 +120,7 @@
       <tr><td>Optional, at setup</td><td>You → GetThere</td><td><code>GET /partner/v1/offer</code></td><td>GetThere</td></tr>
       <tr><td>After an airline charge</td><td>Your app → cardholder</td><td><code>https://&lt;issuer&gt;.getthere.now/offer</code> (a link)</td><td>GetThere hosts the page</td></tr>
       <tr><td>A booking is forwarded</td><td>GetThere → you</td><td><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code></td><td>You (optional)</td></tr>
-      <tr><td>Pass bought, rescue card ready, rescue card used</td><td>GetThere → you</td><td><code>POST &lt;your push URL&gt;</code></td><td>You</td></tr>
+      <tr><td>Pass bought, pre-loaded rescue card ready, pre-loaded rescue card used</td><td>GetThere → you</td><td><code>POST &lt;your push URL&gt;</code></td><td>You</td></tr>
       <tr><td>After you deliver pushes</td><td>You → GetThere</td><td><code>POST /partner/v1/push-receipts</code></td><td>GetThere</td></tr>
     </table>
 
@@ -128,7 +128,7 @@
     <p>Each card issuer is its own channel with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your
     own addresses, all in your colours:</p>
     <ul>
-      <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and rescue card pages)</li>
+      <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and pre-loaded rescue card pages)</li>
       <li>Booking forwarding address: <code>quote@&lt;issuer&gt;.getthere.now</code></li>
       <li>API base URL: <code>https://&lt;issuer&gt;.getthere.now/partner/v1</code></li>
     </ul>
@@ -184,9 +184,9 @@
     <p class="dir">GetThere calls you · you build these</p>
 
     <div class="ep"><span class="verb">POST</span><h3>&lt;your push URL&gt;</h3></div>
-    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> a pass is bought, a rescue card is ready, a rescue card is used · <b>Built by:</b> you</p>
+    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> a pass is bought, a pre-loaded rescue card is ready, a pre-loaded rescue card is used · <b>Built by:</b> you</p>
     <p>Shows a GetThere message as a push in your app. You give us one URL. We call it when a pass is bought, when
-    a pre-loaded rescue card is ready and after the cardholder rebooks. Pushes are alerts only: the rescue card itself always goes
+    a pre-loaded rescue card is ready and after the cardholder rebooks. Pushes are alerts only: the pre-loaded rescue card itself always goes
     to the cardholder on WhatsApp and by email.</p>
 <pre><code>Idempotency-Key: 5b1f…
 
