@@ -18,7 +18,6 @@
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
-      "support_email": "help@my.getthere.now",
       "from_address": "GetThere <quote@my.getthere.now>",
       "partner_name": null,
       "tiers": [
@@ -68,7 +67,6 @@
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
-      "support_email": "help@sq.getthere.now",
       "from_address": "GetThere for Singapore Airlines <quote@sq.getthere.now>",
       "partner_name": "Singapore Airlines",
       "tiers": [
@@ -118,7 +116,6 @@
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
-      "support_email": "help@dbs.getthere.now",
       "from_address": "GetThere for DBS <quote@dbs.getthere.now>",
       "partner_name": "DBS",
       "tiers": [

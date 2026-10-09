@@ -39,7 +39,6 @@ for c in channels.CHANNELS.values():
         "host": c.host,
         "site_url": c.site_url,
         "forward_to": c.inbound_addresses[0],
-        "support_email": c.support_email,
         "from_address": c.from_address,
         "partner_name": b.partner_name,
         "tiers": [{"label": t.label, "cap": t.cap_multiplier} for t in c.tiers],
