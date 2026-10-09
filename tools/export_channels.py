@@ -51,8 +51,8 @@ for c in channels.CHANNELS.values():
         "max_booking_value": r.max_booking_value,
         "max_other_people_bookings_per_year": r.max_other_people_bookings_per_year,
         "excluded_airports": list(r.excluded_airports),
-        "purchase_match": bool(c.partner_api_url),
-        "app_push": bool(c.push_url),
+        "purchase_match": c.purchase_match,
+        "app_push": c.app_push,
     })
 
 dest = Path(__file__).with_name("channels.json")
