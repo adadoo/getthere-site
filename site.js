@@ -84,3 +84,24 @@ document.querySelectorAll(".carousel").forEach(car => {
   window.addEventListener("resize", () => go(current));
   mark();
 });
+
+// Airlines and travel sites we read bookings from, live from the app (learned ones included)
+const airlineList = document.querySelector("[data-airlines]");
+if (airlineList) {
+  fetch("https://my.getthere.now/airlines.json").then(r => r.ok ? r.json() : Promise.reject()).then(data => {
+    if (!data.airlines || !data.airlines.length) return;
+    airlineList.replaceChildren(...data.airlines.map(a => {
+      const el = document.createElement("div");
+      el.className = "airline";
+      if (a.code) {
+        const code = document.createElement("span");
+        code.className = "code";
+        code.textContent = a.code;
+        el.append(code);
+      }
+      el.append(a.name);
+      return el;
+    }));
+    document.querySelectorAll("[data-airlines-line]").forEach(el => el.textContent = data.line);
+  }).catch(() => {});   // keep the list in the page
+}

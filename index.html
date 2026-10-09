@@ -34,7 +34,7 @@
         <a class="btn" href="#forward">Forward your booking</a>
         <a class="btn ghost" href="#how">How it works</a>
       </div>
-      <p class="fine" style="margin-top:18px">Works with Singapore Airlines and Virgin Australia bookings today.</p>
+      <p class="fine" style="margin-top:18px">Works with bookings from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>.</p>
     </div>
 
     <div class="mock" aria-label="Example of the price email you get back">
@@ -157,11 +157,15 @@
   <div class="wrap">
     <p class="eyebrow">Airlines</p>
     <h2>We read booking emails from</h2>
-    <p class="muted">Your pre-loaded rescue card works on any airline. The booking you forward needs to be from one of these, for now.</p>
-    <div class="airlines" style="margin-top:22px">
+    <p class="muted">Your pre-loaded rescue card works on any airline. We read bookings from these today, and learn a new airline or travel site the first time someone forwards one of its bookings.</p>
+    <!-- Filled from https://my.getthere.now/airlines.json (site.js); this list shows if that can't be reached. -->
+    <div class="airlines" data-airlines style="margin-top:22px">
+      <div class="airline"><span class="code">AI</span>Air India</div>
+      <div class="airline"><span class="code">AK</span>AirAsia</div>
+      <div class="airline"><span class="code">EK</span>Emirates</div>
       <div class="airline"><span class="code">SQ</span>Singapore Airlines</div>
+      <div class="airline">Trip.com</div>
       <div class="airline"><span class="code">VA</span>Virgin Australia</div>
-      <div class="airline soon">More airlines coming</div>
     </div>
   </div>
 </section>
@@ -192,7 +196,7 @@
     </details>
     <details>
       <summary>Which bookings can I forward?</summary>
-      <p>Confirmation or e-ticket emails from Singapore Airlines or Virgin Australia, for most bookings worth about A$500 to A$15,000 (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
+      <p>Confirmation or e-ticket emails from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>, or any other airline or travel site (we learn new ones as they're forwarded), for most bookings worth about A$500 to A$15,000 (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
     </details>
     <details>
       <summary>What happens to my email?</summary>
