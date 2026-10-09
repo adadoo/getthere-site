@@ -91,19 +91,19 @@
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>Push 1: pass bought</h3>
         <p>The moment she pays, GetThere calls your push endpoint and your app confirms the purchase.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "pass_purchased"</code> · <span class="builder you">you build it</span></p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "pass_purchased"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>Push 2: her flight is late, her pre-loaded rescue card is ready</h3>
         <p>When her flight is 3+ hours late or cancelled, GetThere sends the pre-loaded rescue card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_issued"</code> · <span class="builder you">you build it</span></p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "card_issued"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>Push 3: she has rebooked</h3>
         <p>When Mia uses the pre-loaded rescue card for a new flight, GetThere calls your push endpoint and your app thanks her.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"kind": "card_used"</code> · <span class="builder you">you build it</span></p>
+        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "card_used"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
         <div class="lanes"><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
@@ -193,7 +193,7 @@
 
 {"push_id": "5b1f…",
  "customer": {"email": "mia@example.com"},
- "kind": "card_issued",
+ "type": "card_issued",
  "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
  "body": "GetThere has sent it to you on WhatsApp and by email.",
  "link": null}</code></pre>
@@ -201,7 +201,7 @@
       <tr><th>Field</th><th>Meaning</th></tr>
       <tr><td><code>push_id</code></td><td>Unique per push. It's also the <code>Idempotency-Key</code> header, so a retry never shows twice.</td></tr>
       <tr><td><code>customer.email</code></td><td>The email your cardholder forwarded their booking from. Match it to your customer.</td></tr>
-      <tr><td><code>kind</code></td><td><code>pass_purchased</code>, <code>card_issued</code> or <code>card_used</code></td></tr>
+      <tr><td><code>type</code></td><td><code>pass_purchased</code>, <code>card_issued</code> or <code>card_used</code></td></tr>
       <tr><td><code>title</code>, <code>body</code></td><td>Ready to show. We agree the wording for your channel with you before launch.</td></tr>
       <tr><td><code>link</code></td><td>Optional page to open, or <code>null</code></td></tr>
     </table>
