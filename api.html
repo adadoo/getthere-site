@@ -50,7 +50,7 @@
         <ul>
           <li><b>Your offer page</b> at <code>https://&lt;issuer&gt;.getthere.now/offer</code>, in your colours.</li>
           <li><b>Your forwarding address</b> <code>quote@&lt;issuer&gt;.getthere.now</code>, where cardholders send their booking.</li>
-          <li><b>The partner API</b> at <code>https://&lt;issuer&gt;.getthere.now/partner/v1</code>: a key check,
+          <li><b>The partner API</b> at <code>https://api.getthere.now/partner/v1</code>: a key check,
           your offer link, and push receipts.</li>
           <li><b>Every message to the cardholder:</b> the price email, the pass confirmation, and the pre-loaded rescue card on WhatsApp and by email.</li>
         </ul>
@@ -130,8 +130,9 @@
     <ul>
       <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and pre-loaded rescue card pages)</li>
       <li>Booking forwarding address: <code>quote@&lt;issuer&gt;.getthere.now</code></li>
-      <li>API base URL: <code>https://&lt;issuer&gt;.getthere.now/partner/v1</code></li>
     </ul>
+    <p>The API has one address for every card issuer, <code>https://api.getthere.now/partner/v1</code>.
+    Your API key tells GetThere which issuer is calling, so you only ever see your own data.</p>
 
     <h2>Authentication</h2>
     <p><b>You calling GetThere.</b> Every channel has its own API key. Send it on every call:</p>
