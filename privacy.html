@@ -43,7 +43,10 @@
       reference (PNR), flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
       digits of the card used.</li>
       <li>Your <b>name and email address</b>, from the email you forward.</li>
-      <li>Your <b>mobile number</b>, if you give it at checkout so we can send your pre-loaded rescue card there.</li>
+      <li>Your <b>mobile number</b>, which you give at checkout so we can send your pre-loaded rescue card there. We don't
+      check it when you enter it; we treat it as confirmed once a message we send to it is delivered.</li>
+      <li>Your <b>legal name, date of birth, home address and the country you live in</b>, which you give at checkout
+      so the pre-loaded rescue card can be issued in your name.</li>
       <li><b>Payment details</b>, handled by our payment provider. We don't see or store your full card number.</li>
       <li><b>Your pre-loaded rescue card's use</b>: where it was used, the amount and when.</li>
       <li><b>Flight status</b> for your flights, from flight-data providers.</li>
@@ -63,10 +66,13 @@
     <h2>4. Who we share it with</h2>
     <ul>
       <li>Service providers who work for us under contract: hosting (Render, servers in Singapore), file storage,
-      email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and pre-loaded rescue card issuing,
+      email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and pre-loaded rescue card issuing (Airwallex),
       and flight data (FlightAware).</li>
       <li>When you forward a booking from an airline or travel site we haven't seen before, an AI service
       (Anthropic's Claude) reads it for us to find the flights, travellers and fare.</li>
+      <li>Airwallex, our card issuer, receives your legal name, date of birth, home address, email address and mobile
+      number when you buy a pass, to check your identity (including sanctions screening) and to issue the pre-loaded
+      rescue card in your name. Airwallex may ask for an identity document if it can't confirm who you are.</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
       <li>Authorities, when the law requires it.</li>
     </ul>
