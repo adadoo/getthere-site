@@ -79,7 +79,7 @@ def page(title, description, body, depth=1):
   <div class="wrap">
     <div>
       <a class="logo" href="{up}./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">Don't miss your moment.</p>
+      <p style="margin-top:10px;max-width:320px">Your flight is delayed, but you can get there.</p>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
