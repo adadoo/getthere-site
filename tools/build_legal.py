@@ -95,14 +95,15 @@ def page(title, description, body, depth=1):
 
 def privacy():
     help_ = '<a href="mailto:privacy@getthere.now">privacy@getthere.now</a>'
-    banks = [c for c in DATA["channels"] if c["partner_name"] and (c["purchase_match"] or c["app_push"])]
-    # Generic: no card issuer is named, whichever channels exist.
+    # Generic: no card issuer is named, whichever channels exist. Purchase checks have no
+    # setting (a card issuer's address turns them on, in the admin), so they're always listed.
     bank_items = "".join([
         "\n      <li><b>To confirm the booking was paid with that issuer's card:</b> we send only your email address, "
         "the airline, the amount, the currency and the booking date range. The card issuer answers yes or no and "
-        "shares no transaction data with us.</li>" if any(c["purchase_match"] for c in banks) else "",
+        "shares no transaction data with us.</li>",
         "\n      <li><b>To show alerts about your pass in the card issuer's app:</b> we send your email address and the "
-        "alert's wording and link. You can turn these alerts off in the app.</li>" if any(c["app_push"] for c in banks) else ""])
+        "alert's wording and link. You can turn these alerts off in the app.</li>"
+        if any(c["partner_name"] and c["app_push"] for c in DATA["channels"]) else ""])
     bank_section = (f"""
     <h2>5. If you bought through a card issuer</h2>
     <p>Some card issuers offer the {PASS} to their cardholders. The card issuer is a separate organisation with its own privacy notice.

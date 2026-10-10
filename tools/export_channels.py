@@ -43,15 +43,7 @@ for c in channels.CHANNELS.values():
         "partner_name": b.partner_name,
         "tiers": [{"label": t.label, "cap": t.cap_multiplier} for t in c.tiers],
         "trigger_minutes": r.trigger_delay_minutes,
-        "watch_from_hours": r.watch_from_hours,
-        "allow_topup": r.allow_topup,
-        "phone_required": r.phone_required,
         "takeoff_signoff": r.takeoff_signoff,
-        "min_booking_value": r.min_booking_value,
-        "max_booking_value": r.max_booking_value,
-        "max_other_people_bookings_per_year": r.max_other_people_bookings_per_year,
-        "excluded_airports": list(r.excluded_airports),
-        "purchase_match": c.purchase_match,
         "app_push": c.app_push,
     })
 

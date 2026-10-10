@@ -14,7 +14,7 @@
     {
       "code": "direct",
       "name": "GT Direct",
-      "version": 11,
+      "version": 14,
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
@@ -31,39 +31,13 @@
         }
       ],
       "trigger_minutes": 180,
-      "watch_from_hours": 24,
-      "allow_topup": true,
-      "phone_required": true,
       "takeoff_signoff": true,
-      "min_booking_value": {
-        "AUD": 500,
-        "NZD": 550,
-        "SGD": 450,
-        "USD": 330,
-        "EUR": 300,
-        "GBP": 260,
-        "INR": 27000,
-        "JPY": 50000
-      },
-      "max_booking_value": {
-        "AUD": 15000,
-        "NZD": 16500,
-        "SGD": 13500,
-        "USD": 10000,
-        "EUR": 9000,
-        "GBP": 8000,
-        "INR": 830000,
-        "JPY": 1500000
-      },
-      "max_other_people_bookings_per_year": 3,
-      "excluded_airports": [],
-      "purchase_match": false,
       "app_push": false
     },
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 12,
+      "version": 15,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
@@ -80,39 +54,13 @@
         }
       ],
       "trigger_minutes": 180,
-      "watch_from_hours": 24,
-      "allow_topup": true,
-      "phone_required": true,
       "takeoff_signoff": true,
-      "min_booking_value": {
-        "AUD": 500,
-        "NZD": 550,
-        "SGD": 450,
-        "USD": 330,
-        "EUR": 300,
-        "GBP": 260,
-        "INR": 27000,
-        "JPY": 50000
-      },
-      "max_booking_value": {
-        "AUD": 15000,
-        "NZD": 16500,
-        "SGD": 13500,
-        "USD": 10000,
-        "EUR": 9000,
-        "GBP": 8000,
-        "INR": 830000,
-        "JPY": 1500000
-      },
-      "max_other_people_bookings_per_year": 3,
-      "excluded_airports": [],
-      "purchase_match": false,
       "app_push": false
     },
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 12,
+      "version": 16,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
@@ -133,33 +81,7 @@
         }
       ],
       "trigger_minutes": 120,
-      "watch_from_hours": 24,
-      "allow_topup": true,
-      "phone_required": true,
       "takeoff_signoff": true,
-      "min_booking_value": {
-        "AUD": 500,
-        "NZD": 550,
-        "SGD": 450,
-        "USD": 330,
-        "EUR": 300,
-        "GBP": 260,
-        "INR": 27000,
-        "JPY": 50000
-      },
-      "max_booking_value": {
-        "AUD": 15000,
-        "NZD": 16500,
-        "SGD": 13500,
-        "USD": 10000,
-        "EUR": 9000,
-        "GBP": 8000,
-        "INR": 830000,
-        "JPY": 1500000
-      },
-      "max_other_people_bookings_per_year": 3,
-      "excluded_airports": [],
-      "purchase_match": true,
       "app_push": true
     }
   ]
