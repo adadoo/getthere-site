@@ -62,6 +62,7 @@ document.querySelectorAll(".carousel").forEach(car => {
   const tabs = slides.map((s, i) => {
     const b = document.createElement("button");
     b.textContent = `${i + 1}. ${s.querySelector("h3").textContent}`;
+    if (s.hasAttribute("data-optional")) b.append(Object.assign(document.createElement("span"), { className: "opt", textContent: "optional" }));
     b.addEventListener("click", () => go(i));
     steps.append(b);
     return b;
