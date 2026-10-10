@@ -1,7 +1,7 @@
 {
   "product": "GetThere",
   "pass_name": "Flight Delay Pass",
-  "terms_effective": "2026-10-08",
+  "terms_effective": "2026-10-10",
   "global": {
     "sales_close_hours": 48,
     "quote_valid_hours": 24,
@@ -31,13 +31,12 @@
         }
       ],
       "trigger_minutes": 180,
-      "takeoff_signoff": true,
-      "app_push": false
+      "takeoff_signoff": true
     },
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 15,
+      "version": 16,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
@@ -54,13 +53,12 @@
         }
       ],
       "trigger_minutes": 180,
-      "takeoff_signoff": true,
-      "app_push": false
+      "takeoff_signoff": true
     },
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 16,
+      "version": 17,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
@@ -81,8 +79,7 @@
         }
       ],
       "trigger_minutes": 120,
-      "takeoff_signoff": true,
-      "app_push": true
+      "takeoff_signoff": true
     }
   ]
 }
