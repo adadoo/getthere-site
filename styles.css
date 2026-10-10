@@ -242,6 +242,8 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .car-steps { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
 .car-steps button { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
 .car-steps button[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.car-steps .opt { margin-left: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.car-steps button[aria-current="true"] .opt { color: #c8d1de; }
 @media (max-width: 760px) {
   .carousel .slide { grid-template-columns: 1fr; gap: 18px; justify-items: center; text-align: left; }
   .carousel .slide img { max-width: 260px; }
