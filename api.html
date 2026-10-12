@@ -136,12 +136,12 @@
         <div class="g-call"><code>GET /partner/v1/ping</code><span class="builder gt">GetThere builds it</span></div>
       </div>
       <div class="g-row">
-        <div class="g-when"><b>Optional, at setup</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
+        <div class="g-when"><b>Before each push, for tracing</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
         <div class="g-call"><code>GET /partner/v1/offer</code><span class="builder gt">GetThere builds it</span></div>
       </div>
       <div class="g-row">
         <div class="g-when"><b>After an airline charge</b><div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Cardholder</span></div></div>
-        <div class="g-call"><code>https://&lt;issuer&gt;.getthere.now/offer</code><span class="builder gt">A link to a page GetThere hosts</span></div>
+        <div class="g-call"><code>https://&lt;issuer&gt;.getthere.now/offer?o=&lt;offer_id&gt;</code><span class="builder gt">A link to a page GetThere hosts</span></div>
       </div>
       <div class="g-row">
         <div class="g-when"><b>A booking is forwarded</b><div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">You</span></div></div>
@@ -199,11 +199,16 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <p><code>mode</code> is <code>test</code> for a test key and <code>live</code> for a live key.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> optional, once at setup or before each push notification · <b>Built by:</b> GetThere</p>
-    <p>The offer link and forwarding address for your channel, if you'd rather not hard-code them. With a test key,
-    <code>forward_to</code> is <code>test@&lt;issuer&gt;.getthere.now</code>, so bookings forwarded from your test app make test passes.</p>
-<pre><code>200 {"offer_url": "https://&lt;issuer&gt;.getthere.now/offer",
-     "forward_to": "quote@&lt;issuer&gt;.getthere.now",
+    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> before each push notification · <b>Built by:</b> GetThere</p>
+    <p>A fresh offer link and forwarding address for one push. Each call gets its own <code>offer_id</code>, carried in
+    both the link and the address, so a booking forwarded from that push is traced back to it: you and we can see how many
+    customers opened the offer, forwarded a booking, got a quote and bought a pass. Your customer copies nothing. With a
+    test key, <code>forward_to</code> starts <code>test+</code>, so bookings forwarded from your test app make test passes.
+    The plain <code>https://&lt;issuer&gt;.getthere.now/offer</code> link works too: each visit to it gets its own
+    <code>offer_id</code>, counted as a direct visit rather than one of your pushes.</p>
+<pre><code>200 {"offer_id": "k7f2q9xm",
+     "offer_url": "https://&lt;issuer&gt;.getthere.now/offer?o=k7f2q9xm",
+     "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
      "product_name": "GetThere"}</code></pre>
 
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/push-receipts</h3></div>
