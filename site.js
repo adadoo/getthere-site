@@ -16,7 +16,7 @@ document.querySelectorAll(".tabs button").forEach(tab => {
   });
 });
 
-// Share calculator on the card issuers page
+// Pass fee calculator on the card issuers page
 const calc = document.querySelector(".calc");
 if (calc) {
   const $ = id => document.getElementById(id);
@@ -34,7 +34,7 @@ if (calc) {
       return;
     }
     const passes = airfare / 500 * takeup;
-    $("share").textContent = money(airfare * takeup * 0.0675 * 0.15);
+    $("share").textContent = money(airfare * takeup * 0.0675);
     $("passes").textContent = count(passes);
     $("rescues").textContent = count(passes * 0.02);
   };
