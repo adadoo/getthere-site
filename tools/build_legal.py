@@ -19,7 +19,10 @@ PASS = DATA["pass_name"]
 
 import datetime as _dt
 EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTIVE
-EFFECTIVE = _dt.date.fromisoformat(EFFECTIVE_ISO).strftime("%-d %B %Y")
+# The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12) take effect on
+# this date, or on the terms' date when that is later.
+PRIVACY_CHANGED_ISO = "2026-10-12"
+EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO, PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
 STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
 GOVERNING_LAW = "Singapore"
@@ -139,6 +142,10 @@ def privacy():
       <li><b>Payment details</b>, handled by our payment provider. We don't see or store your full card number.</li>
       <li><b>Your pre-loaded rescue card's use</b>: where it was used, the amount and when.</li>
       <li><b>Flight status</b> for your flights, from flight-data providers.</li>
+      <li>When you open an offer page, such as one linked from a partner's app or an ad: your <b>IP address</b>, your
+        <b>browser's details</b> (its user agent), the page you came from, any campaign tags in the link you followed
+        (where the link was shared and which campaign it belongs to, such as utm_source), and when. A booking you
+        forward from that page is linked to the visit.</li>
       <li>Delivery records for the messages we send you, and basic technical logs.</li>
     </ul>
 
@@ -147,6 +154,8 @@ def privacy():
       <li>To price your pass and decide whether we can offer one, including checks that the booking and fare are real.</li>
       <li>To watch your flights and send your pre-loaded rescue card when a flight is delayed or cancelled.</li>
       <li>To send you your price, pass, alerts and pre-loaded rescue card, and to answer your questions.</li>
+      <li>To count how many people see an offer and go on to forward a booking, which links and sites bring them
+        there, and to tell real visits apart from automated ones (bots and link previews).</li>
       <li>To prevent fraud and misuse, and to meet legal and accounting obligations.</li>
     </ul>
     <p>We use your data because it's needed to provide the service you ask for, for our legitimate interest in
@@ -176,6 +185,7 @@ def privacy():
     <ul>
       <li>Links in our emails to your pass and pre-loaded rescue card keep working for 12 months after your trip, then stop.</li>
       <li>We keep booking emails and booking data for 12 months after your last flight, then delete them.</li>
+      <li>We keep offer page visits, with their IP address, browser details and campaign tags, for 12 months, then delete them.</li>
       <li>We keep payment and pre-loaded rescue card records for as long as the law requires.</li>
     </ul>
 
