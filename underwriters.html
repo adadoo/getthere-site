@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Flight Delay Pass for underwriters · runs on GetThere</title>
-<meta name="description" content="Underwrite the Flight Delay Pass: a flight delay policy sold at the moment of booking through card issuers and airlines, priced flight by flight, paid automatically from flight data. GetThere is the platform it runs on.">
+<meta name="description" content="Underwrite the Flight Delay Pass: a flight delay policy sold at the moment of booking through card issuers, priced flight by flight, paid automatically from flight data. GetThere is the platform it runs on.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/underwriters.html">
@@ -43,7 +43,7 @@
     <div>
       <p class="eyebrow">For underwriters</p>
       <h1>A flight delay policy that sells at booking and pays in minutes.</h1>
-      <p class="lede">You issue the Flight Delay Pass under your licence and keep every fee in your own accounts. GetThere is the platform: it prices each flight, sells through card issuers and airlines, watches every flight and pays claims from flight data, within limits you set.</p>
+      <p class="lede">You issue the Flight Delay Pass under your licence and keep every fee in your own accounts. GetThere is the platform: it prices each flight, sells through card issuers, watches every flight and pays claims from flight data, within limits you set.</p>
       <div class="btns">
         <a class="btn" href="mailto:partner@getthere.now?subject=Underwriting%20the%20Flight%20Delay%20Pass">Contact us</a>
         <a class="btn ghost light" href="#model">See how it works</a>
@@ -67,7 +67,7 @@
       <p class="eyebrow">The opportunity</p>
       <h2>Distribution you can't reach alone, at the one moment travellers think about delays</h2>
       <div class="points">
-        <div><h3>Sold where the trip is paid</h3><p class="muted">A card issuer's app nudges right after an airline charge. An airline's booking email carries the offer.</p></div>
+        <div><h3>Sold where the trip is paid</h3><p class="muted">A card issuer's app nudges the cardholder right after an airline charge on the card.</p></div>
         <div><h3>One underwriter, many partners</h3><p class="muted">Every partner on GetThere you take on sells your policy in its own brand, on the same pricing, limits and wording.</p></div>
         <div><h3>A claim customers remember</h3><p class="muted">Money for a new flight within minutes of the delay, with nothing to claim. That's the experience your name sits behind.</p></div>
       </div>
@@ -91,7 +91,7 @@
       <div class="tile"><span class="time">YOU</span><h3>Collect every fee</h3><p class="muted">Travellers pay into your own payment account, through your provider's form embedded on the checkout page.</p></div>
       <div class="tile"><span class="time">YOU</span><h3>Fund every rescue card</h3><p class="muted">Rescue cards are issued on your own card account, and only what the traveller spends on a new flight leaves it.</p></div>
       <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Prices every pass</h3><p class="muted">Flight by flight, from each flight's own track record, weather and airport news, within your limits.</p></div>
-      <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Sells through partners</h3><p class="muted">Offer pages, quote emails and checkout in each partner's colours. Reading each customer's airline booking.</p></div>
+      <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Sells through partners</h3><p class="muted">Offer pages, quote emails and checkout in each partner's colours. Reading each customer's booking email.</p></div>
       <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Watches and pays</h3><p class="muted">Tracks every flight on an active pass, opens the claim from flight data, sends the rescue card by WhatsApp and email, and answers the traveller.</p></div>
     </div>
   </div>
@@ -203,12 +203,9 @@
 <section id="rollout" class="tint">
   <div class="wrap">
     <p class="eyebrow">Rolling out to partners</p>
-    <h2>Distribute the policy through partners, with little integration</h2>
-    <p class="lede">GetThere builds and runs the offer pages, quote emails, checkout, terms and rescue cards for every partner. What a partner builds depends on how it reaches travellers.</p>
-    <div class="grid2" style="margin-top:28px">
-      <div class="tile"><span class="time">ONE LINK</span><h3>Airlines</h3><p class="muted">A line in the booking confirmation email that links to the partner's offer page.</p></div>
-      <div class="tile"><span class="time">ONE PUSH</span><h3>Card issuers</h3><p class="muted">One push notification after an airline charge. Three more pushes and a yes-or-no purchase check are optional. <a href="api.html">API reference</a></p></div>
-    </div>
+    <h2>Distribute the policy through card issuers, with one push notification</h2>
+    <p class="lede">GetThere builds and runs the offer pages, quote emails, checkout, terms and rescue cards for every partner.</p>
+    <div class="callout dark" style="margin-top:28px">A card issuer sends one push notification after an airline charge on its card. Three more pushes and a yes-or-no purchase check are optional. <a href="api.html" style="color:#5eead4">API reference</a></div>
     <div class="grid2" style="margin-top:20px">
       <div class="points">
         <div><h3>Set up from the admin</h3><p class="muted">A partner's pages, email address and terms are set up from the GetThere admin. Its terms are built from your settings, with your name as the issuer.</p></div>
