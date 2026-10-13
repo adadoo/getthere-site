@@ -41,7 +41,7 @@
     <div>
       <p class="eyebrow">Flight Delay Pass</p>
       <h1>When your flight is delayed, we help you get there.</h1>
-      <p class="lede">If your flight is 3+ hours late or cancelled, we send you a pre-loaded rescue card within a minute. It's a digital card with money already on it, to buy a new flight on any airline. Forward your booking email to get your price.</p>
+      <p class="lede">If your flight is delayed, you hear first. If it's 3+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you. Forward your booking email to get your price.</p>
       <div class="btns">
         <a class="btn" href="#forward">Forward your booking</a>
         <a class="btn ghost" href="#how">How it works</a>
@@ -76,15 +76,17 @@
       <p class="muted">Find the confirmation email your airline sent when you booked, and forward it as it is. We read every flight and traveller on it and reply with your price.</p>
 
       <div class="forward">
-        <div class="fine">Forward it to</div>
+        <div class="fine">Forward your booking confirmation to</div>
         <div class="addr">
-          <code id="addr">quote@my.getthere.now</code>
-          <button class="copy" data-copy="quote@my.getthere.now">Copy</button>
+          <code id="addr" data-forward>quote@my.getthere.now</code>
+          <button class="copy" data-copy="quote@my.getthere.now" data-forward-copy>Copy</button>
         </div>
         <div class="btns">
-          <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking">Open Mail</a>
+          <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking" data-forward-mailto>Open Mail</a>
         </div>
-        <p class="fine" style="margin:16px 0 0">Forward at least 48 hours before you fly. One pass includes every flight and traveller on the booking. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
+        <p class="fine" style="margin:16px 0 0">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Forward your booking at least 48 hours before your first flight. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
+        <!-- site.js fills in the reference that comes with the address, as on the app's offer page. -->
+        <p class="fine" data-reference-line hidden style="margin:10px 0 0">Your reference: <span data-reference></span></p>
       </div>
     </div>
 
@@ -100,7 +102,7 @@
           <li>Search your inbox for your booking reference, or for <b>singaporeair</b> or <b>virginaustralia</b>.</li>
           <li>Open the booking confirmation or e-ticket email.</li>
           <li>Tap <b>⋮</b> then <b>Forward</b> (on a computer, the arrow at the bottom).</li>
-          <li>Send it to <b>quote@my.getthere.now</b>. Keep the attachments on.</li>
+          <li>Send it to <b data-forward>quote@my.getthere.now</b>. Keep the attachments on.</li>
         </ol>
       </div>
       <div class="tabpanel" id="tab-outlook" hidden>
@@ -108,7 +110,7 @@
           <li>Search for your booking reference or the airline's name.</li>
           <li>Open the booking confirmation or e-ticket email.</li>
           <li>Choose <b>Forward</b> (the arrow at the top of the message).</li>
-          <li>Send it to <b>quote@my.getthere.now</b>.</li>
+          <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
         </ol>
       </div>
       <div class="tabpanel" id="tab-apple" hidden>
@@ -116,7 +118,7 @@
           <li>Search Mail for your booking reference.</li>
           <li>Open the confirmation email and tap the reply arrow.</li>
           <li>Tap <b>Forward</b>, and include attachments if asked.</li>
-          <li>Send it to <b>quote@my.getthere.now</b>.</li>
+          <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
         </ol>
       </div>
       <p class="fine" style="margin:16px 0 0">Booked for someone else? Forward it anyway and we'll send the price to you.</p>
@@ -131,20 +133,25 @@
     <div class="grid3" style="margin-top:28px">
       <div class="tile">
         <div class="num">1</div>
-        <h3>Forward your booking</h3>
-        <p class="muted">We find every flight and traveller on it and email you back a price within a minute.</p>
+        <h3>Forward your flight booking email</h3>
+        <p class="muted">We track every flight on your booking, for every traveller on it, and email you back a price within a minute.</p>
       </div>
       <div class="tile">
         <div class="num">2</div>
-        <h3>Choose your pass</h3>
-        <p class="muted">Choose how much money goes on your rescue card: 1x or 1.5x the estimated seat price, which is your fare or what a new seat on your trip costs, whichever is more. Your quote shows each amount next to what you paid. Pay by card, and you're done.</p>
+        <h3>Purchase a Flight Delay Pass</h3>
+        <p class="muted">GetThere will email you a quote for Flight Delay Pass. You buy it using your card. Choose how much money goes on your rescue card: 1x or 1.5x the estimated seat price, which is your fare or what a new seat on your trip costs, whichever is more. Your quote shows each amount next to what you paid. </p>
       </div>
       <div class="tile">
         <div class="num">3</div>
-        <h3>Get a pre-loaded rescue card if you're stuck</h3>
-        <p class="muted">We watch your flight from the day before. If it's 3+ hours late or cancelled, your rescue card arrives within a minute.</p>
+        <h3>Receive your rescue card</h3>
+        <p class="muted">We watch your flights from the day before. If any one of those flights is 3+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you.</p>
       </div>
     </div>
+    <ul class="card-rules">
+      <li><b>24 hours</b> to use it</li>
+      <li><b>One purchase</b> book everything at once</li>
+      <li><b>Airline and travel sites</b> only</li>
+    </ul>
   </div>
 </section>
 
@@ -168,7 +175,7 @@
 <section id="different" class="tint">
   <div class="wrap">
     <p class="eyebrow">How it's different</p>
-    <h2>Not the airline's next free seat. Not a refund weeks later.</h2>
+    <h2>Not a refund later. Money to book the next flight now, on any airline.</h2>
     <div class="grid2" style="margin-top:28px">
       <div class="tile">
         <h3>Waiting for the airline to rebook you</h3>
@@ -208,6 +215,14 @@
       <p>Help getting to where you're going. If a flight on your booking is 3+ hours late or cancelled, we send you a single-use pre-loaded rescue card to book a new flight. It works for 24 hours, for one purchase, at airlines and travel agencies only. <b>It buys new flights only and is never paid out as cash</b>, and any amount you don't spend isn't refunded. There's nothing to fill in and no receipts to send.</p>
     </details>
     <details>
+      <summary>Your original ticket stays yours.</summary>
+      <p>Ask the airline for any refund or compensation it owes you, as you normally would. The rescue card comes on top of that.</p>
+    </details>
+    <details>
+      <summary>Spend less than the card holds?</summary>
+      <p>The card is for one purchase and is never paid out as cash, so the unspent amount is not refunded. Only money you add yourself comes back to you.</p>
+    </details>
+    <details>
       <summary>How much does it cost?</summary>
       <p>It depends on how likely your flight is to be disrupted on your travel date, and on your fare. Forward your booking to see your price; there's no obligation to buy.</p>
     </details>
@@ -237,8 +252,8 @@
 <section>
   <div class="wrap" style="text-align:center">
     <h2>Flying soon?</h2>
-    <p class="muted" style="margin-bottom:24px">Forward your booking to <b>quote@my.getthere.now</b> and get your price in a minute.</p>
-    <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking">Forward your booking</a>
+    <p class="muted" style="margin-bottom:24px">Forward your booking to <b data-forward>quote@my.getthere.now</b> and get your price in a minute.</p>
+    <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking" data-forward-mailto>Forward your booking</a>
   </div>
 </section>
 
