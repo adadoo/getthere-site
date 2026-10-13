@@ -89,7 +89,7 @@ def page(title, description, body, depth=1):
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
       <div><b style="color:#fff">Legal</b><a href="https://my.getthere.now/terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
     </div>
-    <div class="legal">Rescue cards are funded by the Underwriter, GetThere's financial partner.<br>© 2026 GetThere.</div>
+    <div class="legal">Rescue cards are funded by GetThere, or by the Underwriter named in your pass's terms.<br>© 2026 GetThere.</div>
   </div>
 </footer>
 </body>
@@ -172,8 +172,8 @@ def privacy():
       <li>Airwallex, our card issuer, receives your legal name, date of birth, home address, email address and mobile
       number when you buy a pass, to check your identity (including sanctions screening) and to issue the pre-loaded
       rescue card in your name. Airwallex may ask for an identity document if it can't confirm who you are.</li>
-      <li>The Underwriter, GetThere's financial partner, funds every pre-loaded rescue card. The Underwriter and its
-      card issuing partner receive your legal name, date of birth, home address, email address and mobile number
+      <li>On channels with an Underwriter (a financial partner named in your pass's terms), the Underwriter funds
+      every pre-loaded rescue card. The Underwriter and its card issuing partner receive your legal name, date of birth, home address, email address and mobile number
       when you buy a pass, to check your identity (including sanctions screening) and to fund and issue the
       pre-loaded rescue card in your name.</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
