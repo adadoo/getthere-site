@@ -144,7 +144,7 @@ def privacy():
       so the pre-loaded rescue card can be issued in your name.</li>
       <li><b>Payment details</b>: you type your card details into the payment form of the selling company's payment
       provider, embedded on our checkout page. We never see or store your card number; we get only the payment's
-      result, amount and card type.</li>
+      result and amount.</li>
       <li><b>Your pre-loaded rescue card's use</b>: where it was used, the amount and when.</li>
       <li><b>Flight status</b> for your flights, from flight-data providers.</li>
       <li>When you open an offer page, such as one linked from a partner's app or an ad: your <b>IP address</b>, your
