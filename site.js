@@ -25,7 +25,7 @@ document.querySelectorAll(".tabs button").forEach(tab => {
   });
 });
 
-// Pass fee calculator on the card issuers page
+// Pass fee calculator on the card issuers and underwriters pages
 const calc = document.querySelector(".calc");
 if (calc) {
   const $ = id => document.getElementById(id);
@@ -39,7 +39,7 @@ if (calc) {
     const takeup = num($("takeup").value) / 100;
     $("takeupPresets").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === takeup * 100));
     if (!(airfare > 0) || !(takeup > 0) || takeup > 1) {
-      ["share", "passes", "rescues"].forEach(id => $(id).textContent = "–");
+      ["share", "passes", "rescues", "pool", "rescueMoney"].forEach(id => $(id) && ($(id).textContent = "–"));
       return;
     }
     const passes = airfare / 500 * takeup;
@@ -47,6 +47,8 @@ if (calc) {
     $("share").textContent = money(fees);
     $("passes").textContent = count(passes);
     $("rescues").textContent = count(passes * 0.02);
+    if ($("pool")) $("pool").textContent = money(fees * 0.4);              // after rescue money, card costs and the platform fee
+    if ($("rescueMoney")) $("rescueMoney").textContent = money(fees * 0.4);
   };
   ["airfare", "unit", "takeup"].forEach(id => $(id).addEventListener("input", update));
   $("takeupPresets").addEventListener("click", e => {
