@@ -1,10 +1,10 @@
 {
   "product": "GetThere",
   "pass_name": "Flight Delay Pass",
-  "terms_effective": "2026-10-10",
+  "terms_effective": "2026-10-13-r3",
   "global": {
     "sales_close_hours": 48,
-    "quote_valid_hours": 24,
+    "quote_valid_hours": 12,
     "card_validity_hours": 24,
     "max_claims_per_year": 2,
     "max_fare_vs_market": 1.5,
@@ -14,7 +14,7 @@
     {
       "code": "direct",
       "name": "GT Direct",
-      "version": 14,
+      "version": 23,
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
@@ -23,20 +23,19 @@
       "tiers": [
         {
           "label": "Basic",
-          "cap": 1.5
+          "cap": 1.0
         },
         {
           "label": "Plus",
-          "cap": 2.0
+          "cap": 1.5
         }
       ],
-      "trigger_minutes": 180,
-      "takeoff_signoff": true
+      "trigger_minutes": 180
     },
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 16,
+      "version": 25,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
@@ -45,20 +44,19 @@
       "tiers": [
         {
           "label": "Basic",
-          "cap": 1.5
+          "cap": 1.0
         },
         {
           "label": "Plus",
-          "cap": 2.0
+          "cap": 1.5
         }
       ],
-      "trigger_minutes": 180,
-      "takeoff_signoff": true
+      "trigger_minutes": 180
     },
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 17,
+      "version": 26,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
@@ -67,19 +65,18 @@
       "tiers": [
         {
           "label": "Silver",
-          "cap": 1.5
+          "cap": 1.0
         },
         {
           "label": "Gold",
-          "cap": 2.0
+          "cap": 1.5
         },
         {
           "label": "Platinum",
-          "cap": 3.0
+          "cap": 2.5
         }
       ],
-      "trigger_minutes": 120,
-      "takeoff_signoff": true
+      "trigger_minutes": 120
     }
   ]
 }

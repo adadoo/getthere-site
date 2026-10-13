@@ -22,7 +22,7 @@ EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTI
 # The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12) take effect on
 # this date, or on the terms' date when that is later.
 PRIVACY_CHANGED_ISO = "2026-10-12"
-EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO, PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
+EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO[:10], PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
 STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
 GOVERNING_LAW = "Singapore"
