@@ -41,12 +41,12 @@
     <div>
       <p class="eyebrow">Flight Delay Pass</p>
       <h1>When your flight is delayed, we help you get there.</h1>
-      <p class="lede">If your flight is delayed, you hear first. If it's 3+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you. Forward your booking email to get your price.</p>
+      <p class="lede">If your flight is delayed, you hear first. If it's <span data-setting="trigger_hours">3</span>+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you. Forward your booking email to get your price.</p>
       <div class="btns">
         <a class="btn" href="#forward">Forward your booking</a>
         <a class="btn ghost" href="#how">How it works</a>
       </div>
-      <p class="fine" style="margin-top:18px">For residents of Singapore, Hong Kong or Australia.</p>
+      <p class="fine" style="margin-top:18px">For residents of <span data-setting="sell_countries">Singapore, Hong Kong or Australia</span>.</p>
     </div>
 
     <div class="mock" aria-label="Example of the price email you get back">
@@ -84,7 +84,7 @@
             <svg class="done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
           </button>
         </div>
-        <p class="fine" style="margin:16px 0 0">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Forward your booking at least 48 hours before your first flight. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
+        <p class="fine" style="margin:16px 0 0">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Forward your booking at least <span data-setting="sales_close_hours">48</span> hours before your first flight. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
         <!-- site.js fills in the reference that comes with the address, as on the app's offer page. -->
         <p class="fine" data-reference-line hidden style="margin:10px 0 0">Your reference: <span data-reference></span></p>
       </div>
@@ -139,16 +139,16 @@
       <div class="tile">
         <div class="num">2</div>
         <h3>Purchase a Flight Delay Pass</h3>
-        <p class="muted">GetThere will email you a quote for Flight Delay Pass. You buy it using your card. Choose how much money goes on your rescue card: 1x or 1.5x the estimated seat price, which is your fare or what a new seat on your trip costs, whichever is more. Your quote shows each amount next to what you paid. </p>
+        <p class="muted">GetThere will email you a quote for Flight Delay Pass. You buy it using your card. Choose how much money goes on your rescue card: <span data-setting="plans_line">1x or 1.5x</span> the estimated seat price, which is your fare or what a new seat on your trip costs, whichever is more. Your quote shows each amount next to what you paid. </p>
       </div>
       <div class="tile">
         <div class="num">3</div>
         <h3>Receive your rescue card</h3>
-        <p class="muted">We watch your flights from the day before. If any one of those flights is 3+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you.</p>
+        <p class="muted">We watch your flights from <span data-setting="watch_from_hours">24</span> hours before departure. If any one of those flights is <span data-setting="trigger_hours">3</span>+ hours late or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you.</p>
       </div>
     </div>
     <ul class="card-rules">
-      <li><b>24 hours</b> to use it</li>
+      <li><b><span data-setting="card_validity_hours">24</span> hours</b> to use it</li>
       <li><b>One purchase</b> book everything at once</li>
       <li><b>Airline and travel sites</b> only</li>
     </ul>
@@ -158,12 +158,12 @@
 <section>
   <div class="wrap grid3">
     <div>
-      <div class="big">3 hours</div>
-      <p class="muted">A delay of 3+ hours, or a cancellation, is all it takes. We track your flight live, so there's nothing to claim.</p>
+      <div class="big"><span data-setting="trigger_hours">3</span> hours</div>
+      <p class="muted">A delay of <span data-setting="trigger_hours">3</span>+ hours, or a cancellation, is all it takes. We track your flight live, so there's nothing to claim.</p>
     </div>
     <div>
-      <div class="big">Up to 1.5x</div>
-      <p class="muted">The estimated seat price, your fare or what a new seat on your trip costs, whichever is more, on your rescue card to spend at any airline or travel agency within 24 hours.</p>
+      <div class="big"><span data-setting="up_to">Up to 1.5x</span></div>
+      <p class="muted">The estimated seat price, your fare or what a new seat on your trip costs, whichever is more, on your rescue card to spend at any airline or travel agency within <span data-setting="card_validity_hours">24</span> hours.</p>
     </div>
     <div>
       <div class="big">1 minute</div>
@@ -179,7 +179,7 @@
     <div class="grid2" style="margin-top:28px">
       <div class="tile">
         <h3>Waiting for the airline to rebook you</h3>
-        <p class="muted">The airline moves you to its own next free seat, often hours later or the next day, after a queue at the desk or a wait on the phone. With GetThere, your rescue card arrives within a minute of a 3-hour delay, and you book the next flight that gets you there, on any airline.</p>
+        <p class="muted">The airline moves you to its own next free seat, often hours later or the next day, after a queue at the desk or a wait on the phone. With GetThere, your rescue card arrives within a minute of a <span data-setting="trigger_hours">3</span>-hour delay, and you book the next flight that gets you there, on any airline.</p>
       </div>
       <div class="tile">
         <h3>Claiming money back after the trip</h3>
@@ -212,7 +212,7 @@
     <h2>Good to know</h2>
     <details open>
       <summary>What exactly do I get?</summary>
-      <p>Help getting to where you're going. If a flight on your booking is 3+ hours late or cancelled, we send you a single-use pre-loaded rescue card to book a new flight. It works for 24 hours, for one purchase, at airlines and travel agencies only. <b>It buys new flights only and is never paid out as cash</b>, and any amount you don't spend isn't refunded. There's nothing to fill in and no receipts to send.</p>
+      <p>Help getting to where you're going. If a flight on your booking is <span data-setting="trigger_hours">3</span>+ hours late or cancelled, we send you a single-use pre-loaded rescue card to book a new flight. It works for <span data-setting="card_validity_hours">24</span> hours, for one purchase, at airlines and travel agencies only. <b>It buys new flights only and is never paid out as cash</b>, and any amount you don't spend isn't refunded. There's nothing to fill in and no receipts to send.</p>
     </details>
     <details>
       <summary>Your original ticket stays yours.</summary>
@@ -228,11 +228,11 @@
     </details>
     <details>
       <summary>When do I need to buy it?</summary>
-      <p>At least 48 hours before your first flight. Your price stays valid for 12 hours. After that, forward the booking again for a new price.</p>
+      <p>At least <span data-setting="sales_close_hours">48</span> hours before your first flight. Your price stays valid for <span data-setting="quote_valid_hours">12</span> hours. After that, forward the booking again for a new price.</p>
     </details>
     <details>
       <summary>What does one pass include?</summary>
-      <p>Every flight and every traveller on the booking you forward. If any of those flights is 3+ hours late or cancelled, we send the rescue card.</p>
+      <p>Every flight and every traveller on the booking you forward. If any of those flights is <span data-setting="trigger_hours">3</span>+ hours late or cancelled, we send the rescue card.</p>
     </details>
     <details>
       <summary>How do I get the rescue card?</summary>
@@ -240,7 +240,7 @@
     </details>
     <details>
       <summary>Which bookings can I forward?</summary>
-      <p>Confirmation or e-ticket emails from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>, or any other airline or travel site (we learn new ones as they're forwarded), for most bookings worth about US$150 to US$12,000 (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
+      <p>Confirmation or e-ticket emails from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>, or any other airline or travel site (we learn new ones as they're forwarded), for most bookings worth about <span data-setting="booking_range">US$150 to US$12,000</span> (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
     </details>
     <details>
       <summary>What happens to my email?</summary>
