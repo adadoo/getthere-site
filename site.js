@@ -116,6 +116,19 @@ if (airlineList) {
   }).catch(() => {});   // keep the list in the page
 }
 
+// The Direct channel's settings the home page quotes (hours, plans, countries, booking values), from
+// the app (GET /settings.json), so the website says what the app's pages and the terms say. Each
+// [data-setting] keeps the value it was written with if the app can't be reached.
+const settingSpots = document.querySelectorAll("[data-setting]");
+if (settingSpots.length) {
+  fetch("https://my.getthere.now/settings.json").then(r => r.ok ? r.json() : Promise.reject()).then(s => {
+    settingSpots.forEach(el => {
+      const v = s[el.dataset.setting];
+      if (typeof v === "string" && v) el.textContent = v;
+    });
+  }).catch(() => {});
+}
+
 // The forward address on the home page: the website is the Direct channel's app, so it gets a new
 // offer from the partner API through its own server (server/server.py holds the key), as a card
 // issuer's app does. The offer's code rides in the address, so a booking forwarded from here is traced
