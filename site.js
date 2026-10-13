@@ -39,11 +39,13 @@ if (calc) {
     const takeup = num($("takeup").value) / 100;
     $("takeupPresets").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === takeup * 100));
     if (!(airfare > 0) || !(takeup > 0) || takeup > 1) {
-      $("share").textContent = "–"; $("passes").textContent = "–"; $("rescues").textContent = "–";
+      ["share", "yourShare", "passes", "rescues"].forEach(id => $(id).textContent = "–");
       return;
     }
     const passes = airfare / 500 * takeup;
-    $("share").textContent = money(airfare * takeup * 0.0675);
+    const fees = airfare * takeup * 0.0675;
+    $("share").textContent = money(fees);
+    $("yourShare").textContent = money(fees * 0.25);   // an example share; the real one is agreed with the Underwriter
     $("passes").textContent = count(passes);
     $("rescues").textContent = count(passes * 0.02);
   };
