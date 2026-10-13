@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GetThere · When your flight is delayed, we help you get there</title>
-<meta name="description" content="Forward your booking email. If your flight is delayed 3+ hours or cancelled, GetThere sends you a pre-loaded rescue card: money for a new flight on any airline.">
+<meta name="description" content="Forward your booking email. If your flight is delayed 3+ hours or cancelled, you get a pre-loaded rescue card: money for a new flight on any airline.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/">
@@ -20,199 +20,150 @@
 <meta name="twitter:description" content="When your flight is delayed, we help you get there.">
 <meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css">
+<!-- The traveller page: the same design and wording as each channel's home and offer page in the app
+     (getthere/templates/landing.html); traveller.css is the app's _traveller.css, kept identical. The numbers
+     are the Direct channel's settings, filled in by site.js from the app's /settings.json. -->
+<style>
+  :root { --ink: #14213d; --muted: #5c6b80; --line: #e3e8ef; --bg: #f4f6f9; --accent: #0f766e; --soft: #e6f4f2;
+          --logo: #0f766e; --logo-on-dark: #5eead4; --r: 18px; --r-sm: 14px; --r-btn: 26px;
+          --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+</style>
+<link rel="stylesheet" href="traveller.css">
 </head>
-<body>
+<body class="tp">
 
-<header class="site">
-  <div class="wrap">
-    <a class="logo" href="./">Get<span>There</span></a>
-    <nav class="links">
-      <a class="hide-sm" href="#how">How it works</a>
-      <a class="hide-sm" href="#faq">FAQ</a>
-      <a href="issuers.html">For card issuers</a>
-      <a class="pill" href="#forward">Get a price</a>
-    </nav>
-  </div>
-</header>
+<header class="top"><div class="wrap">
+  <a class="logo" href="./">Get<span>There</span></a>
+  <nav>
+    <a class="wide" href="#how">How it works</a>
+    <a class="wide" href="#faq">FAQ</a>
+    <a href="issuers.html">For card issuers</a>
+    <a class="pill" href="#forward">Get a price</a>
+  </nav>
+</div></header>
 
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
       <p class="eyebrow">Flight Delay Pass</p>
       <h1>When your flight is delayed, we help you get there.</h1>
-      <p class="lede">If your flight is delayed, you hear first. If it's delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you. Forward your booking email to get your price.</p>
-      <div class="btns">
-        <a class="btn" href="#forward">Forward your booking</a>
-        <a class="btn ghost" href="#how">How it works</a>
+      <p class="lede">If a flight on your booking is delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, you get a pre-loaded rescue card with money for a new flight on any airline, within minutes.</p>
+      <div class="fwd-box" id="forward">
+        <p class="fwd-label">Forward your booking confirmation to</p>
+        <div class="addr"><code data-forward>quote@<wbr>my.getthere.now</code><button class="copy" data-copy="quote@my.getthere.now" data-forward-copy aria-label="Copy the address" type="button">
+          <svg class="idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+          <svg class="done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
+          <span class="idle">Copy</span><span class="done">Copied</span>
+        </button></div>
+        <details class="howto">
+          <summary>How to forward it</summary>
+          <div class="howto-body">
+            <div class="tabs" role="tablist">
+              <button type="button" role="tab" aria-selected="true" data-tab="gmail">Gmail</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="outlook">Outlook</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="apple">Apple Mail</button>
+            </div>
+            <div class="tabpanel" id="tab-gmail"><ol>
+              <li>Search your inbox for your booking reference or the airline's name.</li>
+              <li>Open the booking confirmation or e-ticket email.</li>
+              <li>Tap <b>&#8942;</b> then <b>Forward</b> (on a computer, the arrow at the bottom).</li>
+              <li>Send it to <b data-forward>quote@my.getthere.now</b>. Keep the attachments on.</li>
+            </ol></div>
+            <div class="tabpanel" id="tab-outlook" hidden><ol>
+              <li>Search for your booking reference or the airline's name.</li>
+              <li>Open the booking confirmation or e-ticket email.</li>
+              <li>Choose <b>Forward</b> (the arrow at the top of the message).</li>
+              <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
+            </ol></div>
+            <div class="tabpanel" id="tab-apple" hidden><ol>
+              <li>Search Mail for your booking reference.</li>
+              <li>Open the confirmation email and tap the reply arrow.</li>
+              <li>Tap <b>Forward</b>, and include attachments if asked.</li>
+              <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
+            </ol></div>
+            <p class="fine">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Forward your booking at least <span data-setting="sales_close_hours">48</span> hours before your first flight.</p>
+            <p class="fine">Booked for someone else? Forward it anyway and we'll send the price to you.</p>
+          </div>
+        </details>
+        <!-- site.js fills in the reference that comes with the visit's own address, as on the app's offer page. -->
+        <p class="ref" data-reference-line hidden>Your reference: <span data-reference></span></p>
       </div>
+      <p class="funded">Rescue cards are funded by GetThere.</p>
     </div>
-
     <div class="mock" aria-label="Example of the price email you get back">
-      <div class="from"><b>GetThere</b> &lt;quote@my.getthere.now&gt;<br>Your Flight Delay Pass for SIN → BOM</div>
-      <div class="flight">
-        <div class="k">YOUR FLIGHT · 19 DEC</div>
-        <div class="route"><span class="ap">SIN</span><span class="mid">SQ 424<br>5h 35m</span><span class="ap">BOM</span></div>
+      <div class="from"><b>GetThere</b> &lt;quote@my.getthere.now&gt;<br>Your Flight Delay Pass price</div>
+      <div class="flightbox">
+        <div class="k">YOUR FLIGHT</div>
+        <div class="route"><span class="ap">SIN</span><span class="mid">SQ 424<br>&#9992;</span><span class="ap">BOM</span></div>
       </div>
-      <div class="plan featured">
-        <div><div class="name">Basic <span class="badge">RECOMMENDED</span></div><div class="sub">Coverage set from your fare and flights</div></div>
-        <div class="price">S$27</div>
+      <div data-plans>
+        <div class="plan featured"><div class="name">Basic<span class="badge">RECOMMENDED</span></div><div class="note">Coverage set from your fare and flights</div></div>
+        <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
       </div>
-      <div class="plan">
-        <div><div class="name">Plus</div><div class="sub">1.5x the coverage of Basic</div></div>
-        <div class="price">S$34</div>
-      </div>
-      <p class="fine" style="margin:12px 0 0">Example only. Your price depends on your flight and fare and is before tax: at checkout we add any sales tax that applies where you live.</p>
+      <p class="fine">Example only. Your price depends on your flights and your airfare.</p>
     </div>
   </div>
 </section>
 
-<section id="forward">
-  <div class="wrap grid2" style="align-items:start">
-    <div>
-      <p class="eyebrow">Get a price in minutes</p>
-      <h2>Forward your booking confirmation</h2>
-      <p class="muted">Find the confirmation email your airline sent when you booked, and forward it as it is. We read every flight and traveller on it and reply with your price.</p>
-
-      <div class="forward">
-        <div class="fine">Forward your booking confirmation to</div>
-        <div class="addr">
-          <code id="addr" data-forward>quote@<wbr>my.getthere.now</code>
-          <button class="copy" type="button" data-copy="quote@my.getthere.now" data-forward-copy aria-label="Copy the address" title="Copy">
-            <svg class="idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
-            <svg class="done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
-          </button>
-        </div>
-        <p class="fine" style="margin:16px 0 0">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Buy at least <span data-setting="sales_close_hours">48</span> hours before your first flight. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
-        <!-- site.js fills in the reference that comes with the address, as on the app's offer page. -->
-        <p class="fine" data-reference-line hidden style="margin:10px 0 0">Your reference: <span data-reference></span></p>
-      </div>
-    </div>
-
-    <div class="tile">
-      <h3 style="margin-bottom:14px">How to forward it</h3>
-      <div class="tabs" role="tablist">
-        <button role="tab" aria-selected="true" data-tab="gmail">Gmail</button>
-        <button role="tab" aria-selected="false" data-tab="outlook">Outlook</button>
-        <button role="tab" aria-selected="false" data-tab="apple">Apple Mail</button>
-      </div>
-      <div class="tabpanel" id="tab-gmail">
-        <ol>
-          <li>Search your inbox for your booking reference, or for <b>singaporeair</b> or <b>virginaustralia</b>.</li>
-          <li>Open the booking confirmation or e-ticket email.</li>
-          <li>Tap <b>⋮</b> then <b>Forward</b> (on a computer, the arrow at the bottom).</li>
-          <li>Send it to <b data-forward>quote@my.getthere.now</b>. Keep the attachments on.</li>
-        </ol>
-      </div>
-      <div class="tabpanel" id="tab-outlook" hidden>
-        <ol>
-          <li>Search for your booking reference or the airline's name.</li>
-          <li>Open the booking confirmation or e-ticket email.</li>
-          <li>Choose <b>Forward</b> (the arrow at the top of the message).</li>
-          <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
-        </ol>
-      </div>
-      <div class="tabpanel" id="tab-apple" hidden>
-        <ol>
-          <li>Search Mail for your booking reference.</li>
-          <li>Open the confirmation email and tap the reply arrow.</li>
-          <li>Tap <b>Forward</b>, and include attachments if asked.</li>
-          <li>Send it to <b data-forward>quote@my.getthere.now</b>.</li>
-        </ol>
-      </div>
-      <p class="fine" style="margin:16px 0 0">Booked for someone else? Forward it anyway and we'll send the price to you.</p>
-    </div>
-  </div>
-</section>
-
-<section id="how" class="tint">
+<section class="band" id="how">
   <div class="wrap">
     <p class="eyebrow">How it works</p>
     <h2>Three steps, then fly without the worry</h2>
-    <div class="grid3" style="margin-top:28px">
-      <div class="tile">
-        <div class="num">1</div>
-        <h3>Forward your flight booking email</h3>
-        <p class="muted">We track every flight on your booking, for every traveller on it, and email you back a price within minutes.</p>
-      </div>
-      <div class="tile">
-        <div class="num">2</div>
-        <h3>Purchase a Flight Delay Pass</h3>
-        <p class="muted">GetThere emails you a quote with a choice of plans, each with a different amount of coverage on your rescue card, set from your fare and your flights. You see each amount before you buy, and pay by card.</p>
-      </div>
-      <div class="tile">
-        <div class="num">3</div>
-        <h3>Receive your rescue card</h3>
-        <p class="muted">We track your flights from <span data-setting="watch_from_hours">24</span> hours before departure. If any one of those flights is delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, we send you a pre-loaded rescue card with money for a new flight on any airline, so you don't have to wait for the airline to re-accommodate you.</p>
-        <p class="fine" style="margin:10px 0 0">Rescue cards are funded by GetThere.</p>
-      </div>
-    </div>
-    <ul class="card-rules">
-      <li><b><span data-setting="card_validity_hours">24</span> hours</b> to use it</li>
-      <li><b>One purchase</b> book everything at once</li>
-      <li><b>Airline and travel sites</b> only</li>
-    </ul>
-  </div>
-</section>
-
-<section>
-  <div class="wrap grid3">
-    <div>
-      <div class="big"><span data-setting="trigger_hours">3</span> hours</div>
-      <p class="muted">A flight delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled is all it takes. We track your flight live, so there's nothing to claim.</p>
-    </div>
-    <div>
-      <div class="big">Your choice</div>
-      <p class="muted">of coverage on your rescue card, set from your fare and your flights, to spend at any airline or travel agency within <span data-setting="card_validity_hours">24</span> hours.</p>
-    </div>
-    <div>
-      <div class="big">Minutes</div>
-      <p class="muted">From the delay to the rescue card in your inbox, so you can book the next flight yourself, without waiting for the airline to re-accommodate you.</p>
+    <ol class="steps">
+      <li><span class="num">1</span><div><h3>Forward your booking</h3>
+        <p>We read every flight and traveller on it, and email you a price within minutes.</p></div></li>
+      <li><span class="num">2</span><div><h3>Choose your plan and pay</h3>
+        <p>Each plan puts a different amount of coverage on your rescue card. Pay by card, and you're done.</p></div></li>
+      <li><span class="num">3</span><div><h3>Get your rescue card if you're delayed or cancelled</h3>
+        <p>We watch your flights from <span data-setting="watch_from_hours">24</span> hours before departure. Delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled? Your card arrives within minutes.</p></div></li>
+    </ol>
+    <div class="diff">
+      <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
+        <span><b>No waiting for the airline.</b> Book the next flight that gets you there, on any airline, yourself.</span></p>
+      <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
+        <span><b>Not a refund weeks later.</b> Money to spend right then, with nothing to claim.</span></p>
     </div>
   </div>
 </section>
 
-<section id="different" class="tint">
+<section class="band tint" id="plans">
   <div class="wrap">
-    <p class="eyebrow">How it's different</p>
-    <h2>Not a refund later. Money to book the next flight now, on any airline.</h2>
-    <div class="grid2" style="margin-top:28px">
-      <div class="tile">
-        <h3>Waiting for the airline to rebook you</h3>
-        <p class="muted">The airline moves you to its own next free seat, often hours later or the next day, after a queue at the desk or a wait on the phone. With GetThere, your rescue card arrives within minutes of your flight being delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, and you book the next flight that gets you there, on any airline.</p>
-      </div>
-      <div class="tile">
-        <h3>Claiming money back after the trip</h3>
-        <p class="muted">Refunds and compensation come weeks later, after forms and receipts, and they don't get you there on time. Your rescue card is money to spend right then, at the airport or from your phone, with nothing to fill in.</p>
-      </div>
+    <p class="eyebrow">Plans</p>
+    <h2>Choose your coverage</h2>
+    <p class="intro">Your quote shows each plan's amount, set from your fare and your flights, before you buy.</p>
+    <div class="plans" data-plans>
+      <div class="plan featured"><div class="name">Basic<span class="badge">RECOMMENDED</span></div><div class="note">Coverage set from your fare and flights</div></div>
+      <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
     </div>
+    <p class="fine">Every rescue card works for <span data-setting="card_validity_hours">24</span> hours, for one purchase, at airlines and travel sites only.</p>
   </div>
 </section>
 
-<section>
+<section class="band">
   <div class="wrap">
     <p class="eyebrow">Airlines</p>
     <h2>We read booking emails from</h2>
-    <p class="muted">Your rescue card works on any airline. We read bookings from these today, and learn a new airline or travel site the first time someone forwards one of its bookings.</p>
+    <p class="intro">Your rescue card works on any airline. We read bookings from these today, and learn a new airline or travel site the first time someone forwards one of its bookings.</p>
     <!-- Filled from https://my.getthere.now/airlines.json (site.js); this list shows if that can't be reached. -->
-    <div class="airlines" data-airlines style="margin-top:22px">
-      <div class="airline"><span class="code">AI</span>Air India</div>
-      <div class="airline"><span class="code">AK</span>AirAsia</div>
-      <div class="airline"><span class="code">EK</span>Emirates</div>
-      <div class="airline"><span class="code">SQ</span>Singapore Airlines</div>
-      <div class="airline">Trip.com</div>
-      <div class="airline"><span class="code">VA</span>Virgin Australia</div>
+    <div class="airlines" data-airlines>
+      <span class="airline"><span class="code">AI</span>Air India</span>
+      <span class="airline"><span class="code">AK</span>AirAsia</span>
+      <span class="airline"><span class="code">EK</span>Emirates</span>
+      <span class="airline"><span class="code">SQ</span>Singapore Airlines</span>
+      <span class="airline">Trip.com</span>
+      <span class="airline"><span class="code">VA</span>Virgin Australia</span>
     </div>
   </div>
 </section>
 
-<section id="faq" class="tint">
+<section class="band tint" id="faq">
   <div class="wrap narrow">
     <p class="eyebrow">Questions</p>
     <h2>Good to know</h2>
+    <div class="faq">
     <details open>
       <summary>What exactly do I get?</summary>
-      <p>Help getting to where you're going. If a flight on your booking is delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, we send you a single-use pre-loaded rescue card to book a new flight. It works for <span data-setting="card_validity_hours">24</span> hours, for one purchase, at airlines and travel agencies only. <b>It buys new flights only and is never paid out as cash</b>, and rescue card money you don't spend isn't paid out. There's nothing to fill in and no receipts to send.</p>
+      <p>Help getting to where you're going. If a flight on your booking is delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled, we send you a single-use pre-loaded rescue card to book a new flight. It works for <span data-setting="card_validity_hours">24</span> hours, for one purchase, at airlines and travel agencies only. <b>It buys new flights only and is never paid out as cash.</b> There's nothing to fill in and no receipts to send.</p>
     </details>
     <details>
       <summary>Your original ticket stays yours.</summary>
@@ -220,11 +171,11 @@
     </details>
     <details>
       <summary>Spend less than the card holds?</summary>
-      <p>Rescue card money is spent first. If you added your own money and some is left over after your purchase, or when the card expires, we refund it to the card you paid with. Rescue card money you don't spend isn't paid out.</p>
+      <p>The card is for one purchase and is never paid out as cash. Rescue card money is spent first. Any of your own money left over after your purchase, or when the card expires, is refunded to the card you paid with. Rescue card money you don't spend isn't paid out.</p>
     </details>
     <details>
       <summary>How much does it cost?</summary>
-      <p>It depends on how likely your flight is to be disrupted on your travel date, and on your fare. Forward your booking to see your price; there's no obligation to buy.</p>
+      <p>It depends on how likely your flight is to be disrupted on your travel date, and on your airfare. Forward your booking to see your price; there's no obligation to buy.</p>
     </details>
     <details>
       <summary>When do I need to buy it?</summary>
@@ -240,37 +191,29 @@
     </details>
     <details>
       <summary>Which bookings can I forward?</summary>
-      <p>Confirmation or e-ticket emails from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>, or any other airline or travel site (we learn new ones as they're forwarded), for most bookings worth about <span data-setting="booking_range">US$150 to US$12,000</span> (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
+      <p>Confirmation or e-ticket emails from <span data-airlines-line>Air India, AirAsia, Emirates and 3 more</span>, or any other airline or travel site: we learn new ones as they're forwarded, for most bookings worth about <span data-setting="booking_range">US$150 to US$12,000</span> (or the same in your currency). If we can't price a booking, we'll email you to say why.</p>
     </details>
     <details>
       <summary>What happens to my email?</summary>
-      <p>We read the booking details we need to price and track your flights: flight numbers, dates, travellers and fare. Our <a href="privacy.html">Privacy Notice</a> has the details.</p>
+      <p>We read the booking details we need to price and watch your flights: flight numbers, dates, travellers and airfare. Our <a href="privacy.html">Privacy Notice</a> has the details.</p>
     </details>
+    </div>
   </div>
 </section>
 
-<section>
-  <div class="wrap" style="text-align:center">
-    <h2>Flying soon?</h2>
-    <p class="muted" style="margin-bottom:24px">Forward your booking to <b data-forward>quote@my.getthere.now</b> and get your price in minutes.</p>
-    <a class="btn" href="#forward">Forward your booking</a>
+<footer class="foot"><div class="wrap">
+  <div>
+    <a class="logo" href="./">Get<span>There</span></a>
+    <p>When your flight is delayed, we help you get there.</p>
   </div>
-</section>
-
-<footer class="site">
-  <div class="wrap">
-    <div>
-      <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">When your flight is delayed, we help you get there.</p>
-    </div>
-    <div class="cols">
-      <div><b style="color:#fff">Travellers</b><a href="#forward">Get a price</a><a href="#how">How it works</a><a href="#faq">FAQ</a></div>
-      <div><b style="color:#fff">Card issuers</b><a href="issuers.html">Flight Delay Pass for card issuers</a><a href="issuers.html#numbers">The numbers</a><a href="issuers.html#pilot">Pilot</a></div>
-      <div><b style="color:#fff">Help</b><a href="mailto:help@getthere.now">help@getthere.now</a></div>
-    </div>
-    <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>Rescue cards are funded by GetThere.<br>© 2026 GetThere.</div>
+  <div class="foot-links">
+    <a href="mailto:help@getthere.now">help@getthere.now</a>
+    <a href="https://my.getthere.now/terms.html">Terms</a>
+    <a href="privacy.html">Privacy Notice</a>
+    <a href="issuers.html">For card issuers</a>
   </div>
-</footer>
+  <div class="foot-legal">Rescue cards are funded by GetThere.<small>&copy; 2026 GetThere.</small></div>
+</div></footer>
 
 <script src="site.js"></script>
 </body>

@@ -3,7 +3,7 @@ document.querySelectorAll("[data-copy]").forEach(btn => {
   btn.addEventListener("click", () => copy(btn.dataset.copy, btn));
 });
 
-// A tick once copied, as on the app's offer page; where the browser won't copy, the address is
+// A tick and Copied once copied, as on the app's traveller page; where the browser won't copy, the address is
 // selected to copy by hand.
 function copy(text, btn) {
   const done = () => {
@@ -17,7 +17,7 @@ function copy(text, btn) {
   if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, select); else select();
 }
 
-// Mail-app tabs on the home page
+// Mail-app tabs in the home page's How to forward it
 document.querySelectorAll(".tabs button").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tabs button").forEach(t => t.setAttribute("aria-selected", t === tab));
@@ -103,7 +103,7 @@ if (airlineList) {
   fetch("https://my.getthere.now/airlines.json").then(r => r.ok ? r.json() : Promise.reject()).then(data => {
     if (!data.airlines || !data.airlines.length) return;
     airlineList.replaceChildren(...data.airlines.map(a => {
-      const el = document.createElement("div");
+      const el = document.createElement("span");
       el.className = "airline";
       if (a.code) {
         const code = document.createElement("span");
@@ -128,7 +128,27 @@ if (settingSpots.length) {
       const v = s[el.dataset.setting];
       if (typeof v === "string" && v) el.textContent = v;
     });
+    showPlans(s);
   }).catch(() => {});
+}
+
+// The Direct channel's plans, as the app's pages show them: each plan's name and badge, and its note
+// ("Coverage set from your fare and flights", "1.5x the coverage of Basic"). The featured one is highlighted.
+function showPlans(s) {
+  if (!Array.isArray(s.plans) || !s.plans.length || !Array.isArray(s.plan_notes)) return;
+  document.querySelectorAll("[data-plans]").forEach(box => {
+    box.replaceChildren(...s.plans.map((p, i) => {
+      const el = document.createElement("div");
+      el.className = "plan" + ((p.featured ?? i === 0) ? " featured" : "");
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = p.label;
+      if (p.badge) name.append(Object.assign(document.createElement("span"), { className: "badge", textContent: p.badge }));
+      const note = Object.assign(document.createElement("div"), { className: "note", textContent: s.plan_notes[i] || "" });
+      el.append(name, note);
+      return el;
+    }));
+  });
 }
 
 // The forward address on the home page: the website is the Direct channel's app, so it gets a new
