@@ -78,11 +78,11 @@
       <div class="forward">
         <div class="fine">Forward your booking confirmation to</div>
         <div class="addr">
-          <code id="addr" data-forward>quote@my.getthere.now</code>
-          <button class="copy" data-copy="quote@my.getthere.now" data-forward-copy>Copy</button>
-        </div>
-        <div class="btns">
-          <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking" data-forward-mailto>Open Mail</a>
+          <code id="addr" data-forward>quote@<wbr>my.getthere.now</code>
+          <button class="copy" type="button" data-copy="quote@my.getthere.now" data-forward-copy aria-label="Copy the address" title="Copy">
+            <svg class="idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
+          </button>
         </div>
         <p class="fine" style="margin:16px 0 0">One Flight Delay Pass looks after every flight and traveller on your booking, whichever airline you fly. Forward your booking at least 48 hours before your first flight. Passes are sold under our <a href="https://my.getthere.now/terms.html">Terms</a>; see how we use your data in our <a href="privacy.html">Privacy Notice</a>.</p>
         <!-- site.js fills in the reference that comes with the address, as on the app's offer page. -->
@@ -253,7 +253,7 @@
   <div class="wrap" style="text-align:center">
     <h2>Flying soon?</h2>
     <p class="muted" style="margin-bottom:24px">Forward your booking to <b data-forward>quote@my.getthere.now</b> and get your price in a minute.</p>
-    <a class="btn" href="mailto:quote@my.getthere.now?subject=My%20booking" data-forward-mailto>Forward your booking</a>
+    <a class="btn" href="#forward">Forward your booking</a>
   </div>
 </section>
 

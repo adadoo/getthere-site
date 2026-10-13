@@ -3,9 +3,18 @@ document.querySelectorAll("[data-copy]").forEach(btn => {
   btn.addEventListener("click", () => copy(btn.dataset.copy, btn));
 });
 
+// A tick once copied, as on the app's offer page; where the browser won't copy, the address is
+// selected to copy by hand.
 function copy(text, btn) {
-  const done = () => { const t = btn.textContent; btn.textContent = "Copied"; setTimeout(() => btn.textContent = t, 1500); };
-  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => {});
+  const done = () => {
+    btn.classList.add("copied"); btn.setAttribute("aria-label", "Copied");
+    setTimeout(() => { btn.classList.remove("copied"); btn.setAttribute("aria-label", "Copy the address"); }, 2000);
+  };
+  const select = () => {
+    const range = document.createRange(); range.selectNodeContents(btn.previousElementSibling);
+    getSelection().removeAllRanges(); getSelection().addRange(range);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, select); else select();
 }
 
 // Mail-app tabs on the home page
@@ -116,10 +125,9 @@ const SITE_SERVER = "https://getthere-site-server.onrender.com";
 const forwardSpots = document.querySelectorAll("[data-forward]");
 if (forwardSpots.length) {
   const show = offer => {
-    forwardSpots.forEach(el => el.textContent = offer.forward_to);
+    const [local, host] = offer.forward_to.split("@");     // a line may break after the @, as on the offer page
+    forwardSpots.forEach(el => el.replaceChildren(local + "@", document.createElement("wbr"), host));
     document.querySelectorAll("[data-forward-copy]").forEach(el => el.dataset.copy = offer.forward_to);
-    document.querySelectorAll("[data-forward-mailto]").forEach(el =>
-      el.href = "mailto:" + offer.forward_to + "?subject=My%20booking");
     document.querySelectorAll("[data-reference]").forEach(el => el.textContent = offer.reference);
     document.querySelectorAll("[data-reference-line]").forEach(el => el.hidden = false);
   };
