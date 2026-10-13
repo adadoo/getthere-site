@@ -172,7 +172,7 @@ def privacy():
       <li>Airwallex, our card issuer, receives your legal name, date of birth, home address, email address and mobile
       number when you buy a pass, to check your identity (including sanctions screening) and to issue the pre-loaded
       rescue card in your name. Airwallex may ask for an identity document if it can't confirm who you are.</li>
-      <li>On channels with an Underwriter (a financial partner named in your pass's terms), the Underwriter funds
+      <li>When your pass's terms name an Underwriter other than GetThere, that Underwriter funds
       every pre-loaded rescue card. The Underwriter and its card issuing partner receive your legal name, date of birth, home address, email address and mobile number
       when you buy a pass, to check your identity (including sanctions screening) and to fund and issue the
       pre-loaded rescue card in your name.</li>
