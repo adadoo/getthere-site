@@ -43,7 +43,6 @@ for c in channels.CHANNELS.values():
         "partner_name": b.partner_name,
         "tiers": [{"label": t.label, "cap": t.cap_multiplier} for t in c.tiers],
         "trigger_minutes": r.trigger_delay_minutes,
-        "takeoff_signoff": r.takeoff_signoff,
     })
 
 dest = Path(__file__).with_name("channels.json")
