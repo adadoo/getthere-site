@@ -117,7 +117,7 @@ if (airlineList) {
   }).catch(() => {});   // keep the list in the page
 }
 
-// The Direct channel's settings the home page quotes (hours, plans, countries, booking values), from
+// The Direct partner's settings the home page quotes (hours, plans, countries, booking values), from
 // the app (GET /settings.json), so the website says what the app's pages and the terms say. Each
 // [data-setting] keeps the value it was written with if the app can't be reached.
 const settingSpots = document.querySelectorAll("[data-setting]");
@@ -131,7 +131,7 @@ if (settingSpots.length) {
   }).catch(() => {});
 }
 
-// The Direct channel's plans, as the app's pages show them: each plan's name and badge, and its note
+// The Direct partner's plans, as the app's pages show them: each plan's name and badge, and its note
 // ("Coverage set from your fare and flights", "1.5x the coverage of Basic"). The featured one is highlighted.
 function showPlans(s) {
   if (!Array.isArray(s.plans) || !s.plans.length || !Array.isArray(s.plan_notes)) return;
@@ -150,7 +150,7 @@ function showPlans(s) {
   });
 }
 
-// The forward address on the home page: the website is the Direct channel's app, so it gets a new
+// The forward address on the home page: the website is the Direct partner's app, so it gets a new
 // offer from the partner API through its own server (server/server.py holds the key), as a card
 // issuer's app does. The offer's code rides in the address, so a booking forwarded from here is traced
 // to this visit, with this page's utm_* tags and referring site, in the admin's Offers. Kept for the

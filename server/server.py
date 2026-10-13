@@ -1,5 +1,5 @@
-"""The website's own server: the website (getthere.now) is the Direct channel's app, so it gets its
-forward address the way a card issuer's app does, from GetThere's partner API with a channel key
+"""The website's own server: the website (getthere.now) is the Direct partner's app, so it gets its
+forward address the way a card issuer's app does, from GetThere's partner API with a partner key
 (Dadoo, 2026-10-13). The key is a secret, so it lives here and never in the pages.
 
     POST /offer?utm_source=..&utm_medium=..&utm_campaign=..&ref=<the page's referrer>
@@ -10,7 +10,7 @@ forward address the way a card issuer's app does, from GetThere's partner API wi
         Up.
 
 Settings (environment):
-    GETTHERE_PARTNER_KEY   the Direct channel's key from the admin (gt_live_... or gt_test_...)
+    GETTHERE_PARTNER_KEY   the Direct partner's key from the admin (gt_live_... or gt_test_...)
     GETTHERE_API_URL       default https://api.getthere.now/partner/v1
     ALLOWED_ORIGINS        pages that may call it, comma separated; default https://getthere.now
     PORT                   default 8000

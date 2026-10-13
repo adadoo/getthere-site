@@ -1,7 +1,7 @@
 {
   "product": "GetThere",
   "pass_name": "Flight Delay Pass",
-  "terms_effective": "2026-10-13-r3",
+  "terms_effective": "2026-10-13-r8",
   "global": {
     "sales_close_hours": 48,
     "quote_valid_hours": 12,
@@ -10,11 +10,11 @@
     "max_fare_vs_market": 1.5,
     "verify_booking_before_payout": true
   },
-  "channels": [
+  "partners": [
     {
       "code": "direct",
       "name": "GT Direct",
-      "version": 23,
+      "version": 25,
       "host": "my.getthere.now",
       "site_url": "https://my.getthere.now",
       "forward_to": "quote@my.getthere.now",
@@ -35,11 +35,11 @@
     {
       "code": "sq",
       "name": "Singapore Airlines",
-      "version": 25,
+      "version": 27,
       "host": "sq.getthere.now",
       "site_url": "https://sq.getthere.now",
       "forward_to": "quote@sq.getthere.now",
-      "from_address": "GetThere for Singapore Airlines <quote@sq.getthere.now>",
+      "from_address": "GetThere \u00d7 Singapore Airlines <quote@sq.getthere.now>",
       "partner_name": "Singapore Airlines",
       "tiers": [
         {
@@ -56,11 +56,11 @@
     {
       "code": "dbs",
       "name": "DBS",
-      "version": 26,
+      "version": 27,
       "host": "dbs.getthere.now",
       "site_url": "https://dbs.getthere.now",
       "forward_to": "quote@dbs.getthere.now",
-      "from_address": "GetThere for DBS <quote@dbs.getthere.now>",
+      "from_address": "GetThere \u00d7 DBS <quote@dbs.getthere.now>",
       "partner_name": "DBS",
       "tiers": [
         {

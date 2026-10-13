@@ -1,4 +1,4 @@
-/* The traveller page: one design for every channel's home and offer page (the app's landing.html) and for
+/* The traveller page: one design for every partner's home and offer page (the app's landing.html) and for
    getthere.now (the website's index.html). The same file in both repos: getthere/templates/_traveller.css
    and getthere-site/traveller.css; keep them identical. Colours, font and corners come from the page's
    tokens: --ink --muted --line --bg --accent --soft --logo --r --r-sm --r-btn --font. Mobile first: it

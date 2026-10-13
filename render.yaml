@@ -1,4 +1,4 @@
-# Render Blueprint for the website's own server (server/server.py): it holds the Direct channel's
+# Render Blueprint for the website's own server (server/server.py): it holds the Direct partner's
 # partner key and hands the home page its forward address, as an issuer's app server would.
 # The pages themselves stay on GitHub Pages. New > Blueprint in Render, pick this repo.
 services:
@@ -14,7 +14,7 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.13.1"
-      - key: GETTHERE_PARTNER_KEY      # the Direct channel's key, issued in the admin
+      - key: GETTHERE_PARTNER_KEY      # the Direct partner's key, issued in the admin
         sync: false
       - key: ALLOWED_ORIGINS
         value: https://getthere.now
