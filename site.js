@@ -43,7 +43,7 @@ if (calc) {
       return;
     }
     const passes = airfare / 500 * takeup;
-    const fees = airfare * takeup * 0.0675;
+    const fees = airfare * takeup * 0.075;
     $("share").textContent = money(fees);
     $("passes").textContent = count(passes);
     $("rescues").textContent = count(passes * 0.02);
