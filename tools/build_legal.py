@@ -126,9 +126,11 @@ def privacy():
     </div>
 
     <h2>1. Who we are</h2>
-    <p>{OPERATOR} ("we", "us") runs the {PASS}, including when it's offered under a partner's name such as
-    "GetThere for &lt;partner&gt;", and is responsible for the personal data described here. Contact us at {help_},
-    or at the help address in any email we've sent you.</p>
+    <p>The {PASS} is sold by the company your pass's terms name as selling it and funding your pre-loaded rescue
+    cards: GetThere for passes from GetThere's own page, or another company, such as an insurer, on some partners'
+    pages. {OPERATOR} ("we", "us") runs the service for that company, including when it's offered under a partner's
+    name, and is responsible for the personal data described here. The selling company is also responsible for the
+    data it receives (section 4). Contact us at {help_}, or at the help address in any email we've sent you.</p>
 
     <h2>2. What we collect</h2>
     <ul>
@@ -137,10 +139,12 @@ def privacy():
       digits of the card used.</li>
       <li>Your <b>name and email address</b>, from the email you forward.</li>
       <li>Your <b>mobile number</b>, which you give at checkout so we can send your pre-loaded rescue card there. We send a
-      code to it on WhatsApp to check it's yours.</li>
+      code to it on WhatsApp to check it's yours, and we only send you WhatsApp messages once you've entered that code.</li>
       <li>Your <b>legal name, date of birth, home address and the country you live in</b>, which you give at checkout
       so the pre-loaded rescue card can be issued in your name.</li>
-      <li><b>Payment details</b>, handled by our payment provider. We don't see or store your full card number.</li>
+      <li><b>Payment details</b>: you type your card details into the payment form of the selling company's payment
+      provider, embedded on our checkout page. We never see or store your card number; we get only the payment's
+      result, amount and card type.</li>
       <li><b>Your pre-loaded rescue card's use</b>: where it was used, the amount and when.</li>
       <li><b>Flight status</b> for your flights, from flight-data providers.</li>
       <li>When you open an offer page, such as one linked from a partner's app or an ad: your <b>IP address</b>, your
@@ -165,16 +169,14 @@ def privacy():
     <h2>4. Who we share it with</h2>
     <ul>
       <li>Service providers who work for us under contract: hosting (Render, servers in Singapore), file storage,
-      email delivery (Postmark), messaging (WhatsApp messages, through Twilio), payments and pre-loaded rescue card issuing (Airwallex),
-      and flight data (FlightAware).</li>
+      email delivery (Postmark), messaging (WhatsApp messages, through Twilio), and flight data (FlightAware).</li>
       <li>When you forward a booking from an airline or travel site we haven't seen before, an AI service
       (Anthropic's Claude) reads it for us to find the flights, travellers and fare.</li>
-      <li>Airwallex, our card issuer, receives your legal name, date of birth, home address, email address and mobile
-      number when you buy a pass, to check your identity (including sanctions screening) and to issue the pre-loaded
-      rescue card in your name. Airwallex may ask for an identity document if it can't confirm who you are.</li>
-      <li>If another company funds your rescue cards (your terms and emails name it), that company and its card provider receive your legal name, date of birth, home address, email address and mobile number
-      when you buy a pass, to check your identity (including sanctions screening) and to fund and issue the
-      pre-loaded rescue card in your name.</li>
+      <li>The company that sells your pass, and its payment provider and card issuer (Airwallex, for passes sold by
+      GetThere), receive your legal name, date of birth, home address, email address and mobile number when you buy a
+      pass, to take your payment, check your identity (including sanctions screening), and fund and issue the
+      pre-loaded rescue card in your name. The card issuer may ask for an identity document if it can't confirm who
+      you are.</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
       <li>Authorities, when the law requires it.</li>
     </ul>
