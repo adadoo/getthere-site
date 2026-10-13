@@ -28,8 +28,9 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-      <a class="hide-sm" href="#pricing">Pricing</a>
-      <a class="hide-sm" href="#exposure">Exposure</a>
+      <a class="hide-sm" href="#risk">Risk</a>
+      <a class="hide-sm" href="#rollout">Rollout</a>
+      <a class="hide-sm" href="#reports">Reports</a>
       <a class="hide-sm" href="#numbers">The numbers</a>
       <a class="hide-sm" href="issuers.html">For card issuers</a>
       <a class="pill" href="mailto:partner@getthere.now?subject=Underwriting%20the%20Flight%20Delay%20Pass">Contact us</a>
@@ -96,36 +97,53 @@
   </div>
 </section>
 
-<section id="pricing">
+<section id="risk">
   <div class="wrap">
-    <p class="eyebrow">Pricing</p>
-    <h2>Priced flight by flight, not route by route</h2>
-    <p class="lede">Every quote starts from a year of that flight's own departures, so a 06:00 flight that runs on time doesn't pay for the 18:00 one that doesn't.</p>
+    <p class="eyebrow">Who holds which risk</p>
+    <h2>Three buckets of risk: what GetThere captures, what you control, what you can leave to your partner</h2>
+    <p class="lede">Every quote comes from the same pricing model. Some risks it prices and screens for you on every partner. Some limits are yours alone. A few choices are left to each partner, and the model prices each of them in, so a partner's choice moves the traveller's price, not your margin.</p>
     <div class="grid3" style="margin-top:28px">
-      <div class="tile"><h3>A year of each flight</h3><p class="muted">The last 365 days of the flight number from FlightAware, weighted by its month, its route and its airports. The last 90 days count double.</p></div>
-      <div class="tile"><h3>Weather and news on top</h3><p class="muted">Airports under severe-weather forecasts, strikes or air traffic control action stop selling until it passes.</p></div>
-      <div class="tile"><h3>A floor under every rate</h3><p class="muted">A flight with no history starts at a 2% rate, and no flight goes below 1%, however clean its year. A booking with a flight already 10% or more likely to be disrupted is declined.</p></div>
-    </div>
-    <div class="callout" style="margin-top:20px"><b>Fee</b> = chance of disruption × expected spend on the rescue card × card limit ÷ (1 − gross margin). The card limit follows what a new seat typically costs for that trip at quote time, never more than 1.5 times the fare paid.</div>
-  </div>
-</section>
-
-<section id="selection" class="tint">
-  <div class="wrap">
-    <p class="eyebrow">Selection</p>
-    <h2>No buying once the delay is known</h2>
-    <div class="grid2" style="margin-top:28px">
-      <div class="points">
-        <div><h3>Sales close 48 hours before departure</h3><p class="muted">Nobody buys from the gate. You can close sales earlier, never later.</p></div>
-        <div><h3>A price holds 12 hours</h3><p class="muted">After that the booking is priced again on that day's odds.</p></div>
-        <div><h3>Believable fares only</h3><p class="muted">A fare far above the market's normal fare for the cabin gets no quote, so the rescue card can't be inflated.</p></div>
+      <div class="tile">
+        <span class="time" style="background:var(--accent)">GETTHERE CAPTURES</span>
+        <h3>Priced and screened on every pass</h3>
+        <ol class="pushes">
+          <li><b>How often the flight is late</b> A year of that flight's own departures, by month, route and airport. A flight with no history starts at 2%, and none goes below 1%.</li>
+          <li><b>How much of the card gets spent</b> Most of a small card is spent and less of a large one, so each plan size is priced on its own.</li>
+          <li><b>How long the delay must be</b> A shorter trigger is priced higher: a 2-hour trigger at 1.6 times the 3-hour rate.</li>
+          <li><b>Weather, strikes and air traffic control</b> Affected airports stop selling until it passes.</li>
+          <li><b>Inflated fares</b> A fare far above the market gets no quote, and the card follows what a new seat typically costs.</li>
+          <li><b>Miles and points</b> Only bookings paid in full with money are offered a pass.</li>
+          <li><b>Card misuse</b> One purchase, within 24 hours, at airlines and travel agencies only.</li>
+        </ol>
       </div>
-      <div class="points">
-        <div><h3>Two rescue cards a year at most</h3><p class="muted">A traveller with two cards in the last year gets no quote.</p></div>
-        <div><h3>No buying for strangers</h3><p class="muted">More than three passes a year for bookings the buyer isn't on gets no quote. Family trips are fine.</p></div>
-        <div><h3>Counted across your partners</h3><p class="muted">Both limits count every pass sold by any of your partners, whichever one sold it.</p></div>
+      <div class="tile">
+        <span class="time">YOU CONTROL</span>
+        <h3>Your limits, across every partner</h3>
+        <ol class="pushes">
+          <li><b>Exposure per flight</b> The most your passes may hold in card limits on one flight and date.</li>
+          <li><b>Exposure per airport</b> The same for one airport on one day.</li>
+          <li><b>Repeat claimers</b> How many rescue cards a traveller may have in a year.</li>
+          <li><b>Buying for others</b> How many passes a year for trips the buyer isn't on.</li>
+          <li><b>Rate floor and sales close</b> Raise the lowest rate and close sales earlier. Never below GetThere's own.</li>
+          <li><b>Highest risk sold</b> The chance of disruption above which a booking is declined.</li>
+          <li><b>Booking size and card size</b> The smallest and largest booking, and the card's ceiling against the fare paid.</li>
+          <li><b>Margin per partner</b> Your gross margin on each partner's passes, 60% unless you agree otherwise.</li>
+        </ol>
+      </div>
+      <div class="tile">
+        <span class="time" style="background:#64748b">YOUR PARTNER DECIDES</span>
+        <h3>Priced in automatically</h3>
+        <ol class="pushes">
+          <li><b>The delay trigger</b> 3 hours by default; a premium card might offer 2. The price rises to match.</li>
+          <li><b>Plan sizes</b> Cards from 1 to 3 times the seat price. Bigger plans cost more.</li>
+          <li><b>Its own limits</b> A partner can set its own booking and card limits for its customers. It can only tighten your rate floor and sales close.</li>
+          <li><b>Who sees the offer</b> Which cards, which charges and which customers get the nudge.</li>
+          <li><b>A purchase check</b> An optional yes or no that the booking was paid on its card, for a stronger fraud check.</li>
+          <li><b>Look and channel</b> Its colours, logo, app and emails.</li>
+        </ol>
       </div>
     </div>
+    <div class="callout" style="margin-top:20px"><b>Fee</b> = chance of disruption × expected spend on the rescue card × card limit ÷ (1 − gross margin). GetThere sets the first two from its model. The card limit comes from the partner's plans within your ceiling. The margin is yours.</div>
   </div>
 </section>
 
@@ -140,34 +158,6 @@
       <div class="tile glass"><h3>Checked to the last seat</h3><p>At quote, at checkout, and once more under a lock as the pass is created, so two buyers can't both take the last of the room.</p></div>
     </div>
     <p class="light-muted" style="margin-top:20px">These limits are yours alone. No partner can raise them, and other underwriters' passes never count against yours.</p>
-  </div>
-</section>
-
-<section id="controls">
-  <div class="wrap">
-    <p class="eyebrow">Your controls</p>
-    <h2>The settings that decide your risk are yours</h2>
-    <p class="lede">Set them once for all your partners in the GetThere admin. A change applies to the next quote, with no release.</p>
-    <div class="grid2" style="margin-top:28px">
-      <div class="tile">
-        <h3>Yours alone, across every partner</h3>
-        <ol class="pushes">
-          <li><b>Exposure per flight</b> Total card limits on one flight and date</li>
-          <li><b>Exposure per airport</b> Total card limits at one airport on one day</li>
-          <li><b>Rescue cards per traveller</b> How many in a year before no more quotes</li>
-          <li><b>Bookings for others</b> How many passes a year for trips the buyer isn't on</li>
-        </ol>
-      </div>
-      <div class="tile">
-        <h3>Your defaults for each partner</h3>
-        <ol class="pushes">
-          <li><b>Rate floor and sales close</b> Tighten only: never below GetThere's own</li>
-          <li><b>Highest risk sold</b> The disruption rate above which a booking is declined</li>
-          <li><b>Booking value</b> The smallest and largest booking quoted</li>
-          <li><b>Card limit</b> Its ceiling against the fare paid, and how long a price holds</li>
-        </ol>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -210,6 +200,65 @@
   </div>
 </section>
 
+<section id="rollout" class="tint">
+  <div class="wrap">
+    <p class="eyebrow">Rolling out to partners</p>
+    <h2>Distribute the policy through partners, with little or no integration</h2>
+    <p class="lede">GetThere builds and runs the offer pages, quote emails, checkout, terms and rescue cards for every partner. What a partner builds depends on how it reaches travellers.</p>
+    <div class="grid3" style="margin-top:28px">
+      <div class="tile"><span class="time">NO BUILD</span><h3>Travel sites and brands</h3><p class="muted">Their customers forward a booking email to the partner's own address. GetThere reads emails from any airline or travel site.</p></div>
+      <div class="tile"><span class="time">ONE LINK</span><h3>Airlines</h3><p class="muted">A line in the booking confirmation email that links to the partner's offer page.</p></div>
+      <div class="tile"><span class="time">ONE PUSH</span><h3>Card issuers</h3><p class="muted">One push notification after an airline charge. Three more pushes and a yes-or-no purchase check are optional. <a href="api.html">API reference</a></p></div>
+    </div>
+    <div class="grid2" style="margin-top:20px">
+      <div class="points">
+        <div><h3>Set up from the admin</h3><p class="muted">A partner's pages, email address and terms are set up from the GetThere admin. Its terms are built from your settings, with your name as the issuer.</p></div>
+        <div><h3>Tested before it sells</h3><p class="muted">Each partner runs the whole journey in test mode first: test payments, test cards and simulated delays.</p></div>
+      </div>
+      <div class="points">
+        <div><h3>Your limits travel with it</h3><p class="muted">A new partner sells under your exposure, claims and pricing limits from its first pass. You see which of your settings a partner has set its own value for.</p></div>
+        <div><h3>Solution architects when you need them</h3><p class="muted">For a partner that needs more, GetThere's solution architects can plan and build the integration with the partner's team, billed on time and materials.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reports">
+  <div class="wrap">
+    <p class="eyebrow">Reporting</p>
+    <h2>A monthly report for you, and one for each partner</h2>
+    <p class="lede">You see the whole book, risk and claims included. Each partner sees its own sales, its share and its customers' experience.</p>
+    <div class="grid2" style="margin-top:28px;align-items:start">
+      <div class="tile">
+        <h3>Your report</h3>
+        <p class="muted" style="margin:0 0 12px">Every partner, with the detail by partner</p>
+        <div class="split report">
+          <div class="bar-row"><span>Passes sold · pass fees</span><b>16,400 · $615K</b></div>
+          <div class="bar-row"><span>Rescue cards issued · money spent</span><b>312 · $226K</b></div>
+          <div class="bar-row"><span>Loss ratio, actual against priced</span><b>36.8% · 40.0%</b></div>
+          <div class="bar-row"><span>Unspent card limits kept</span><b>$8K</b></div>
+          <div class="bar-row"><span>Peak exposure on one flight · at one airport</span><b>$41K · $380K</b></div>
+          <div class="bar-row"><span>Quotes declined, by reason</span><b>Weather, fare, claims, miles</b></div>
+          <div class="bar-row"><span>Settings changed, by you or a partner</span><b>2</b></div>
+        </div>
+      </div>
+      <div class="tile">
+        <h3>Each partner's report</h3>
+        <p class="muted" style="margin:0 0 12px">Its own customers only</p>
+        <div class="split report">
+          <div class="bar-row"><span>Offers opened · quotes · passes sold</span><b>82,000 · 8,200 · 1,640</b></div>
+          <div class="bar-row"><span>Pass fees · its share</span><b>$61.5K · as agreed with you</b></div>
+          <div class="bar-row"><span>Customers rescued</span><b>31</b></div>
+          <div class="bar-row"><span>Minutes from delay to rescue card</span><b>Under 5</b></div>
+          <div class="bar-row"><span>Customer feedback</span><b>Ratings and comments</b></div>
+          <div class="bar-row"><span>Top routes and airlines</span><b>By passes sold</b></div>
+        </div>
+      </div>
+    </div>
+    <p class="fine" style="margin-top:14px">Example figures, not forecasts.</p>
+  </div>
+</section>
+
 <section id="money" class="tint">
   <div class="wrap">
     <p class="eyebrow">Money and data</p>
@@ -230,7 +279,7 @@
     <div class="grid3" style="margin-top:28px">
       <div class="tile glass"><span class="time">TEST MODE</span><h3>Your sandbox</h3><p>Test payments, test rescue cards and simulated delays on your own sandbox keys. Nothing real moves.</p></div>
       <div class="tile glass"><span class="time">GO LIVE</span><h3>Country by country</h3><p>A country sells once your live payment and card accounts work there, with your tax for that country.</p></div>
-      <div class="tile glass"><span class="time">DAYS 1–180</span><h3>A pilot with one partner</h3><p>GetThere reports monthly on offers, passes bought, rescues and feedback. At day 180 you and the partner decide on a full launch.</p></div>
+      <div class="tile glass"><span class="time">DAYS 1–180</span><h3>A pilot with one partner</h3><p>Monthly reports for you and the partner. At day 180 you decide together on a full launch and the next partners.</p></div>
     </div>
     <div style="margin-top:40px">
       <h2 class="accent-text">Let's get your policyholders there.</h2>
@@ -250,7 +299,7 @@
     </div>
     <div class="cols">
       <div><b style="color:#fff">Travellers</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
-      <div><b style="color:#fff">Underwriters</b><a href="#pricing">Pricing</a><a href="#exposure">Exposure</a><a href="#numbers">The numbers</a></div>
+      <div><b style="color:#fff">Underwriters</b><a href="#risk">Risk</a><a href="#rollout">Rollout</a><a href="#reports">Reports</a><a href="#numbers">The numbers</a></div>
       <div><b style="color:#fff">Card issuers</b><a href="issuers.html">The product</a><a href="api.html">API reference</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
