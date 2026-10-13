@@ -38,7 +38,7 @@
 
     <p class="eyebrow">For card issuers</p>
     <h1>API reference</h1>
-    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Your channel is your own set-up on GetThere: your pages, addresses and keys. Every channel starts in test mode: build and test with a test key, and we switch your channel to live once you and the Underwriter sign off.</p>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Your set-up on GetThere is your own: your pages, addresses and keys. Every partner starts in test mode: build and test with a test key, and we switch your partner to live once you and the Underwriter sign off.</p>
 
     <div class="callout key">
       <b>The short version.</b> All you have to send is one push notification of your own, after an airline charge.
@@ -157,8 +157,8 @@
       </div>
     </div>
 
-    <h2>Your channel</h2>
-    <p>Each card issuer is its own channel with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your
+    <h2>Your set-up</h2>
+    <p>Each card issuer is its own partner with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your
     own addresses, all in your colours:</p>
     <ul>
       <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and pre-loaded rescue card pages)</li>
@@ -169,15 +169,15 @@
     Your API key tells GetThere which issuer is calling, so you only ever see your own data.</p>
 
     <h2>Authentication</h2>
-    <p><b>You calling GetThere.</b> Each channel gets two kinds of API key. Send one on every call:</p>
+    <p><b>You calling GetThere.</b> Each partner gets two kinds of API key. Send one on every call:</p>
 <pre><code>Authorization: Bearer gt_test_…   (test key)
 Authorization: Bearer gt_live_…   (live key)</code></pre>
     <ul>
       <li><b>Test keys</b> (<code>gt_test_</code>) only ever see test passes and test pushes, and work at any time.</li>
-      <li><b>Live keys</b> (<code>gt_live_</code>) see real cardholders, and work once your channel is live. Before that they get
+      <li><b>Live keys</b> (<code>gt_live_</code>) see real cardholders, and work once you're live. Before that they get
       <code>403</code>.</li>
     </ul>
-    <p>The key identifies your channel, so you only ever see your own data. A missing, wrong or revoked key gets
+    <p>The key identifies you, so you only ever see your own data. A missing, wrong or revoked key gets
     <code>401 {"detail": "invalid partner key"}</code>. We issue keys securely, show each one once, and can revoke and
     reissue one at any time.</p>
     <p><b>GetThere calling you.</b> You give us a token for your API, and we send it the same way, as
@@ -195,7 +195,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/ping</h3></div>
     <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> while you set up, to test your key · <b>Built by:</b> GetThere</p>
     <p>Checks your key and connection.</p>
-<pre><code>200 {"ok": true, "channel": "&lt;issuer&gt;", "mode": "test"}</code></pre>
+<pre><code>200 {"ok": true, "partner": "&lt;issuer&gt;", "mode": "test"}</code></pre>
     <p><code>mode</code> is <code>test</code> for a test key and <code>live</code> for a live key.</p>
 
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
@@ -242,7 +242,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     </table>
 <pre><code>200 {"results": [{"push_id": "5b1f…", "result": "ok"},
                  {"push_id": "9c2e…", "result": "ok"}]}</code></pre>
-    <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your channel's
+    <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your partner's
     pushes, or a push of the other mode: test keys report test pushes, live keys real ones). A body without a <code>receipts</code> list gets <code>422</code>.</p>
 
     <p class="dir">GetThere calls you · you build these</p>
@@ -267,7 +267,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
       <tr><td><code>push_id</code></td><td>Unique per push. It's also the <code>Idempotency-Key</code> header, so a retry never shows twice.</td></tr>
       <tr><td><code>customer.email</code></td><td>The email your cardholder forwarded their booking from. Match it to your customer.</td></tr>
       <tr><td><code>type</code></td><td><code>pass_purchased</code>, <code>card_issued</code> or <code>card_used</code></td></tr>
-      <tr><td><code>title</code>, <code>body</code></td><td>Ready to show. We agree the wording for your channel with you before launch.</td></tr>
+      <tr><td><code>title</code>, <code>body</code></td><td>Ready to show. We agree the wording with you before launch.</td></tr>
       <tr><td><code>link</code></td><td>Optional page to open, or <code>null</code></td></tr>
     </table>
     <p>Reply when you've accepted the push notification. Report delivery later to <code>/partner/v1/push-receipts</code>.</p>
@@ -299,11 +299,11 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     delay on a test pass's flight, so you see the pre-loaded rescue card push minutes later instead of on travel day.</p>
     <ul>
       <li>Test passes come from bookings forwarded to <code>test@&lt;issuer&gt;.getthere.now</code>, and from your
-      channel's own address until it goes live.</li>
+      partner's own address until it goes live.</li>
       <li>Their pushes go to your test push URL if you gave us one; otherwise we only record them.</li>
       <li>Their purchase checks go to your test purchase-match API if you gave us one; otherwise we use test purchases
       we set up with you. A test pass is never checked against your real cardholders.</li>
-      <li>Test passes stay test passes after your channel goes live, so you can keep testing.</li>
+      <li>Test passes stay test passes after you go live, so you can keep testing.</li>
     </ul>
     <p>Ask us for a test key at
     <a href="mailto:partner@getthere.now?subject=API%20test%20key">partner@getthere.now</a>.</p>

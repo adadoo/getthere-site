@@ -1,7 +1,7 @@
-"""Build the website's Privacy Notice (privacy.html, one for every channel) from
-tools/channels.json (see export_channels.py).
+"""Build the website's Privacy Notice (privacy.html, one for every partner) from
+tools/partners.json (see export_partners.py).
 
-The website has no copy of any terms: its Terms links go to the Direct channel's
+The website has no copy of any terms: its Terms links go to the Direct partner's
 terms on the app, https://my.getthere.now/terms.html, so they are always the same
 page. terms.html, legal.html and terms/direct.html redirect there.
 
@@ -13,7 +13,7 @@ from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = json.loads((ROOT / "tools" / "channels.json").read_text())
+DATA = json.loads((ROOT / "tools" / "partners.json").read_text())
 G = DATA["global"]
 PASS = DATA["pass_name"]
 
@@ -28,7 +28,7 @@ STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
 GOVERNING_LAW = "Singapore"
 
-CHANNEL_PAGE = {"direct": "Direct (my.getthere.now)"}
+PARTNER_PAGE = {"direct": "Direct (my.getthere.now)"}
 
 
 def hours(n):
@@ -44,7 +44,7 @@ def mult(x):
 
 
 def label(c):
-    return CHANNEL_PAGE.get(c["code"], f"{c['name']} customers ({c['host']})")
+    return PARTNER_PAGE.get(c["code"], f"{c['name']} customers ({c['host']})")
 
 
 def service_name(c):
@@ -99,7 +99,7 @@ def page(title, description, body, depth=1):
 
 def privacy():
     help_ = '<a href="mailto:privacy@getthere.now">privacy@getthere.now</a>'
-    # Generic: no partner is named, whichever channels exist. Purchase checks and app alerts
+    # Generic: no partner is named, whichever partners exist. Purchase checks and app alerts
     # have no setting (a partner's address turns each on, in the admin), so both are listed.
     bank_items = (
         "\n      <li><b>To confirm the booking was paid with that partner's card:</b> we send only your email address, "

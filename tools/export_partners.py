@@ -1,8 +1,8 @@
-"""Export each channel's settings from the app into channels.json, for the
-Privacy Notice. (Terms aren't on the website: every channel's terms are served
-by the app on its own address.) Run from the site folder after a channel changes:
+"""Export each partner's settings from the app into partners.json, for the
+Privacy Notice. (Terms aren't on the website: every partner's terms are served
+by the app on its own address.) Run from the site folder after a partner changes:
 
-    python3 tools/export_channels.py ../getthere     (path to the app checkout)
+    python3 tools/export_partners.py ../getthere     (path to the app checkout)
     python3 tools/build_legal.py
 """
 
@@ -13,13 +13,13 @@ from pathlib import Path
 
 app = Path(sys.argv[1] if len(sys.argv) > 1 else "../getthere").resolve()
 sys.path.insert(0, str(app))
-from getthere import brand, channels, risk  # noqa: E402
+from getthere import brand, partners, risk  # noqa: E402
 
 R = risk.RISK
 out = {
     "product": brand.PRODUCT_NAME,
     "pass_name": brand.PASS_NAME,
-    "terms_effective": brand.TERMS_EFFECTIVE,     # with each channel's version, names the terms page
+    "terms_effective": brand.TERMS_EFFECTIVE,     # with each partner's version, names the terms page
     "global": {
         "sales_close_hours": R.sales_close_hours,
         "quote_valid_hours": R.quote_valid_hours,
@@ -28,11 +28,11 @@ out = {
         "max_fare_vs_market": R.max_fare_vs_market,
         "verify_booking_before_payout": R.verify_booking_before_payout,
     },
-    "channels": [],
+    "partners": [],
 }
-for c in channels.CHANNELS.values():
+for c in partners.PARTNERS.values():
     r, b = c.rules, c.branding
-    out["channels"].append({
+    out["partners"].append({
         "code": c.code,
         "name": c.name,
         "version": c.version,
@@ -45,6 +45,6 @@ for c in channels.CHANNELS.values():
         "trigger_minutes": r.trigger_delay_minutes,
     })
 
-dest = Path(__file__).with_name("channels.json")
+dest = Path(__file__).with_name("partners.json")
 dest.write_text(json.dumps(out, indent=2) + "\n")
-print(f"{len(out['channels'])} channels -> {dest}")
+print(f"{len(out['partners'])} partners -> {dest}")
