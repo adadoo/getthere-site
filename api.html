@@ -38,13 +38,13 @@
 
     <p class="eyebrow">For card issuers</p>
     <h1>API reference</h1>
-    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Every channel starts in test mode: build and test with a test key, and we switch your channel to live together.</p>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Your channel is your own set-up on GetThere: your pages, addresses and keys. Every channel starts in test mode: build and test with a test key, and we switch your channel to live once you and the Underwriter sign off.</p>
 
     <div class="callout key">
       <b>The short version.</b> All you have to send is one push notification of your own, after an airline charge.
       <b>Everything else on your side is optional, including GetThere's push notifications in your app.</b> Without them, the
       cardholder still gets every message on WhatsApp and by email. GetThere builds the rest: the offer page, pricing,
-      checkout, flight watching, pre-loaded rescue cards, messages to the cardholder and support.
+      checkout, flight tracking, pre-loaded rescue cards, messages to the cardholder and support.
     </div>
 
     <h2>Who builds what</h2>
@@ -112,7 +112,7 @@
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span><span class="opt">optional</span></div>
         <h3>Push notification 2: her flight is late, her pre-loaded rescue card is ready</h3>
-        <p>When her flight is 3+ hours late or cancelled, GetThere sends the pre-loaded rescue card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
+        <p>When her flight is delayed 3+ hours or cancelled, GetThere sends the pre-loaded rescue card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
         <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "card_issued"</code> · <span class="builder you">you build it</span></p>
       </li>
       <li>
@@ -209,7 +209,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
 <pre><code>200 {"offer_id": "k7f2q9xm",
      "offer_url": "https://&lt;issuer&gt;.getthere.now/offer?o=k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
-     "product_name": "GetThere",
+     "product_name": "Flight Delay Pass",
      "reference": "R-K7F2Q9XM"}</code></pre>
     <p><code>reference</code> is what the offer page shows the cardholder as "Your reference". Quote it to us and we
     can find the cardholder's journey.</p>
@@ -260,7 +260,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
  "customer": {"email": "mia@example.com"},
  "type": "card_issued",
  "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
- "body": "GetThere has sent it to you on WhatsApp and by email.",
+ "body": "We've sent it to you on WhatsApp and by email.",
  "link": null}</code></pre>
     <table>
       <tr><th>Field</th><th>Meaning</th></tr>
@@ -283,7 +283,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
  "airline": "QF",
  "amount": "1550.00",
  "currency": "AUD",
- "booked_after": "2025-10-09T00:00:00Z"}</code></pre>
+ "booked_after": "2026-11-13T00:00:00Z"}</code></pre>
 <pre><code>200 {"match": true}</code></pre>
     <ul>
       <li>Answer <code>true</code> if a charge from that airline, within 1% of <code>amount</code>, was made on or after
