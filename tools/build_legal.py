@@ -19,9 +19,10 @@ PASS = DATA["pass_name"]
 
 import datetime as _dt
 EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTIVE
-# The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12) take effect on
-# this date, or on the terms' date when that is later.
-PRIVACY_CHANGED_ISO = "2026-10-12"
+# The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12; the Underwriter
+# and its card issuing partner as recipients, 2026-10-13) take effect on this date, or on the terms' date
+# when that is later.
+PRIVACY_CHANGED_ISO = "2026-10-13"
 EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO[:10], PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
 STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
@@ -88,7 +89,7 @@ def page(title, description, body, depth=1):
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
       <div><b style="color:#fff">Legal</b><a href="https://my.getthere.now/terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
     </div>
-    <div class="legal">© 2026 GetThere.</div>
+    <div class="legal">Rescue cards are funded by GetThere, or by the company your pass's terms name.<br>© 2026 GetThere.</div>
   </div>
 </footer>
 </body>
@@ -116,11 +117,11 @@ def privacy():
     body = f"""
     <p class="eyebrow">Privacy notice</p>
     <h1>How we use your data</h1>
-    <p class="doc-meta">Every channel · Effective {EFFECTIVE} · <span class="draft">{STATUS}</span><br>
+    <p class="doc-meta">For every pass, wherever you bought it · Effective {EFFECTIVE} · <span class="draft">{STATUS}</span><br>
     Your terms are linked from every email we send you.</p>
 
     <div class="callout key">
-      <b>The short version.</b> We use the booking you forward to price your pass, watch your flights and send your
+      <b>The short version.</b> We use the booking you forward to price your pass, track your flights and send your
       pre-loaded rescue card. We don't sell your data and we don't send you marketing.
     </div>
 
@@ -132,11 +133,11 @@ def privacy():
     <h2>2. What we collect</h2>
     <ul>
       <li><b>The booking email you forward</b>, including its attachments: the names of the travellers, the booking
-      reference (PNR), flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
+      reference, flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
       digits of the card used.</li>
       <li>Your <b>name and email address</b>, from the email you forward.</li>
-      <li>Your <b>mobile number</b>, which you give at checkout so we can send your pre-loaded rescue card there. We don't
-      check it when you enter it; we treat it as confirmed once a message we send to it is delivered.</li>
+      <li>Your <b>mobile number</b>, which you give at checkout so we can send your pre-loaded rescue card there. We send a
+      code to it on WhatsApp to check it's yours.</li>
       <li>Your <b>legal name, date of birth, home address and the country you live in</b>, which you give at checkout
       so the pre-loaded rescue card can be issued in your name.</li>
       <li><b>Payment details</b>, handled by our payment provider. We don't see or store your full card number.</li>
@@ -152,7 +153,7 @@ def privacy():
     <h2>3. Why we use it</h2>
     <ul>
       <li>To price your pass and decide whether we can offer one, including checks that the booking and fare are real.</li>
-      <li>To watch your flights and send your pre-loaded rescue card when a flight is delayed or cancelled.</li>
+      <li>To track your flights and send your pre-loaded rescue card when a flight is delayed or cancelled.</li>
       <li>To send you your price, pass, alerts and pre-loaded rescue card, and to answer your questions.</li>
       <li>To count how many people see an offer and go on to forward a booking, which links and sites bring them
         there, and to tell real visits apart from automated ones (bots and link previews).</li>
@@ -164,13 +165,16 @@ def privacy():
     <h2>4. Who we share it with</h2>
     <ul>
       <li>Service providers who work for us under contract: hosting (Render, servers in Singapore), file storage,
-      email delivery (Postmark), messaging (WhatsApp and text messages, through Twilio), payments and pre-loaded rescue card issuing (Airwallex),
+      email delivery (Postmark), messaging (WhatsApp messages, through Twilio), payments and pre-loaded rescue card issuing (Airwallex),
       and flight data (FlightAware).</li>
       <li>When you forward a booking from an airline or travel site we haven't seen before, an AI service
       (Anthropic's Claude) reads it for us to find the flights, travellers and fare.</li>
       <li>Airwallex, our card issuer, receives your legal name, date of birth, home address, email address and mobile
       number when you buy a pass, to check your identity (including sanctions screening) and to issue the pre-loaded
       rescue card in your name. Airwallex may ask for an identity document if it can't confirm who you are.</li>
+      <li>If another company funds your rescue cards (your terms and emails name it), that company and its card provider receive your legal name, date of birth, home address, email address and mobile number
+      when you buy a pass, to check your identity (including sanctions screening) and to fund and issue the
+      pre-loaded rescue card in your name.</li>
       <li>The airline, to check your booking is still active before we send a pre-loaded rescue card.</li>
       <li>Authorities, when the law requires it.</li>
     </ul>
@@ -179,7 +183,7 @@ def privacy():
 
     <h2>{n}. Where it's stored</h2>
     <p>Our servers are in Singapore. Some of our providers may process data in other countries; when they do, we use
-    contracts that protect it.</p>
+    contracts that keep it safe.</p>
 
     <h2>{n + 1}. How long we keep it</h2>
     <ul>
@@ -193,7 +197,7 @@ def privacy():
 
     <h2>{n + 2}. Your choices and rights</h2>
     <p>You can ask us for a copy of your data, to correct it, or to delete it, by emailing {help_}. Depending on where
-    you live, you may also have the right to object to some uses or to complain to your data-protection regulator.</p>
+    you live, you may also have the right to object to some uses or to complain to your privacy regulator.</p>
     <p>Forward a booking only if you are a traveller on it or have the travellers' agreement to share their details with us.</p>
 
     <h2>{n + 3}. Cookies</h2>
@@ -202,7 +206,7 @@ def privacy():
     <h2>{n + 4}. Changes</h2>
     <p>We'll post any changes to this notice on this page with a new effective date.</p>
 """
-    return page("Privacy notice · GetThere", "How GetThere uses your data, on every channel.", body, depth=0)
+    return page("Privacy notice · GetThere", "How GetThere uses your data, wherever you bought your pass.", body, depth=0)
 
 
 (ROOT / "privacy.html").write_text(privacy())

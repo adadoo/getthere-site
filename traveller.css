@@ -1,0 +1,162 @@
+/* The traveller page: one design for every channel's home and offer page (the app's landing.html) and for
+   getthere.now (the website's index.html). The same file in both repos: getthere/templates/_traveller.css
+   and getthere-site/traveller.css; keep them identical. Colours, font and corners come from the page's
+   tokens: --ink --muted --line --bg --accent --soft --logo --r --r-sm --r-btn --font. Mobile first: it
+   opens in a partner's in-app browser at about 390px wide. */
+.tp { margin: 0; background: #fff; color: var(--ink); font-family: var(--font); line-height: 1.5;
+      -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; }
+.tp *, .tp *::before, .tp *::after { box-sizing: border-box; }
+html:has(body.tp) { scroll-behavior: smooth; scroll-padding-top: 76px; }
+.tp a { color: var(--accent); }
+.tp p { margin: 0 0 12px; }
+.tp .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+.tp .narrow { max-width: 760px; }
+.tp .muted { color: var(--muted); }
+.tp .fine { font-size: 13px; color: var(--muted); }
+
+/* header: the lockup and Get a price */
+.tp .top { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.94); backdrop-filter: blur(8px);
+           -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.tp .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+.tp .logo { display: inline-flex; align-items: center; font-size: 21px; font-weight: 800; letter-spacing: -.5px;
+            color: var(--ink); text-decoration: none; white-space: nowrap; }
+.tp .logo span { color: var(--logo); }
+.tp .logo small { font-size: 14px; color: var(--muted); font-weight: 400; padding: 0 7px; }
+.tp .logo b { font-size: 17px; }
+.tp .top nav { display: flex; align-items: center; gap: 18px; font-size: 15px; }
+.tp .top nav a { color: var(--ink); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.tp .top nav a:hover { color: var(--accent); }
+.tp .top nav .wide { display: none; }
+.tp .top nav a.pill { background: var(--accent); color: #fff; padding: 8px 16px; border-radius: var(--r-btn); font-weight: 700; }
+.tp .top nav a.pill:hover { color: #fff; filter: brightness(.92); }
+@media (max-width: 420px) { .tp .top nav { gap: 12px; font-size: 14px; } .tp .top nav a.pill { padding: 7px 13px; } }
+@media (min-width: 760px) { .tp .top nav .wide { display: inline; } .tp .top .wrap { height: 64px; } }
+
+
+/* hero: the promise, and the forward box */
+.tp .hero { background: linear-gradient(180deg, var(--soft) 0%, #fff 100%); padding: 28px 0 16px; }
+.tp .hero-grid { display: grid; gap: 40px; }
+.tp .hero-grid > * { min-width: 0; }
+.tp .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+.tp h1 { font-size: clamp(31px, 5.4vw, 54px); line-height: 1.07; letter-spacing: -1px; margin: 0 0 14px; }
+.tp h2 { font-size: clamp(25px, 3.4vw, 34px); line-height: 1.15; letter-spacing: -.5px; margin: 0 0 10px; }
+.tp h3 { font-size: 17px; line-height: 1.3; margin: 0 0 4px; }
+.tp .lede { font-size: 17px; color: var(--muted); max-width: 560px; margin: 0 0 22px; }
+.tp .fwd-box { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 16px;
+               box-shadow: 0 18px 40px -24px rgba(15,23,42,.35); max-width: 560px; }
+.tp .fwd-label { font-size: 14px; font-weight: 700; margin: 0 0 8px; }
+.tp .addr { display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: var(--r-sm); padding: 8px 8px 8px 14px; }
+.tp .addr code { flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                 font-size: clamp(15px, 4vw, 19px); font-weight: 700; color: var(--ink); overflow-wrap: anywhere; line-height: 1.35; }
+.tp .copy { flex: none; display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; border: 0;
+            border-radius: var(--r-btn); padding: 10px 14px; font: 700 14px var(--font); cursor: pointer; }
+.tp .copy svg { width: 16px; height: 16px; }
+.tp .copy .done, .tp .copy.copied .idle { display: none; }
+.tp .copy.copied .done { display: inline; }
+.tp .copy.copied svg.done { display: block; }
+.tp .howto { margin-top: 12px; }
+.tp .howto summary { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--accent);
+                     cursor: pointer; list-style: none; }
+.tp .howto summary::-webkit-details-marker { display: none; }
+.tp .howto summary::after { content: ""; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0;
+                            transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s; }
+.tp .howto[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+.tp .howto-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; overflow-wrap: anywhere; }
+.tp .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tp .tabs button { background: var(--bg); border: 0; border-radius: var(--r-btn); padding: 6px 12px; font: 600 13px var(--font);
+                   color: var(--muted); cursor: pointer; }
+.tp .tabs button[aria-selected="true"] { background: var(--ink); color: #fff; }
+.tp .tabpanel ol { margin: 0 0 10px; padding-left: 20px; }
+.tp .tabpanel li { margin-bottom: 4px; }
+.tp .tabpanel[hidden] { display: none; }
+.tp .howto-body .fine { margin: 6px 0 0; }
+.tp .ref { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+.tp .ref[hidden] { display: none; }
+.tp .funded { font-size: 13px; color: var(--muted); margin: 14px 0 0; }
+.tp .funded small { display: block; font-size: 12px; margin-top: 2px; }
+
+/* the example price email, on wide screens */
+.tp .mock { display: none; background: #fff; border-radius: calc(var(--r) + 6px); padding: 20px; max-width: 380px; width: 100%;
+            justify-self: center; box-shadow: 0 30px 60px -24px rgba(15,23,42,.3), 0 0 0 1px var(--line); }
+.tp .mock .from { font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+.tp .mock .from b { color: var(--ink); }
+.tp .flightbox { background: var(--soft); border-radius: var(--r-sm); padding: 14px 16px; }
+.tp .flightbox .k { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; color: var(--accent); }
+.tp .route { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.tp .route .ap { font-size: 26px; font-weight: 800; }
+.tp .route .mid { font-size: 12px; color: var(--muted); text-align: center; }
+.tp .mock .plan { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 11px 14px; margin-top: 10px; }
+.tp .mock .plan.featured { border: 2px solid var(--accent); }
+.tp .mock .fine { margin: 12px 0 0; }
+.tp .plan .name { font-weight: 800; }
+.tp .plan .note { font-size: 13px; color: var(--muted); }
+.tp .badge { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .8px; background: var(--accent); color: #fff;
+             border-radius: 6px; padding: 2px 6px; margin-left: 6px; vertical-align: 2px; }
+
+@media (min-width: 900px) {
+  .tp .hero { padding: 64px 0 32px; }
+  .tp .hero-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr); align-items: center; gap: 56px; }
+  .tp .lede { font-size: 19px; }
+  .tp .fwd-box { padding: 20px; }
+  .tp .mock { display: block; }
+}
+
+/* bands */
+.tp .band { padding: 48px 0; }
+.tp .band.tint { background: var(--bg); }
+.tp .band .intro { color: var(--muted); max-width: 620px; margin: 0; }
+@media (min-width: 900px) { .tp .band { padding: 72px 0; } }
+
+/* three steps, and how it's different */
+.tp .steps { list-style: none; display: grid; gap: 12px; padding: 0; margin: 22px 0 0; }
+.tp .steps li { display: flex; gap: 14px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 18px; }
+.tp .num { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800;
+           display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.tp .steps p { color: var(--muted); font-size: 15px; margin: 0; }
+.tp .diff { display: grid; gap: 10px; margin: 18px 0 0; }
+.tp .diff p { display: flex; gap: 10px; align-items: flex-start; margin: 0; font-size: 15px; color: var(--muted); }
+.tp .diff b { color: var(--ink); }
+.tp .diff svg { flex: none; width: 20px; height: 20px; margin-top: 1px; color: var(--accent); }
+@media (min-width: 900px) {
+  .tp .steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tp .steps li { flex-direction: column; padding: 24px; }
+  .tp .diff { grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; }
+}
+
+/* plans */
+.tp .plans { display: grid; gap: 10px; margin: 20px 0 0; }
+.tp .plans .plan { background: #fff; border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px 16px; }
+.tp .plans .plan.featured { border: 2px solid var(--accent); }
+.tp .plans + .fine { margin: 14px 0 0; }
+@media (min-width: 700px) { .tp .plans { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; } }
+
+/* airlines */
+.tp .airlines { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.tp .airline { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px;
+               padding: 7px 14px; font-size: 14px; font-weight: 600; }
+.tp .airline .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--accent); font-size: 13px; font-weight: 700; }
+
+/* questions */
+.tp .faq { margin-top: 14px; }
+.tp .faq details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+.tp .faq summary { display: flex; justify-content: space-between; gap: 16px; font-weight: 700; font-size: 16px; cursor: pointer; list-style: none; }
+.tp .faq summary::-webkit-details-marker { display: none; }
+.tp .faq summary::after { content: "+"; color: var(--accent); font-size: 22px; line-height: 1; font-weight: 400; }
+.tp .faq details[open] summary::after { content: "\2013"; }
+.tp .faq details p { color: var(--muted); margin: 10px 0 0; font-size: 15px; }
+
+/* footer */
+.tp .foot { background: var(--ink); color: #c8d1de; padding: 36px 0; font-size: 14px; }
+.tp .foot a { color: #fff; }
+.tp .foot .wrap { display: grid; gap: 18px; }
+.tp .foot .logo { color: #fff; }
+.tp .foot .logo span { color: var(--logo-on-dark, #fff); }
+.tp .foot .logo small { color: #c8d1de; }
+.tp .foot p { margin: 6px 0 0; }
+.tp .foot-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.tp .foot-legal { border-top: 1px solid rgba(255,255,255,.14); padding-top: 16px; font-size: 13px; color: #9aa7b8; }
+.tp .foot-legal small { display: block; margin-top: 2px; }
+@media (min-width: 760px) {
+  .tp .foot .wrap { grid-template-columns: 1fr auto; align-items: start; }
+  .tp .foot-legal { grid-column: 1 / -1; }
+}
