@@ -106,3 +106,38 @@ if (airlineList) {
     document.querySelectorAll("[data-airlines-line]").forEach(el => el.textContent = data.line);
   }).catch(() => {});   // keep the list in the page
 }
+
+// The forward address on the home page: the website is the Direct channel's app, so it gets a new
+// offer from the partner API through its own server (server/server.py holds the key), as a card
+// issuer's app does. The offer's code rides in the address, so a booking forwarded from here is traced
+// to this visit, with this page's utm_* tags and referring site, in the admin's Offers. Kept for the
+// visit, so a reload isn't a second offer. The plain address stays if the server can't be reached.
+const SITE_SERVER = "https://getthere-site-server.onrender.com";
+const forwardSpots = document.querySelectorAll("[data-forward]");
+if (forwardSpots.length) {
+  const show = offer => {
+    forwardSpots.forEach(el => el.textContent = offer.forward_to);
+    document.querySelectorAll("[data-forward-copy]").forEach(el => el.dataset.copy = offer.forward_to);
+    document.querySelectorAll("[data-forward-mailto]").forEach(el =>
+      el.href = "mailto:" + offer.forward_to + "?subject=My%20booking");
+    document.querySelectorAll("[data-reference]").forEach(el => el.textContent = offer.reference);
+    document.querySelectorAll("[data-reference-line]").forEach(el => el.hidden = false);
+  };
+  let kept = null;
+  try { kept = JSON.parse(sessionStorage.getItem("getthere.offer")); } catch (e) {}
+  if (kept && kept.forward_to) {
+    show(kept);
+  } else {
+    const tags = new URLSearchParams();
+    const page = new URLSearchParams(location.search);
+    ["utm_source", "utm_medium", "utm_campaign", "src"].forEach(k => { if (page.get(k)) tags.set(k, page.get(k)); });
+    if (document.referrer && new URL(document.referrer).host !== location.host) tags.set("ref", document.referrer);
+    fetch(SITE_SERVER + "/offer?" + tags, { method: "POST" })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(offer => {
+        if (!offer.forward_to) return;
+        show(offer);
+        try { sessionStorage.setItem("getthere.offer", JSON.stringify(offer)); } catch (e) {}
+      }).catch(() => {});
+  }
+}

@@ -13,6 +13,13 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
+The website is the Direct channel's app. Like a card issuer's app, it gets each visitor's forward address
+from GetThere's partner API (`GET /partner/v1/offer`), with the page's utm tags and referring site, so a booking
+forwarded from the site is traced to that visit in the admin's Offers. The partner key is a secret, so a small
+server holds it: `server/server.py` (standard library only), deployed on Render from `render.yaml` with the Direct
+channel's key from the admin in `GETTHERE_PARTNER_KEY`. `site.js` calls it when the home page opens; if it can't
+be reached, the page keeps the plain `quote@my.getthere.now` address.
+
 The website holds no terms. Every channel's terms are served by the app on that
 channel's own address, and the website's Terms links go to the Direct channel's page,
 https://my.getthere.now/terms.html, so the website and the app always show the same terms.

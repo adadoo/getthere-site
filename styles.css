@@ -84,6 +84,10 @@ p { margin: 0 0 14px; }
 .tile { background: #fff; border-radius: var(--r); padding: 26px; box-shadow: 0 0 0 1px var(--line); }
 section.tint .tile { box-shadow: none; }
 .num { width: 36px; height: 36px; border-radius: 50%; background: var(--soft); color: var(--accent); font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.card-rules { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0; margin: 20px 0 0; }
+.card-rules li { background: #fff; border-radius: var(--r); padding: 18px 26px; color: var(--muted); }
+.card-rules b { display: block; color: var(--ink); font-size: 18px; }
+@media (max-width: 860px) { .card-rules { grid-template-columns: 1fr; } }
 .big { font-size: 40px; font-weight: 800; letter-spacing: -1px; color: var(--accent); line-height: 1.1; }
 
 /* tabs for mail apps */

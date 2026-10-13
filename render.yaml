@@ -1,0 +1,20 @@
+# Render Blueprint for the website's own server (server/server.py): it holds the Direct channel's
+# partner key and hands the home page its forward address, as an issuer's app server would.
+# The pages themselves stay on GitHub Pages. New > Blueprint in Render, pick this repo.
+services:
+  - type: web
+    name: getthere-site-server
+    runtime: python
+    region: singapore
+    plan: starter                      # always on: the free plan sleeps, and the page would show the plain address
+    rootDir: server
+    buildCommand: "true"               # standard library only
+    startCommand: python3 server.py
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.1"
+      - key: GETTHERE_PARTNER_KEY      # the Direct channel's key, issued in the admin
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://getthere.now
