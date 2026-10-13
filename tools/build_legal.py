@@ -20,7 +20,7 @@ PASS = DATA["pass_name"]
 import datetime as _dt
 EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTIVE
 # The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12; the Underwriter
-# and its card issuing partner as recipients, 2026-10-13) take effect on this date, or on the terms' date
+# and its card issuing partner as recipients, a partner's pass as the Underwriter's policy, 2026-10-13) take effect on this date, or on the terms' date
 # when that is later.
 PRIVACY_CHANGED_ISO = "2026-10-13"
 EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO[:10], PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
@@ -89,7 +89,7 @@ def page(title, description, body, depth=1):
       <div><b style="color:#fff">Travellers</b><a href="{up}./#forward">Get a price</a><a href="{up}./#faq">FAQ</a></div>
       <div><b style="color:#fff">Legal</b><a href="https://my.getthere.now/terms.html">Terms</a><a href="{up}privacy.html">Privacy</a></div>
     </div>
-    <div class="legal">Rescue cards are funded by GetThere, or by the company your pass's terms name.<br>© 2026 GetThere.</div>
+    <div class="legal">Pre-loaded rescue cards are funded by the company your pass's terms name.<br>© 2026 GetThere.</div>
   </div>
 </footer>
 </body>
@@ -127,8 +127,10 @@ def privacy():
 
     <h2>1. Who we are</h2>
     <p>The {PASS} is sold by the company your pass's terms name as selling it and funding your pre-loaded rescue
-    cards: GetThere for passes from GetThere's own page, or another company, such as an insurer, on some partners'
-    pages. {OPERATOR} ("we", "us") runs the service for that company, including when it's offered under a partner's
+    cards. On a partner's page, that is the Underwriter, such as an insurer, and the pass is a policy it issues.
+    A page that is still in testing says it is a consumer demo: passes bought there are test passes and no real
+    money moves.
+    {OPERATOR} ("we", "us") runs the service for that company, including when it's offered under a partner's
     name, and is responsible for the personal data described here. The selling company is also responsible for the
     data it receives (section 4). Contact us at {help_}, or at the help address in any email we've sent you.</p>
 

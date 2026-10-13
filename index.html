@@ -30,7 +30,7 @@
 </style>
 <link rel="stylesheet" href="traveller.css">
 </head>
-<body class="tp">
+<body class="tp"><!-- Direct is in sandbox: a sandbox page is a consumer demo, as the app's banner says (brand.demo_notice). --><div class="test-banner" style="background:#fff4e0;color:#8a5a00;border-bottom:1px solid #f0d49b;padding:8px 16px;font-size:13px;font-weight:700;text-align:center">Consumer demo: GetThere does not currently represent a licensed insurer. A booking forwarded here gets a test pass, and no real money moves.</div>
 
 <header class="top"><div class="wrap">
   <a class="logo" href="./">Get<span>There</span></a>
@@ -88,7 +88,7 @@
         <!-- site.js fills in the reference that comes with the visit's own address, as on the app's offer page. -->
         <p class="ref" data-reference-line hidden>Your reference: <span data-reference></span></p>
       </div>
-      <p class="funded">Rescue cards are funded by GetThere.</p>
+      <p class="funded">Pre-loaded rescue cards are funded by GetThere.</p>
     </div>
     <div class="mock" aria-label="Example of the price email you get back">
       <div class="from"><b>GetThere</b> &lt;quote@my.getthere.now&gt;<br>Your Flight Delay Pass price</div>
@@ -98,7 +98,7 @@
       </div>
       <div data-plans>
         <div class="plan featured"><div class="name">Basic<span class="badge">RECOMMENDED</span></div><div class="note">Coverage set from your fare and flights</div></div>
-        <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
+        <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE RESCUE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
       </div>
       <p class="fine">Example only. Your price depends on your flights and your airfare.</p>
     </div>
@@ -115,7 +115,7 @@
       <li><span class="num">2</span><div><h3>Choose your plan and pay</h3>
         <p>Each plan puts a different amount of coverage on your rescue card. Pay by card, and you're done.</p></div></li>
       <li><span class="num">3</span><div><h3>Get your rescue card if you're delayed or cancelled</h3>
-        <p>We watch your flights from <span data-setting="watch_from_hours">24</span> hours before departure. Delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled? Your card arrives within minutes.</p></div></li>
+        <p>We watch your flights from <span data-setting="watch_from_hours">24</span> hours before departure. Delayed <span data-setting="trigger_hours">3</span>+ hours or cancelled? Your rescue card arrives within minutes.</p></div></li>
     </ol>
     <div class="diff">
       <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg>
@@ -133,7 +133,7 @@
     <p class="intro">Your quote shows each plan's amount, set from your fare and your flights, before you buy.</p>
     <div class="plans" data-plans>
       <div class="plan featured"><div class="name">Basic<span class="badge">RECOMMENDED</span></div><div class="note">Coverage set from your fare and flights</div></div>
-      <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
+      <div class="plan"><div class="name">Plus<span class="badge">MOST MONEY ON THE RESCUE CARD</span></div><div class="note">1.5x the coverage of Basic</div></div>
     </div>
     <p class="fine">Every rescue card works for <span data-setting="card_validity_hours">24</span> hours, for one purchase, at airlines and travel sites only.</p>
   </div>
@@ -142,8 +142,8 @@
 <section class="band">
   <div class="wrap">
     <p class="eyebrow">Airlines</p>
-    <h2>We read booking emails from</h2>
-    <p class="intro">Your rescue card works on any airline. We read bookings from these today, and learn a new airline or travel site the first time someone forwards one of its bookings.</p>
+    <h2>We read all flight booking emails</h2>
+    <p class="intro">Your rescue card works with any airline or travel agency. We have quoted Flight Delay Passes for flight bookings from these travel sites so far, but we learn a new airline or travel site the first time someone forwards one of its bookings.</p>
     <!-- Filled from https://my.getthere.now/airlines.json (site.js); this list shows if that can't be reached. -->
     <div class="airlines" data-airlines>
       <span class="airline"><span class="code">AI</span>Air India</span>
@@ -170,8 +170,8 @@
       <p>Ask the airline for any refund or compensation it owes you, as you normally would. The rescue card comes on top of that.</p>
     </details>
     <details>
-      <summary>Spend less than the card holds?</summary>
-      <p>The card is for one purchase and is never paid out as cash. Rescue card money is spent first. Any of your own money left over after your purchase, or when the card expires, is refunded to the card you paid with. Rescue card money you don't spend isn't paid out.</p>
+      <summary>Spend less than the rescue card holds?</summary>
+      <p>The rescue card is for one purchase and is never paid out as cash. Rescue card money is spent first. Any of your top-up money left over after your purchase, or when the rescue card expires, is refunded to the card you paid with. Rescue card money you don't spend isn't paid out.</p>
     </details>
     <details>
       <summary>How much does it cost?</summary>
@@ -187,7 +187,7 @@
     </details>
     <details>
       <summary>How do I get the rescue card?</summary>
-      <p>We send you a link to your rescue card on WhatsApp and by email as soon as the delay is confirmed. Use it online or by phone, and book everything you need for the rest of the trip in that one purchase. If the new flight costs more than the card holds, you can pay the difference yourself.</p>
+      <p>We send you a link to your rescue card on WhatsApp and by email as soon as the delay is confirmed. Use it with any airline or travel agency, and book everything you need for the rest of the trip in that one purchase. If the new flight costs more than the rescue card holds, you can pay the difference yourself.</p>
     </details>
     <details>
       <summary>Which bookings can I forward?</summary>
@@ -212,7 +212,7 @@
     <a href="privacy.html">Privacy Notice</a>
     <a href="issuers.html">For card issuers</a>
   </div>
-  <div class="foot-legal">Rescue cards are funded by GetThere.<small>&copy; 2026 GetThere.</small></div>
+  <div class="foot-legal">Pre-loaded rescue cards are funded by GetThere.<small>&copy; 2026 GetThere.</small></div>
 </div></footer>
 
 <script src="site.js"></script>
