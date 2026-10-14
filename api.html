@@ -224,7 +224,9 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
       <tr><td><code>referrer_url</code></td><td>When you show the offer on a web page: the address the visitor came
         from (the page's <code>document.referrer</code>). We count it by site.</td></tr>
       <tr><td><code>opened</code></td><td><code>true</code> when you show <code>forward_to</code> on your own page or
-        screen straight away, rather than linking to <code>offer_url</code>. The offer then counts as opened now.</td></tr>
+        screen straight away, rather than linking to <code>offer_url</code>. The offer then counts as opened now. Show it
+        as our offer page does: the address without its code (<code>quote@&lt;issuer&gt;.getthere.now</code>), easier to
+        read, with a copy button that copies the whole <code>forward_to</code>.</td></tr>
     </table>
 
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/push-receipts</h3></div>

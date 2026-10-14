@@ -160,9 +160,16 @@ function showPlans(s) {
 const SITE_SERVER = "https://getthere-site-server.onrender.com";
 const forwardSpots = document.querySelectorAll("[data-forward]");
 if (forwardSpots.length) {
+  // The page shows the plain quote@ address, which is easier on the eye; only the copy button carries the
+  // +code (Dadoo, 2026-10-14). Copying the shown address by hand copies the full one too. Typed by hand,
+  // the plain address still gets a price, counted as a plain forward rather than to this visit.
+  let full = null;
+  forwardSpots.forEach(el => el.addEventListener("copy", e => {
+    if (!full || getSelection().toString().trim() !== el.textContent.trim()) return;
+    e.clipboardData.setData("text/plain", full); e.preventDefault();
+  }));
   const show = offer => {
-    const [local, host] = offer.forward_to.split("@");     // a line may break after the @, as on the offer page
-    forwardSpots.forEach(el => el.replaceChildren(local + "@", document.createElement("wbr"), host));
+    full = offer.forward_to;
     document.querySelectorAll("[data-forward-copy]").forEach(el => el.dataset.copy = offer.forward_to);
     document.querySelectorAll("[data-reference]").forEach(el => el.textContent = offer.reference);
     document.querySelectorAll("[data-reference-line]").forEach(el => el.hidden = false);
