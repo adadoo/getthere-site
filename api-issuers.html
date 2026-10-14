@@ -188,8 +188,10 @@
         address and go to their email. Use it as your push's destination.</td></tr>
       <tr><td><code>offer_url</code></td><td>The full offer page, with how it works and FAQs.</td><td class="why">For a
         browser, an email or a banner, where there's room to explain more.</td></tr>
-      <tr><td><code>forward_to</code></td><td>The cardholder's forwarding address for this offer. With a test key it starts
-        <code>test+</code>.</td><td class="why">Only this full address carries the code. If you show it on your own screen,
+      <tr><td><code>forward_to</code></td><td>The cardholder's forwarding address for this offer,
+        <code>quote+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>. While your partner is in test mode, that address makes
+        test passes. Once you're live, a test key gets <code>test+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>
+        instead, so test bookings still make test passes.</td><td class="why">Only this full address carries the code. If you show it on your own screen,
         follow <a href="#show">the rules below</a>.</td></tr>
       <tr><td><code>product_name</code></td><td>The product's name, to show.</td><td class="why">Use it as is.</td></tr>
       <tr><td><code>reference</code></td><td>What our pages show the cardholder as "Your reference".</td><td class="why">Quote
@@ -202,7 +204,9 @@
     <h2 id="show">5. Showing the offer in your app</h2>
 <pre><code>&lt;!-- In a web view, open merchandising_url full screen. Or in a page: --&gt;
 &lt;iframe src="https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm" title="Flight Delay Pass"
+        allow="clipboard-write"
         style="width:100%;max-width:560px;border:0;height:640px"&gt;&lt;/iframe&gt;</code></pre>
+    <p>Keep <code>allow="clipboard-write"</code>: without it, browsers block the copy button inside a frame.</p>
     <p>The page shows the offer, the cardholder's address with a copy button, and three steps. It needs no key. Opening it
     counts the offer as opened. The cardholder copies the address, switches to their email, and forwards their booking.</p>
     <div class="callout must"><b>The address shown can't be copied on its own.</b> The page shows the plain
@@ -256,7 +260,7 @@ Idempotency-Key: 5b1f…
     <h2 id="receipts">7. <code>POST /partner/v1/push-receipts</code> <span class="opt">optional</span></h2>
     <p class="meta"><b>You call GetThere</b> · in batches, whenever you have them</p>
 <pre><code>{"receipts": [
-  {"push_id": "5b1f…", "status": "delivered", "at": "2026-11-20T07:41:05Z"},
+  {"push_id": "5b1f…", "status": "delivered", "at": "2026-11-20T07:41:05+00:00"},
   {"push_id": "9c2e…", "status": "opted_out"}
 ]}</code></pre>
     <table class="fields">
@@ -267,8 +271,8 @@ Idempotency-Key: 5b1f…
         <code>not_delivered</code> or <code>opted_out</code>.</td><td class="why"><code>opted_out</code> stops every further push
         to that cardholder, so you honour their choice. <code>not_delivered</code> tells us WhatsApp and email are the only
         way to reach them.</td></tr>
-      <tr><td><code>at</code> <span class="optl">optional</span></td><td>When, ISO with a time zone. Defaults to when we receive
-        it.</td><td class="why">Shows how quickly the rescue card alert reached them.</td></tr>
+      <tr><td><code>at</code> <span class="optl">optional</span></td><td>When, ISO with a time zone (<code>Z</code> or an
+        offset). Defaults to when we receive it. A time we can't read gives <code>unknown_push</code>.</td><td class="why">Shows how quickly the rescue card alert reached them.</td></tr>
     </table>
 <pre><code>200 {"results": [{"push_id": "5b1f…", "result": "ok"}, {"push_id": "9c2e…", "result": "ok"}]}</code></pre>
     <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not yours, or the other mode). A
@@ -281,19 +285,22 @@ Idempotency-Key: 5b1f…
 <pre><code>POST &lt;your API&gt;/v1/getthere/purchase-match
 Authorization: Bearer &lt;the token you gave us&gt;
 
-{"email": "mia@example.com", "airline": "QF", "amount": "1550.00", "currency": "AUD",
- "booked_after": "2026-11-13T00:00:00Z"}</code></pre>
+{"email": "mia@example.com", "airline": "QF", "seller": null, "amount": "1550.00", "currency": "AUD",
+ "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
 <pre><code>200 {"match": true}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>email</code></td><td>The email the booking was forwarded from.</td><td class="why">How you find the
         cardholder. Not found is <code>false</code>.</td></tr>
-      <tr><td><code>airline</code></td><td>The airline that charged, 2-letter code.</td><td class="why">Match on the
-        merchant.</td></tr>
+      <tr><td><code>airline</code></td><td>The airline whose flights were bought, 2-letter code.</td><td class="why">Match
+        on the merchant when <code>seller</code> is <code>null</code>.</td></tr>
+      <tr><td><code>seller</code></td><td>Who charged the card when it wasn't the airline, such as a travel agency
+        (<code>"Trip.com"</code>), or <code>null</code>.</td><td class="why">Then the charge to look for is from the seller,
+        not the airline.</td></tr>
       <tr><td><code>amount</code>, <code>currency</code></td><td>The fare on the booking.</td><td class="why">Answer
         <code>true</code> within 1% of it, so currency rounding doesn't cause a no.</td></tr>
-      <tr><td><code>booked_after</code></td><td>The earliest the charge could have been.</td><td class="why">Stops an old charge
-        matching a new booking.</td></tr>
+      <tr><td><code>booked_after</code></td><td>The earliest charge to look at: a year before we ask.</td><td
+        class="why">Keeps the search to recent charges.</td></tr>
     </table>
     <p>We wait up to 5 seconds. A timeout or error never blocks the cardholder: the booking goes through our other checks.</p>
 
@@ -311,7 +318,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
       <tr><td><code>GET /offer</code> and open <code>merchandising_url</code> in your app</td><td>The short page, in your
         colours, with a test banner</td><td class="why">It fits your screen.</td></tr>
       <tr><td>Long-press and try to select the address shown</td><td>Nothing selects. Copy gives
-        <code>test+&lt;code&gt;@…</code></td><td class="why">The code can't be lost.</td></tr>
+        <code>quote+&lt;code&gt;@…</code> (<code>test+&lt;code&gt;@…</code> once you're live)</td><td class="why">The code can't be lost.</td></tr>
       <tr><td>Forward a real booking email to the copied address</td><td>A "[Test]" price email within minutes</td><td
         class="why">The journey works end to end.</td></tr>
       <tr><td>Buy a plan with the test payment page</td><td>A <code>pass_purchased</code> push, a <code>pass.issued</code>

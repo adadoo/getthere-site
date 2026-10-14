@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>API for travel sites · GetThere</title>
-<meta name="description" content="Everything a travel site's developers need to sell the Flight Delay Pass after booking or in their own checkout: pick a path, then every call, field, error and event.">
+<meta name="description" content="Everything a travel site's developers need to sell the Flight Delay Pass on their booking page, in their own checkout or in their booking email: pick a path, then every call, field, error and event.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/api-travel-sites.html">
 <meta property="og:title" content="GetThere">
-<meta property="og:description" content="Everything a travel site's developers need to sell the Flight Delay Pass after booking or in their own checkout: pick a path, then every call, field, error and event.">
+<meta property="og:description" content="Everything a travel site's developers need to sell the Flight Delay Pass on their booking page, in their own checkout or in their booking email: pick a path, then every call, field, error and event.">
 <meta property="og:image" content="https://getthere.now/images/og.png?v=2">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GetThere">
-<meta name="twitter:description" content="Everything a travel site's developers need to sell the Flight Delay Pass after booking or in their own checkout: pick a path, then every call, field, error and event.">
+<meta name="twitter:description" content="Everything a travel site's developers need to sell the Flight Delay Pass on their booking page, in their own checkout or in their booking email: pick a path, then every call, field, error and event.">
 <meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
@@ -53,10 +53,9 @@
 
     <ul class="toc">
       <li><a href="#choose">1. Choose your path</a></li>
-      <li><a href="#path-a">2a. After booking, our widget</a></li>
-      <li><a href="#path-b">2b. After booking, your own design</a></li>
-      <li><a href="#path-c">2c. In your checkout, our widget</a></li>
-      <li><a href="#path-d">2d. In your checkout, your own design</a></li>
+      <li><a href="#path-page">2a. On your booking page</a></li>
+      <li><a href="#path-inline">2b. In-line, in your own checkout</a></li>
+      <li><a href="#path-email">2c. In your booking email</a></li>
       <li><a href="#quotes">3. POST /quotes</a></li>
       <li><a href="#widget">4. The widget (merchandising_url)</a></li>
       <li><a href="#checkouts">5. POST /checkouts</a></li>
@@ -64,78 +63,87 @@
       <li><a href="#policies">7. POST /policies</a></li>
       <li><a href="#changes">8. Changes, cancellations and refunds</a></li>
       <li><a href="#events">9. Funnel events (POST /events)</a></li>
-      <li><a href="#webhooks">10. Webhooks</a></li>
-      <li><a href="#merchant-ids">11. Your merchant IDs</a></li>
-      <li><a href="#testing">12. Test cases</a></li>
-      <li><a href="#go-live">13. Go-live checklist</a></li>
+      <li><a href="#forwarding">10. Your forwarding address</a></li>
+      <li><a href="#webhooks">11. Webhooks</a></li>
+      <li><a href="#merchant-ids">12. Your merchant IDs</a></li>
+      <li><a href="#testing">13. Test cases</a></li>
+      <li><a href="#go-live">14. Go-live checklist</a></li>
     </ul>
 
     <h2 id="choose">1. Choose your path</h2>
-    <p>Two decisions shape everything you build. Make them first. You can start with one path and move to another later
-    on the same keys.</p>
+    <p>Every quote you ask for says where you'll show it, in its <code>placement</code>. The placement decides how the
+    pass is sold, so it's the first thing to choose. There's no setting on our side to switch: you can use one
+    placement, two or all three, on the same keys, and add one later.</p>
 
     <div class="decide">
-      <h3>Decision 1: when do you offer the pass?</h3>
-      <p><b>After booking.</b> The flight is booked and paid for. On your confirmation page (or in your confirmation email)
-      you offer the pass, and the customer pays for it on GetThere's checkout, in your colours. You take no payment and
-      settle nothing. This is the quickest to build.</p>
-      <p><b>In your checkout (in-line).</b> The pass is an add-on in your own flight checkout, next to seats and bags. The
-      customer pays you once for both. When the airline confirms the booking you tell us, and we issue the pass at once. You
-      settle with GetThere monthly. More customers buy when the offer comes before payment, but you build more. We switch
-      your partner to in-line checkout for you.</p>
+      <h3>Where do you show the plans?</h3>
+      <p><b><code>booking-page</code>: on your confirmation page.</b> The flight is booked and paid for. You show the plans
+      on the page that confirms it. When the customer chooses a plan, GetThere's checkout opens, in your colours, and they
+      pay there. You take no payment and settle nothing. This is the quickest to build.</p>
+      <p><b><code>in-line</code>: in your own checkout, before payment.</b> The pass is an add-on in your flight checkout,
+      next to seats and bags. You quote the cart, the customer pays you once for both, and when the airline confirms the
+      booking you create the pass with <code>POST /policies</code>. You settle with GetThere monthly. More customers buy
+      when the offer comes before payment, but you build more.</p>
+      <p><b><code>booking-email</code>: in your own booking confirmation email.</b> The plans go in the email you already
+      send, like an ad. A plan's link always opens GetThere's checkout, as on the booking page. Email apps don't run
+      frames or scripts, so here you link to the plans rather than embed them (<a href="#path-email">2c</a>).</p>
     </div>
     <div class="decide">
-      <h3>Decision 2: whose design shows the plans?</h3>
-      <p><b>Our widget.</b> You put the <code>merchandising_url</code> from the quote in an iframe. It shows the plans in your
-      colours, font and layout, which we set with you in the GetThere admin. It records what the customer saw and picked for
-      you, and keeps the wording in line with the terms.</p>
+      <h3>Whose design shows the plans?</h3>
+      <p><b>Our widget.</b> You put the quote's <code>merchandising_url</code> in an iframe, or link to it. It shows the
+      plans in your colours and font. Each placement has its own widget design, which you set with us in the GetThere
+      admin: layout, background, button style, width, and whether to show the logo, intro, flight and badges. All three
+      start out identical. The widget records what the customer saw and picked for you, and keeps the wording in line with
+      the terms.</p>
       <p><b>Your own design.</b> You draw the plans yourself from the quote's <code>offers</code>. It looks native, but you
       must show the required wording (<a href="#own-ui-rules">see the rules</a>) and send us the funnel events the widget
       would have sent.</p>
     </div>
 
     <table class="fields">
-      <tr><th></th><th>After booking</th><th>In your checkout</th></tr>
-      <tr><td>Who takes the payment</td><td>GetThere's checkout, for the Underwriter</td><td>You, in your flight checkout</td></tr>
-      <tr><td>Booking reference at quote time</td><td>Required, the booking exists</td><td>Not needed, you quote the cart</td></tr>
-      <tr><td>Customer details you send</td><td>Email, plus anything that fills in the checkout</td><td>Email at quote. Name, date of birth and address when you create the pass</td></tr>
-      <tr><td>WhatsApp number</td><td>The customer confirms it at our checkout</td><td>The customer adds it after buying, from our confirmation email</td></tr>
-      <tr><td>Calls with our widget</td><td><code>POST /quotes</code></td><td><code>POST /quotes</code>, <code>POST /policies</code></td></tr>
-      <tr><td>Calls with your own design</td><td><code>POST /quotes</code>, <code>POST /checkouts</code>, <code>POST /events</code></td><td><code>POST /quotes</code>, <code>POST /events</code>, <code>POST /policies</code></td></tr>
-      <tr><td>Changes and refunds</td><td>The customer asks us</td><td>You tell us: <code>/changes</code> and <code>/cancel</code></td></tr>
-      <tr><td>Settlement</td><td>None</td><td>A monthly statement</td></tr>
+      <tr><th></th><th><code>booking-page</code></th><th><code>in-line</code></th><th><code>booking-email</code></th></tr>
+      <tr><td>Where the customer sees the plans</td><td>Your confirmation page</td><td>Your checkout, before payment</td><td>Your confirmation email</td></tr>
+      <tr><td><code>booking_reference</code> at quote time</td><td>Required</td><td>Ignored: you quote the cart</td><td>Required</td></tr>
+      <tr><td>What choosing a plan does</td><td>Opens GetThere's checkout</td><td>The widget tells your page, and you add it to your cart</td><td>Opens GetThere's checkout</td></tr>
+      <tr><td>Who takes the payment</td><td>GetThere's checkout, for the Underwriter</td><td>You, in your flight checkout</td><td>GetThere's checkout, for the Underwriter</td></tr>
+      <tr><td>Customer details you send</td><td>Email and country of residence, plus anything that fills in the checkout</td><td>Email and country of residence at quote. Name, date of birth and address when you create the pass</td><td>As for the booking page</td></tr>
+      <tr><td>WhatsApp number</td><td>The customer confirms it at our checkout</td><td>The customer adds it after buying, from our confirmation email</td><td>The customer confirms it at our checkout</td></tr>
+      <tr><td>Calls with our widget</td><td><code>POST /quotes</code></td><td><code>POST /quotes</code>, <code>POST /policies</code></td><td><code>POST /quotes</code></td></tr>
+      <tr><td>Calls with your own design</td><td><code>POST /quotes</code>, <code>POST /checkouts</code>, <code>POST /events</code></td><td><code>POST /quotes</code>, <code>POST /events</code>, <code>POST /policies</code></td><td><code>POST /quotes</code>, <code>POST /checkouts</code></td></tr>
+      <tr><td>Changes and refunds</td><td>The customer asks us</td><td>You tell us: <code>/changes</code> and <code>/cancel</code></td><td>The customer asks us</td></tr>
+      <tr><td>Settlement</td><td>None</td><td>A monthly statement</td><td>None</td></tr>
     </table>
+    <p>Add <code>placement_detail</code> to say where exactly, like <code>"cart"</code> or <code>"seat-selection"</code>.
+    Your funnel is split by placement and by placement detail, so you can compare where the pass sells best.</p>
 
-    <h2 id="path-a">2a. After booking, with our widget</h2>
+    <h2 id="path-page">2a. On your booking page</h2>
     <ol class="steps">
       <li><b>The airline confirms the booking.</b> From your server, call <a href="#quotes"><code>POST /partner/v1/quotes</code></a>
-      with the booking reference, flights, fare, travellers and the booker's email. Add <code>placement: "post_booking"</code>.</li>
+      with <code>placement: "booking-page"</code>, the booking reference, flights, fare, travellers, and the booker's email
+      and <code>residence_country</code>.</li>
       <li><b>If <code>status</code> is <code>quoted</code></b>, put <code>merchandising_url</code> in an iframe on your
-      confirmation page, or link to it from your confirmation email. Any other status: show nothing.</li>
-      <li><b>The customer picks a plan.</b> The widget opens GetThere's checkout, filled in with what you sent, in the full
-      window. They confirm their details and WhatsApp number, tick the boxes and pay.</li>
+      confirmation page. Any other status: show nothing.</li>
+      <li><b>The customer chooses a plan.</b> The widget opens GetThere's checkout, filled in with what you sent, in the full
+      window. They confirm their details and WhatsApp number, tick the boxes and pay. The price shown includes the tax for
+      the country they live in.</li>
       <li><b>Optional:</b> set a <a href="#webhooks">webhook address</a> to hear about the pass, its rescue card and any bounce.</li>
     </ol>
     <p>That's the whole integration: one call and one iframe.</p>
+    <p><b>With your own design:</b> draw the plans from <code>offers</code>, following <a href="#own-ui-rules">the rules
+    for your own design</a>, and send <code>shown</code> to <a href="#events"><code>POST /events</code></a> when they're on
+    screen. When the customer chooses one, send <code>selected</code>, call
+    <a href="#checkouts"><code>POST /partner/v1/checkouts</code></a> with its <code>offer_id</code>, and send the customer
+    to the <code>checkout_url</code> that comes back.</p>
 
-    <h2 id="path-b">2b. After booking, with your own design</h2>
+    <h2 id="path-inline">2b. In-line, in your own checkout</h2>
     <ol class="steps">
-      <li>Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> as in 2a.</li>
-      <li>Draw the plans from <code>offers</code>, following <a href="#own-ui-rules">the rules for your own design</a>.
-      Send <code>shown</code> to <a href="#events"><code>POST /events</code></a> when they're on screen.</li>
-      <li>The customer picks one: send <code>selected</code>, then call <a href="#checkouts"><code>POST /partner/v1/checkouts</code></a>
-      with its <code>offer_id</code>, and send the customer to the <code>checkout_url</code> that comes back.</li>
-    </ol>
-
-    <h2 id="path-c">2c. In your checkout, with our widget</h2>
-    <ol class="steps">
-      <li><b>The customer's cart has flights in it</b> (on the cart or checkout page). Call
-      <a href="#quotes"><code>POST /partner/v1/quotes</code></a> with no <code>booking_reference</code>, your cart or session id
-      as <code>session_id</code>, and <code>placement</code>. Quote again whenever the flights, travellers or fare change:
-      the earlier offers are withdrawn.</li>
-      <li><b>Frame <code>merchandising_url</code></b> where your add-ons are. When the customer picks a plan, the widget sends
-      your page a <a href="#widget"><code>getthere:plan</code> message</a> with the <code>offer_id</code> and fee. Add it to your
-      cart at that fee.</li>
+      <li><b>The customer's cart has flights in it.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> with
+      <code>placement: "in-line"</code>, your cart or session id as <code>session_id</code>, the flights, fare, travellers,
+      and the booker's email and <code>residence_country</code>. There's no booking reference yet: if you send one, it's
+      ignored. Quote again whenever the flights, travellers or fare change: the session's earlier offers are withdrawn.</li>
+      <li><b>Frame <code>merchandising_url</code></b> where your add-ons are. When the customer chooses a plan, the widget
+      sends your page a <a href="#widget"><code>getthere:plan</code> message</a> with the <code>offer_id</code> and fee. Add
+      it to your cart at that fee.</li>
       <li><b>At payment</b>, show the two consent boxes (<a href="#consents">wording</a>) next to the add-on and
       record the time the customer paid (<code>accepted_at</code>). Collect the buyer's name, date of birth and address if you
       don't already.</li>
@@ -146,40 +154,55 @@
       <li><b>Later changes:</b> tell us with <a href="#changes"><code>/changes</code> or <code>/cancel</code></a>.</li>
       <li><b>Each month</b>, pay the statement we send you.</li>
     </ol>
-
-    <h2 id="path-d">2d. In your checkout, with your own design</h2>
-    <p>As 2c, but you draw the plans from <code>offers</code> and must send every funnel event yourself:
+    <p><b>With your own design:</b> draw the plans from <code>offers</code> and send every funnel event yourself:
     <code>shown</code> when the plans are on screen, <code>selected</code> when one is added, <code>removed</code> when it's
     taken out, and <code>abandoned</code> when the cart is given up. <a href="#events">Here's why that matters.</a> Follow
     <a href="#own-ui-rules">the rules for your own design</a>. If your cart can't hold our <code>offer_id</code>, call
     <a href="#lookups"><code>GET /quotes?session_id=</code></a> at payment to get it back.</p>
 
+    <h2 id="path-email">2c. In your booking email</h2>
+    <ol class="steps">
+      <li><b>The airline confirms the booking.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> as in 2a,
+      with <code>placement: "booking-email"</code>.</li>
+      <li><b>If <code>status</code> is <code>quoted</code></b>, add the plans to your confirmation email. Any other status:
+      leave them out.</li>
+      <li><b>Link, don't embed.</b> Email apps don't run iframes or scripts. Either add a button that links to
+      <code>merchandising_url</code>, which opens the plans in a browser in your booking-email widget design, or draw the
+      plans yourself and link each one to its own checkout: call <a href="#checkouts"><code>POST /partner/v1/checkouts</code></a>
+      once per offer when you build the email, and use each <code>checkout_url</code>.</li>
+      <li><b>The customer chooses a plan.</b> Either way, it opens GetThere's checkout, and they pay there.</li>
+    </ol>
+    <p>Send the email soon after you quote. Offers can be bought until their <code>expires_at</code> (12 hours by default,
+    and never later than 48 hours before the first flight). After that the page says the prices have expired. When you link
+    <code>merchandising_url</code>, the page records <code>shown</code> and <code>selected</code> as the customer opens it
+    and chooses. When you draw the plans yourself in an email, you can't tell when they're seen, so no funnel events are
+    expected.</p>
+
     <h3 id="own-ui-rules">Rules for your own design</h3>
     <ul>
       <li>Show each plan's <code>label</code>, <code>fee</code> with its <code>currency</code>, and
       <code>rescue_card_limit</code> ("Pre-loaded rescue card with SGD 984.96").</li>
-      <li>Show the <code>fee</code> as it comes, with "incl. tax": it always includes the tax for where the customer lives
-      (0% where none is added). No breakdown is needed; <code>fee_before_tax</code> and <code>tax</code> are for your
-      accounts.</li>
+      <li>Show the <code>fee</code> as it comes, with "incl. tax", as the widget does: it always includes the tax for the
+      <code>residence_country</code> you sent (0% where none is added). No breakdown is needed; <code>fee_before_tax</code>
+      and <code>tax</code> are for your accounts.</li>
       <li>Say what triggers the rescue card, using <code>trigger_minutes</code> ("delayed 3+ hours or cancelled"), and that it
       works for one purchase, for new flights, on your site.</li>
       <li>Link to <code>terms_url</code>.</li>
-      <li>Put the <code>featured</code> plan first, or mark it, as the widget does. We record that you were told which plan
-      was featured.</li>
+      <li>Put the <code>featured</code> plan first, or mark it, as the widget does. We record which plan was featured on each
+      quote.</li>
       <li>Don't describe the pass in your own words beyond this. The words used to sell it are regulated, and we agree them
       with the Underwriter.</li>
     </ul>
 
     <h2 id="quotes">3. <code>POST /partner/v1/quotes</code></h2>
-    <p class="meta"><b>Every path</b> · after booking: once the airline confirms · in your checkout: whenever the cart's
-    flights, travellers or fare change</p>
-    <p>Prices the booking or cart. No email goes to the customer. The same booking (or the same cart) quoted again returns
-    the same open offers. A flight we've never priced before can take up to 10 seconds, so call it in the background
-    rather than holding a page on it.</p>
+    <p class="meta"><b>Every path</b> · <code>booking-page</code> and <code>booking-email</code>: once the airline confirms
+    · <code>in-line</code>: whenever the cart's flights, travellers or fare change</p>
+    <p>Prices the booking or cart. No email goes to the customer. A flight we've never priced before can take up to 10
+    seconds, so call it in the background rather than holding a page on it.</p>
 <pre><code>{
-  "booking_reference": "K7QX2M",
+  "placement": "in-line",
+  "placement_detail": "seat-selection",
   "session_id": "cart-77120",
-  "placement": "checkout",
   "utm_source": "app", "utm_medium": "checkout", "utm_campaign": "nov-sale",
   "ab_variant": "pass-above-seats",
   "airline": "SQ",
@@ -209,46 +232,54 @@
      "arrival":   {"airport": "SIN", "date": "2026-11-27", "time": "15:20"}}
   ]
 }</code></pre>
+    <p>For <code>booking-page</code> or <code>booking-email</code>, add <code>"booking_reference": "K7QX2M"</code>.</p>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
-      <tr><td><code>booking_reference</code><br><span class="req">After booking</span><span class="optl"> · leave out in checkout</span></td>
+      <tr><td><code>placement</code> <span class="req">required</span></td><td><code>booking-page</code>,
+        <code>in-line</code> or <code>booking-email</code>. Missing or anything else is a <code>422</code>.</td><td
+        class="why">Decides how the offers are sold: on GetThere's checkout (<code>booking-page</code>,
+        <code>booking-email</code>) or in yours (<code>in-line</code>, with <code>POST /policies</code>). It also picks
+        the widget design, and splits your funnel.</td></tr>
+      <tr><td><code>placement_detail</code> <span class="optl">optional</span></td><td>Your own words for where exactly,
+        up to 64 characters, like <code>cart</code> or <code>seat-selection</code>. Stored and sent back with the
+        quote.</td><td class="why">Your funnel is split by it, so you can compare two spots within one placement.</td></tr>
+      <tr><td><code>booking_reference</code><br><span class="req">required for booking-page and booking-email</span><span
+        class="optl"> · ignored for in-line</span></td>
         <td>The airline's booking reference (PNR), or yours.</td>
-        <td class="why">One pass per booking: it stops the same trip being sold twice. In your checkout there's no reference
-        yet, so you send each flight's when you create the pass.</td></tr>
+        <td class="why">One pass per booking: it stops the same trip being sold twice. In-line there's no reference yet, so
+        you send each flight's when you create the pass.</td></tr>
       <tr><td><code>session_id</code> <span class="optl">optional</span></td><td>Your cart or session id, up to 200
         characters.</td><td class="why">Quoting the same session again withdraws its older offers, so a changed cart can
         never be sold at an old price. It also lets you fetch the latest quote if you lose the <code>offer_id</code>, and send
         funnel events by session.</td></tr>
-      <tr><td><code>placement</code> <span class="optl">optional</span></td><td><code>cart</code>, <code>checkout</code> or
-        <code>post_booking</code>.</td><td class="why">The funnel is split by it, so you can see where the pass sells best on
-        your site.</td></tr>
       <tr><td><code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code> <span class="optl">optional</span></td>
         <td>Your own tags, up to 100 characters each.</td><td class="why">Tie sales to your campaigns and channels.</td></tr>
       <tr><td><code>ab_variant</code> <span class="optl">optional</span></td><td>The name of the variant you showed in your own
-        A/B test.</td><td class="why">The funnel is split by it, so you read your experiment's result straight from our
-        numbers. It has nothing to do with test or live keys.</td></tr>
+        A/B test, up to 100 characters.</td><td class="why">The funnel is split by it, so you read your experiment's result
+        straight from our numbers. It has nothing to do with test or live keys.</td></tr>
       <tr><td><code>airline</code> <span class="optl">optional</span></td><td>The ticketing airline, 2-letter code. Defaults to
         the first flight's airline.</td><td class="why">Booking references are unique per airline.</td></tr>
       <tr><td><code>currency</code>, <code>total_paid</code> <span class="req">required</span></td><td>What the customer pays
         for the flights, all travellers, as a 3-letter currency and a number. <code>base_fare</code> and <code>taxes</code>
         are optional.</td><td class="why">The rescue card's limit is set from the fare, so it's enough to buy comparable new
         seats. Plans and fees are in this currency.</td></tr>
-      <tr><td><code>paid_with_miles</code> <span class="optl">optional</span></td><td><code>true</code> for an award
-        booking.</td><td class="why">Award bookings aren't offered a pass (declined with <code>paid_with_miles</code>).</td></tr>
+      <tr><td><code>paid_with_miles</code> <span class="optl">optional</span></td><td><code>true</code> for a booking paid
+        with any miles or points.</td><td class="why">These bookings aren't offered a pass (declined with
+        <code>paid_with_miles</code>).</td></tr>
       <tr><td><code>customer.email</code> <span class="req">required</span></td><td>The person booking. They buy the pass and
         hold the rescue card, and needn't be travelling.</td><td class="why">The pass confirmation and the rescue card are
         sent here. It must be an inbox they read.</td></tr>
       <tr><td><code>customer.residence_country</code> <span class="req">required</span></td><td>Where the customer lives, as
-        a 2-letter country code. You know it from the booking; a missing or malformed code is a <code>422</code>.</td><td
-        class="why">Every fee includes that country's tax from the underwriter's country table, so the price you show is the
-        price they pay. With a live key, a country the underwriter doesn't sell in is declined (<code>not_on_sale</code>), so
-        you never sell a pass that can't pay out.</td></tr>
+        a 2-letter country code. Missing or malformed is a <code>422</code>.</td><td class="why">Every fee includes that
+        country's tax from the Underwriter's country table, so the price you show is the price they pay, at your checkout
+        or ours. With a live key, a country the Underwriter doesn't sell in is declined (<code>not_on_sale</code>), so you
+        never sell a pass that can't pay out.</td></tr>
       <tr><td><code>customer.first_name</code>, <code>last_name</code>, <code>date_of_birth</code>, <code>phone</code>,
         <code>address</code> <span class="optl">optional</span></td><td>Anything else you know about the booker. Date as
         YYYY-MM-DD, phone starting with +, address with <code>line1</code>, <code>line2</code>, <code>city</code>,
-        <code>state</code>, <code>postcode</code> and <code>country</code>.</td><td class="why">After booking, these fill in our
-        checkout, so the customer only checks them and pays: fewer fields, more sales. The response tells you which were
-        used.</td></tr>
+        <code>state</code>, <code>postcode</code> and <code>country</code>.</td><td class="why">On GetThere's checkout these
+        are filled in, so the customer only checks them and pays: fewer fields, more sales. The response tells you which
+        were used. The checkout's country is always <code>residence_country</code>.</td></tr>
       <tr><td><code>passengers</code> <span class="req">required</span></td><td>Everyone travelling, as
         <code>{"title", "first_name", "last_name"}</code> or a name.</td><td class="why">Every traveller on the booking is
         watched, and the price depends on how many there are.</td></tr>
@@ -258,11 +289,17 @@
         that airport) and optional <code>terminal</code>.</td><td class="why">These are the flights we track and price.
         Local times as on the ticket avoid time zone mistakes, and a wrong date means the wrong flight is tracked.</td></tr>
     </table>
+    <p><b>Quoting again.</b> The same booking (or the same cart) quoted again returns the same open offers, and they take
+    the <code>placement</code>, <code>placement_detail</code> and tags of the latest call. So if you show one booking on
+    your confirmation page and in your email, the second quote's placement is the one your funnel counts and the one whose
+    widget design <code>merchandising_url</code> shows.</p>
 <pre><code>200
 {
   "status": "quoted",
   "quote_id": "0b9e…",
   "session_id": "cart-77120",
+  "placement": "in-line",
+  "placement_detail": "seat-selection",
   "reference": "Q-0B9E41C2",
   "merchandising_url": "https://&lt;you&gt;.getthere.now/quote/q4LT…",
   "product_name": "Flight Delay Pass",
@@ -275,10 +312,10 @@
   "offers": [
     {"offer_id": "564fcce8-…", "plan": "basic", "label": "Basic", "featured": true,
      "fee": 34.01, "fee_before_tax": 31.20, "tax": 2.81, "tax_label": "GST 9%",
-     "rescue_card_limit": 656.64, "currency": "SGD", "expires_at": "2026-10-14T20:43:30Z"},
+     "rescue_card_limit": 656.64, "currency": "SGD", "expires_at": "2026-10-14T20:43:30.418207+00:00"},
     {"offer_id": "de01b698-…", "plan": "plus", "label": "Plus", "featured": false,
      "fee": 48.32, "fee_before_tax": 44.33, "tax": 3.99, "tax_label": "GST 9%",
-     "rescue_card_limit": 984.96, "currency": "SGD", "expires_at": "2026-10-14T20:43:30Z"}
+     "rescue_card_limit": 984.96, "currency": "SGD", "expires_at": "2026-10-14T20:43:30.418207+00:00"}
   ]
 }</code></pre>
     <table class="fields">
@@ -288,65 +325,86 @@
         is never interrupted.</td></tr>
       <tr><td><code>quote_id</code>, <code>reference</code></td><td>The quote. <code>reference</code> is the short form.</td>
         <td class="why">Quote <code>reference</code> to us and we can trace the customer's journey.</td></tr>
-      <tr><td><code>merchandising_url</code></td><td>The widget for these plans.</td><td class="why">Frame or link it if you
-        use our widget (<a href="#widget">section 4</a>).</td></tr>
+      <tr><td><code>placement</code>, <code>placement_detail</code></td><td>As you sent them.</td><td class="why">Check the
+        quote is the one you meant for this spot.</td></tr>
+      <tr><td><code>merchandising_url</code></td><td>The widget for these plans, in this placement's design.</td><td
+        class="why">Frame or link it if you use our widget (<a href="#widget">section 4</a>).</td></tr>
       <tr><td><code>offers[].offer_id</code></td><td>One plan, priced for this booking.</td><td class="why">The only thing you
         need to keep. You buy, look up and send events with it.</td></tr>
       <tr><td><code>offers[].plan</code>, <code>label</code>, <code>featured</code></td><td>The plan's code, its name to show,
         and whether it's the one to put first.</td><td class="why">Show <code>label</code> as is. The featured plan is the one
         most customers should pick.</td></tr>
-      <tr><td><code>offers[].fee</code>, <code>currency</code></td><td>The price, in the booking's currency.</td><td
-        class="why">In your checkout, this is what you charge, and <code>amount_paid</code> must match it when you create the
-        pass.</td></tr>
-      <tr><td><code>fees_include_tax</code>, <code>tax_country</code></td><td><code>fee</code> always includes tax, 0% where
-        none is added. <code>tax_country</code> is the <code>residence_country</code> you sent.</td><td class="why">The price
-        you show is the price the customer pays. If the buyer turns out to live elsewhere, quote again with that
-        country.</td></tr>
+      <tr><td><code>offers[].fee</code>, <code>currency</code></td><td>The price, tax included, in the booking's
+        currency.</td><td class="why">It's what the customer pays on GetThere's checkout. In-line, it's what you charge, and
+        <code>amount_paid</code> must match it when you create the pass.</td></tr>
+      <tr><td><code>fees_include_tax</code>, <code>tax_country</code></td><td><code>fee</code> includes tax, 0% where none
+        is added. <code>tax_country</code> is the <code>residence_country</code> you sent.</td><td class="why">The price you
+        show is the price the customer pays. If you sent the wrong country, quote again with the right one.</td></tr>
       <tr><td><code>offers[].fee_before_tax</code>, <code>tax</code>, <code>tax_label</code></td><td>The fee split into its
         price before tax and the tax (<code>tax_label</code> like <code>"GST 9%"</code>, or <code>null</code> at 0%).</td><td
         class="why">For your invoice and your accounts. Show customers the <code>fee</code>, "incl. tax".</td></tr>
       <tr><td><code>offers[].rescue_card_limit</code></td><td>How much the rescue card is pre-loaded with.</td><td
         class="why">The value the customer is buying. Show it next to the fee.</td></tr>
-      <tr><td><code>offers[].expires_at</code></td><td>Until when the offer can be bought.</td><td class="why">Prices move as
-        departure nears. Quote again after this. In your checkout, a customer who paid before it expired still gets the pass
-        (<a href="#policies">section 7</a>).</td></tr>
+      <tr><td><code>offers[].expires_at</code></td><td>Until when the offer can be bought: 12 hours by default, and never
+        later than 48 hours before the first flight.</td><td class="why">Prices move as departure nears. Quote again after
+        this. In-line, a customer who paid before it expired still gets the pass (<a href="#policies">section 7</a>).</td></tr>
       <tr><td><code>trigger_minutes</code></td><td>How late a flight must be: 180 is 3 hours. A cancellation counts too.</td>
         <td class="why">Required wording if you show the plans yourself.</td></tr>
       <tr><td><code>terms_url</code></td><td>The terms these offers are sold under.</td><td class="why">Link to it next to the
-        add-on. In your checkout, send it back when you create the pass, to show which terms the customer accepted.</td></tr>
+        add-on. In-line, send it back when you create the pass, to show which terms the customer accepted.</td></tr>
       <tr><td><code>prefilled</code>, <code>not_prefilled</code></td><td>Which customer fields will fill in our checkout, and
         which we left out and why (a name not in English letters, someone under 18, a phone not starting with +).</td><td
-        class="why">After booking: fix your data so customers type less.</td></tr>
+        class="why">On GetThere's checkout: fix your data so customers type less.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Declined <code>reason</code></th><th>Means</th><th>What to do</th></tr>
-      <tr><td><code>already_departed</code>, <code>too_late</code></td><td>The first flight leaves too soon. Sales close 48
-        hours before departure.</td><td class="why">Show nothing.</td></tr>
-      <tr><td><code>paid_with_miles</code></td><td>An award booking.</td><td class="why">Show nothing.</td></tr>
+      <tr><td><code>already_departed</code>, <code>too_late</code></td><td>The first flight has left, or leaves too soon.
+        Sales close 48 hours before departure.</td><td class="why">Show nothing.</td></tr>
+      <tr><td><code>paid_with_miles</code></td><td>Paid with miles or points, even in part.</td><td class="why">Show
+        nothing.</td></tr>
       <tr><td><code>currency_not_quoted</code></td><td>We don't price in that currency yet.</td><td class="why">Show nothing.
         Tell us if it's common for you.</td></tr>
+      <tr><td><code>below_min_value</code>, <code>above_max_value</code></td><td>The fare is below the smallest or above the
+        largest we offer a pass on.</td><td class="why">Show nothing. Check <code>total_paid</code> is for all travellers,
+        in <code>currency</code>.</td></tr>
       <tr><td><code>flight_not_found</code></td><td>We couldn't match a flight number and date to a scheduled flight.</td><td
         class="why">Check the flight and local date you sent.</td></tr>
+      <tr><td><code>fare_not_believable</code></td><td>The fare is far above the highest normal fare for these flights,
+        cabins and travellers.</td><td class="why">Check <code>total_paid</code> and <code>currency</code>. Show
+        nothing.</td></tr>
+      <tr><td><code>booking_not_found</code></td><td><code>booking-page</code> and <code>booking-email</code>: the airline
+        has no live booking under that reference and the first traveller's surname.</td><td class="why">Check the reference
+        and the first passenger. If you've just booked, quote again a few minutes later.</td></tr>
       <tr><td><code>airport_blackout</code>, <code>high_risk</code>, <code>flight_full</code></td><td>Disruption is already
         expected, or this flight has reached its limit of passes.</td><td class="why">Show nothing. It may be offered again
         later.</td></tr>
-      <tr><td><code>not_on_sale</code></td><td>Live keys: the underwriter doesn't sell where this customer lives.</td>
+      <tr><td><code>claims_limit</code>, <code>other_people_limit</code></td><td>The booker has had the most rescue cards we
+        allow in a year (live only), or has bought the most passes we allow in a year for trips they aren't on.</td><td
+        class="why">Show nothing.</td></tr>
+      <tr><td><code>not_on_sale</code></td><td>Live keys: the Underwriter doesn't sell where this customer lives.</td>
         <td class="why">Show nothing.</td></tr>
+      <tr><td><code>paused</code></td><td>Your partner was paused while the quote was being made.</td><td class="why">Show
+        nothing. Usually a paused partner gets a <code>503</code> instead.</td></tr>
       <tr><td><code>already_has_pass</code> (as <code>status</code>)</td><td>The booking already has a pass.</td><td
         class="why">Show nothing, or "Your trip already has a Flight Delay Pass".</td></tr>
     </table>
-    <p>Errors: <code>422</code> names the bad field; <code>503</code> while your partner is paused. See
-    <a href="api.html#errors">errors</a>.</p>
+    <p>Errors: <code>422</code> names the bad field (including a missing <code>placement</code>,
+    <code>residence_country</code>, or <code>booking_reference</code> for <code>booking-page</code> and
+    <code>booking-email</code>); <code>503</code> while your partner is paused. See <a href="api.html#errors">errors</a>.</p>
 
     <h2 id="widget">4. The widget: <code>merchandising_url</code></h2>
-    <p class="meta"><b>Paths 2a and 2c</b> · after a <code>quoted</code> response</p>
+    <p class="meta"><b>Our widget, any placement</b> · after a <code>quoted</code> response</p>
 <pre><code>&lt;iframe src="https://&lt;you&gt;.getthere.now/quote/q4LT…" title="Flight Delay Pass"
         style="width:100%;max-width:560px;border:0;height:520px" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>
-    <p>It shows the customer's flights, each plan's fee and rescue card limit, and a button per plan, in the look we set
-    with you. It needs no key. Once the booking has a pass, it shows the pass instead.</p>
+    <p>It shows the customer's flights, each plan's fee "incl. tax" and rescue card limit, and a Choose button per plan, in
+    the design set for the quote's placement. Design changes you make in the admin show at once, on quotes already made
+    too. It needs no key. Once the booking has a pass, it shows the pass instead. If the offers can no longer be bought, it
+    says so in place of the plans.</p>
     <ul>
-      <li><b>After booking</b>, a plan's button opens GetThere's checkout in the full window.</li>
-      <li><b>In your checkout</b>, a plan's button tells your page instead:</li>
+      <li><b><code>booking-page</code> and <code>booking-email</code></b>: a plan's button opens GetThere's checkout in the
+      full window (it breaks out of your frame).</li>
+      <li><b><code>in-line</code></b>: a plan's button reads "Added" and tells your page instead, with
+      <code>postMessage</code>. Choosing another plan replaces it:</li>
     </ul>
 <pre><code>window.addEventListener("message", (e) =&gt; {
   if (e.origin !== "https://&lt;you&gt;.getthere.now") return;      // only our widget
@@ -356,50 +414,64 @@
 });</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
-      <tr><td><code>offer_id</code></td><td>The plan picked.</td><td class="why">Keep it with the cart line. You create the pass
-        with it.</td></tr>
+      <tr><td><code>offer_id</code></td><td>The plan chosen.</td><td class="why">Keep it with the cart line. You create the
+        pass with it.</td></tr>
       <tr><td><code>plan</code></td><td>Its code.</td><td class="why">For your own reporting.</td></tr>
-      <tr><td><code>fee</code>, <code>currency</code></td><td>The price shown, tax included.</td><td class="why">Charge exactly this. If the buyer's address turns out to be in another country, charge that
-        country's price (see <code>amount_mismatch</code>).</td></tr>
+      <tr><td><code>fee</code>, <code>currency</code></td><td>The price shown, tax included.</td><td class="why">Charge exactly
+        this. It's the <code>amount_paid</code> <code>POST /policies</code> expects.</td></tr>
     </table>
     <p><b>The widget records the funnel itself:</b> <code>shown</code> once it's in view and <code>selected</code> on each
-    click. You only send <code>removed</code> and <code>abandoned</code>.</p>
+    click. In-line, you only send <code>removed</code> and <code>abandoned</code>.</p>
 
     <h2 id="checkouts">5. <code>POST /partner/v1/checkouts</code></h2>
-    <p class="meta"><b>Path 2b only</b> · when the customer picks a plan you drew yourself</p>
+    <p class="meta"><b><code>booking-page</code> and <code>booking-email</code>, your own design</b> · when the customer
+    chooses a plan you drew, or when you build the email</p>
 <pre><code>{"offer_id": "de01b698-…",
  "customer": {"first_name": "Mia", "last_name": "Tan", "date_of_birth": "1990-04-02",
               "phone": "+6581234567",
               "address": {"line1": "1 Raffles Place", "city": "Singapore", "postcode": "048616", "country": "SG"}}}</code></pre>
 <pre><code>200 {"checkout_url": "https://&lt;you&gt;.getthere.now/checkout/jPib…",
-     "expires_at": "2026-10-14T20:43:30Z",
+     "expires_at": "2026-10-14T20:43:30.418207+00:00",
      "prefilled": ["city", "country", "date_of_birth", "first_name", "last_name", "line1", "phone", "postcode"],
      "not_prefilled": {}}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
-      <tr><td><code>offer_id</code> <span class="req">required</span></td><td>The plan picked.</td><td class="why">Opens that
+      <tr><td><code>offer_id</code> <span class="req">required</span></td><td>The plan chosen.</td><td class="why">Opens that
         plan's checkout.</td></tr>
-      <tr><td><code>customer.*</code> <span class="optl">optional</span></td><td>As in the quote. Replaces what came with
-        it.</td><td class="why">The customer only checks the details and pays.</td></tr>
-      <tr><td><code>checkout_url</code></td><td>The checkout page.</td><td class="why">Send the customer there in the full
-        window, not a frame: they confirm their WhatsApp number and pay.</td></tr>
+      <tr><td><code>customer.*</code> <span class="optl">optional</span></td><td>As in the quote. Added over what came with
+        it, except the country, which stays the quote's <code>residence_country</code>.</td><td class="why">The customer
+        only checks the details and pays, at the price you showed.</td></tr>
+      <tr><td><code>checkout_url</code></td><td>The checkout page, showing the price incl. tax.</td><td class="why">Send the
+        customer there in the full window, not a frame: they confirm their WhatsApp number and pay.</td></tr>
     </table>
-    <p><code>404</code>: not one of your offers, or the other mode. <code>409</code>: the offer has closed or the booking
-    already has a pass (quote again), or <code>in_house:</code> your partner sells in its own checkout (use
-    <code>/policies</code>).</p>
+    <table class="fields">
+      <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
+      <tr><td><code>404</code></td><td>Not one of your offers, or the other mode.</td><td class="why">Check the key and
+        <code>offer_id</code>.</td></tr>
+      <tr><td><code>409 in_line</code></td><td>The offer was quoted with <code>placement: "in-line"</code>.</td><td
+        class="why">Sell it in your checkout and create the pass with <code>POST /policies</code>.</td></tr>
+      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Show the pass,
+        not the plans.</td></tr>
+      <tr><td><code>409 expired</code>, <code>409 closed</code></td><td>The offer's prices have expired, or it's no longer
+        open (sales have closed, or a newer quote for the same session withdrew it).</td><td class="why">Quote again. If that's declined, show nothing.</td></tr>
+      <tr><td><code>409 not_on_sale</code></td><td>Live keys: we can't sell passes for your partner at the moment.</td><td
+        class="why">Show nothing, and tell us.</td></tr>
+      <tr><td><code>503</code></td><td>Your partner is paused.</td><td class="why">Show nothing.</td></tr>
+    </table>
 
     <h2 id="lookups">6. Looking an offer up again</h2>
-    <p class="meta"><b>In your checkout</b> · when your cart can't keep our <code>offer_id</code>, or to check one before
+    <p class="meta"><b>Any placement</b> · when your cart can't keep our <code>offer_id</code>, or to check one before
     payment</p>
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/quotes?session_id=cart-77120</h3></div>
     <p>The latest quote for that session, in the same shape as the quote response. <code>404</code> if none.</p>
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offers/{offer_id}</h3></div>
 <pre><code>200 {"offer_id": "de01b698-…", "quote_id": "0b9e…", "session_id": "cart-77120",
+     "placement": "in-line", "placement_detail": "seat-selection",
      "plan": "plus", "label": "Plus", "featured": false,
      "fee": 48.32, "fee_before_tax": 44.33, "tax": 3.99, "tax_label": "GST 9%",
      "fees_include_tax": true, "tax_country": "SG",
      "rescue_card_limit": 984.96, "currency": "SGD",
-     "expires_at": "2026-10-14T20:43:30Z", "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
+     "expires_at": "2026-10-14T20:43:30.418207+00:00", "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
      "buyable": true, "status": "open",
      "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": null},
                  {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": null}],
@@ -409,21 +481,25 @@
       <tr><td><code>buyable</code>, <code>status</code></td><td>Whether it can be bought now: <code>open</code>,
         <code>withdrawn</code> (the cart was quoted again), <code>expired</code> or <code>purchased</code>.</td><td
         class="why">Check before you take payment. If it's not buyable, quote again.</td></tr>
+      <tr><td><code>placement</code></td><td>The placement it was quoted for.</td><td class="why">Only an
+        <code>in-line</code> offer can be sold with <code>POST /policies</code>.</td></tr>
       <tr><td><code>flights</code>, <code>passengers</code></td><td>What was quoted, with each flight's local date.</td><td
         class="why">Compare with the cart. A pass is created only for these exact flights and travellers.</td></tr>
     </table>
 
     <h2 id="policies">7. <code>POST /partner/v1/policies</code></h2>
-    <p class="meta"><b>Paths 2c and 2d</b> · once the airline confirms the booking the customer paid for</p>
-    <p>Creates the pass. We email the customer their pass straight away, and later ask them to add WhatsApp. Retry until
-    you get an answer: it's safe, and a paying customer must never be left without their pass.</p>
+    <p class="meta"><b><code>in-line</code> only</b> · once the airline confirms the booking the customer paid for</p>
+    <p>Creates the pass for an offer from an <code>in-line</code> quote. An offer quoted for another placement is refused
+    (<code>409 not_in_line</code>): it's bought on GetThere's checkout. We email the customer their pass straight away, and
+    later ask them to add WhatsApp. Retry until you get an answer: it's safe, and a paying customer must never be left
+    without their pass.</p>
 <pre><code>{
   "offer_id": "de01b698-…",
   "ota_order_id": "TRV-5581203",
   "payment_reference": "PAY-88123",
   "amount_paid": 48.32,
   "currency": "SGD",
-  "accepted_at": "2026-10-14T11:20:05Z",
+  "accepted_at": "2026-10-14T11:20:05+00:00",
   "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
   "consents": {"terms": true, "card_issuer": true},
   "segments": [
@@ -441,26 +517,29 @@
 }</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
-      <tr><td><code>offer_id</code> <span class="req">required</span></td><td>The plan the customer bought.</td><td
-        class="why">The only link between your cart and our price. We don't match on anything else.</td></tr>
+      <tr><td><code>offer_id</code> <span class="req">required</span></td><td>The plan the customer bought, from an
+        <code>in-line</code> quote.</td><td class="why">The only link between your cart and our price. We don't match on
+        anything else.</td></tr>
       <tr><td><code>ota_order_id</code> <span class="req">required</span></td><td>Your order id, up to 200 characters.</td><td
         class="why">Each line of your monthly statement and every webhook carries it, so you can reconcile without a
         lookup.</td></tr>
       <tr><td><code>payment_reference</code> <span class="req">required</span></td><td>Your id for the customer's payment,
-        unique per sale.</td><td class="why">Makes the call safe to retry: the same reference returns the same pass. Reusing
-        it for another offer is refused.</td></tr>
+        unique per sale, up to 200 characters.</td><td class="why">Makes the call safe to retry: the same reference returns
+        the same pass. It's kept per mode, so a test sale never meets a live one. Reusing it for another offer is
+        refused.</td></tr>
       <tr><td><code>amount_paid</code>, <code>currency</code> <span class="req">required</span></td><td>What the customer
-        paid for the pass, tax included.</td><td class="why">Must equal the fee with the sales tax for the buyer's address
-        country, to the cent. It's what you owe on your statement.</td></tr>
-      <tr><td><code>accepted_at</code> <span class="req">required</span></td><td>When the customer paid, with a time zone.</td>
-        <td class="why">We honour the offer as it was at that moment, even if it has since expired or sales were paused. You
-        have 24 hours from it to create the pass.</td></tr>
+        paid for the pass, tax included.</td><td class="why">Must equal the offer's <code>fee</code>, to the cent: the tax
+        is for the <code>residence_country</code> you quoted with, whatever the buyer's address says. It's what you owe on
+        your statement.</td></tr>
+      <tr><td><code>accepted_at</code> <span class="req">required</span></td><td>When the customer paid, with a time zone
+        (<code>Z</code> or an offset like <code>+00:00</code>).</td><td class="why">We honour the offer as it was at that
+        moment, even if it has since expired or sales were paused. You have 24 hours from it to create the pass.</td></tr>
       <tr><td><code>terms_url</code> <span class="req">required</span></td><td>The quote's <code>terms_url</code>, unchanged.</td>
         <td class="why">Records which terms the customer accepted. The pass is issued under exactly these.</td></tr>
       <tr><td id="consents"><code>consents.terms</code>, <code>consents.card_issuer</code> <span class="req">required, both true</span></td>
-        <td>The customer ticked both boxes at your checkout (wording below).</td><td class="why">The rescue card issuer needs
-        the customer's agreement before it can check their identity and issue a card in their name. Without both, there's no
-        pass.</td></tr>
+        <td>The customer ticked both boxes at your checkout (wording below). Otherwise <code>422</code>.</td><td
+        class="why">The rescue card issuer needs the customer's agreement before it can check their identity and issue a
+        card in their name. Without both, there's no pass.</td></tr>
       <tr><td><code>segments[]</code> <span class="req">required</span></td><td>Each quoted flight in order, with its
         <code>flight</code>, local <code>date</code> and <code>booking_reference</code>. Flights can have different
         references.</td><td class="why">We match each flight to the quote, and the references let us find the booking with the
@@ -476,7 +555,8 @@
         their name, and the card issuer checks their identity.</td></tr>
       <tr><td><code>customer.address</code> <span class="req">required</span></td><td><code>line1</code>, <code>city</code>
         and <code>country</code> required; <code>line2</code>, <code>state</code> and <code>postcode</code> optional.</td><td
-        class="why">The card issuer needs it, and its country sets the sales tax and whether a card can be issued there.</td></tr>
+        class="why">The card issuer needs it, and with a live key its country must be one where a rescue card can be
+        issued.</td></tr>
     </table>
     <p><b>No phone number.</b> The customer adds WhatsApp themselves after buying, from our confirmation email. Until then,
     everything reaches them by email.</p>
@@ -489,39 +569,42 @@
         use it.</td></tr>
       <tr><td><code>reference</code></td><td>The pass's reference, as our emails show it.</td><td class="why">What your
         customer will quote to your agents.</td></tr>
+      <tr><td><code>pass_status</code></td><td>The pass's status now (see <a href="api.html#webhooks">the basics
+        page</a>).</td><td class="why"><code>active</code> on a new pass.</td></tr>
       <tr><td><code>pass_url</code></td><td>The customer's pass page.</td><td class="why">Link it from your booking page and
         your own confirmation email.</td></tr>
     </table>
-    <p><code>200</code> instead of <code>201</code>: you'd already created it with this <code>payment_reference</code>.</p>
+    <p><code>200</code> instead of <code>201</code>: you'd already created it with this <code>payment_reference</code>, in
+    this mode.</p>
     <table class="fields">
       <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
       <tr><td><code>404</code></td><td>Not one of your offers, or the other mode.</td><td class="why">Check the key and
         <code>offer_id</code>.</td></tr>
       <tr><td><code>422</code></td><td>A field is missing or malformed, named in <code>detail</code>.</td><td class="why">Fix
         it and send again.</td></tr>
-      <tr><td><code>409 hosted</code></td><td>Your partner isn't switched to in-line checkout.</td><td class="why">Ask us to
-        switch it.</td></tr>
+      <tr><td><code>409 not_in_line</code></td><td>The offer was quoted for <code>booking-page</code> or
+        <code>booking-email</code>.</td><td class="why">Quote the cart with <code>placement: "in-line"</code> and sell that
+        offer.</td></tr>
+      <tr><td><code>409 payment_reference_reused</code></td><td>The reference was used for another offer.</td><td
+        class="why">Use a unique reference per sale.</td></tr>
+      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Refund the
+        duplicate.</td></tr>
+      <tr><td><code>409 withdrawn</code></td><td>The cart was quoted again before the customer paid.</td><td class="why">Use
+        an offer from the latest quote. Make sure your cart updates when you re-quote.</td></tr>
       <tr><td><code>409 expired</code></td><td>The customer paid after <code>expires_at</code>, or 24 hours have passed since
         <code>accepted_at</code>.</td><td class="why">Refund the add-on. Quote again before payment next time.</td></tr>
-      <tr><td><code>409 withdrawn</code></td><td>The cart was quoted again after this offer.</td><td class="why">Use an offer
-        from the latest quote. Make sure your cart updates when you re-quote.</td></tr>
       <tr><td><code>409 departed</code></td><td>The first flight has already left.</td><td class="why">Refund the
         add-on.</td></tr>
+      <tr><td><code>409 terms_mismatch</code></td><td><code>terms_url</code> isn't the offer's.</td><td class="why">Send the
+        quote's <code>terms_url</code> unchanged.</td></tr>
       <tr><td><code>409 flights_changed</code></td><td>The flights or dates aren't the ones quoted.</td><td class="why">Quote the
         booking as confirmed, then sell that offer.</td></tr>
       <tr><td><code>409 travellers_changed</code></td><td>The travellers aren't the ones quoted.</td><td class="why">As
         above.</td></tr>
-      <tr><td><code>409 amount_mismatch</code></td><td>Wrong amount or currency for the buyer's country. The
-        <code>detail</code> gives the right amount.</td><td class="why">Charge that amount. This happens when the buyer lives
-        somewhere other than the <code>residence_country</code> you quoted with.</td></tr>
-      <tr><td><code>409 terms_mismatch</code></td><td><code>terms_url</code> isn't the offer's.</td><td class="why">Send the
-        quote's <code>terms_url</code> unchanged.</td></tr>
-      <tr><td><code>409 not_on_sale</code></td><td>No rescue card can be issued where the buyer lives.</td><td class="why">Refund
-        the add-on. Quoting with the right <code>residence_country</code> catches it before you sell.</td></tr>
-      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Refund the
-        duplicate.</td></tr>
-      <tr><td><code>409 payment_reference_reused</code></td><td>The reference was used for another offer.</td><td
-        class="why">Use a unique reference per sale.</td></tr>
+      <tr><td><code>409 not_on_sale</code></td><td>Live keys: no rescue card can be issued in the address's country.</td><td
+        class="why">Refund the add-on.</td></tr>
+      <tr><td><code>409 amount_mismatch</code></td><td>Wrong amount or currency. The <code>detail</code> gives the right
+        amount.</td><td class="why">Charge the offer's <code>fee</code>, in its currency.</td></tr>
       <tr><td><code>409 booking_exists</code></td><td>That booking reference was quoted separately before.</td><td
         class="why">Contact us with the reference.</td></tr>
     </table>
@@ -540,14 +623,16 @@
     still gets their pass.</p>
 
     <h2 id="changes">8. Changes, cancellations and refunds</h2>
-    <p class="meta"><b>Paths 2c and 2d</b> · until we start watching the first flight (24 hours before departure)</p>
-    <p>After booking (paths 2a and 2b), the customer asks GetThere for any change or refund. In your checkout they ask you,
-    and you tell us.</p>
+    <p class="meta"><b><code>in-line</code> passes only</b> · until we start watching the first flight (24 hours before
+    departure)</p>
+    <p>A pass bought on GetThere's checkout (<code>booking-page</code> and <code>booking-email</code>) is the customer's to
+    change or refund with us: these calls refuse it with <code>409 not_in_line</code>. A pass you created with
+    <code>POST /policies</code> is changed through you, and you tell us.</p>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/changes</h3></div>
 <pre><code>{"type": "travellers", "passengers": ["Mia Tan", "Wei Lim", "Chloe Lim-Tan"]}</code></pre>
 <pre><code>{"type": "flights", "offer_id": "&lt;offer for the new flights&gt;",
  "payment_reference": "PAY-88124", "amount_paid": 52.10, "currency": "SGD",
- "accepted_at": "2026-10-20T09:02:11Z",
+ "accepted_at": "2026-10-20T09:02:11+00:00",
  "segments": [{"flight": "SQ222", "date": "2026-11-21", "booking_reference": "K7QX2M"},
               {"flight": "SQ231", "date": "2026-11-27", "booking_reference": "K7QX2M"}]}</code></pre>
 <pre><code>{"type": "cancelled"}</code></pre>
@@ -556,40 +641,61 @@
       <tr><td><code>travellers</code></td><td>Corrects names. Same number of travellers, in the same order.</td><td
         class="why">The rescue card goes to the right people. Adding or removing someone needs a new quote and a
         <code>flights</code> change.</td></tr>
-      <tr><td><code>flights</code></td><td>Quote the new flights first (no <code>booking_reference</code>), then send the new
-        offer with the same fields as <code>/policies</code>. The buyer, terms and consents carry over. A new pass replaces
-        the old one, and the old one's fee is netted on your statement. No refund email goes to the customer: the new pass's
-        confirmation says it all.</td><td class="why">The pass always matches the flights the customer will take.
-        <code>difference</code> in the answer is what you charge (or refund, if negative) on top of what was paid.</td></tr>
+      <tr><td><code>flights</code></td><td>Quote the new flights first, with <code>placement: "in-line"</code>, then send the
+        new offer with the same fields as <code>/policies</code>. The buyer, order id, terms and consents carry over. A new
+        pass replaces the old one, and the old one's fee is netted on your statement. No refund email goes to the customer:
+        the new pass's confirmation says it all. Sending the same change again returns the same answer.</td><td
+        class="why">The pass always matches the flights the customer will take. <code>difference</code> in the answer is
+        what you charge (or refund, if negative) on top of what was paid.</td></tr>
       <tr><td><code>cancelled</code></td><td>Ends the pass. You refund the customer, and it's netted on your statement.</td>
         <td class="why">A cancelled booking can't have a rescue card.</td></tr>
     </table>
 <pre><code>200 {"status": "changed", "policy_id": "&lt;new pass&gt;", "replaces": "0e5b…", "difference": 3.78, …}</code></pre>
-    <p><code>409 too_late</code>: we've started watching the first flight, or the pass has ended, so it can't change.</p>
+    <table class="fields">
+      <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
+      <tr><td><code>404</code></td><td>Not one of your passes, or the other mode.</td><td class="why">Check the key and
+        <code>policy_id</code>.</td></tr>
+      <tr><td><code>422</code></td><td>A missing or bad field, such as <code>type</code> or, for <code>flights</code>,
+        <code>offer_id</code>.</td><td class="why">Fix it and send again.</td></tr>
+      <tr><td><code>409 not_in_line</code></td><td>The pass was bought on GetThere's checkout, or the new offer for a
+        <code>flights</code> change wasn't quoted in-line.</td><td class="why">The customer changes a GetThere checkout pass
+        with us. For a flight change, quote with <code>placement: "in-line"</code>.</td></tr>
+      <tr><td><code>409 too_late</code></td><td>We've started watching the first flight, or the pass has ended.</td><td
+        class="why">It can't change any more.</td></tr>
+      <tr><td><code>409 travellers_changed</code></td><td><code>travellers</code>: a different number of travellers.</td><td
+        class="why">Quote the new booking and send a <code>flights</code> change.</td></tr>
+      <tr><td><code>409</code> with a <code>/policies</code> reason</td><td><code>flights</code>: the new offer is sold
+        like a new pass, so any of <a href="#policies">the <code>/policies</code> reasons</a> can come back, such as
+        <code>amount_mismatch</code>, <code>withdrawn</code> or <code>flights_changed</code>.</td><td class="why">As for
+        <code>/policies</code>. The old pass stays as it was.</td></tr>
+    </table>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/cancel</h3></div>
     <p>The same as <code>{"type": "cancelled"}</code>, for a refund you've given (cooling-off, a chargeback). Returns
-    <code>"status": "cancelled"</code>. <code>409</code> once we've started watching the first flight.</p>
+    <code>"status": "cancelled"</code> and <code>"pass_status": "refunded"</code>. Its <code>409</code>s carry a reason:
+    <code>not_in_line</code> (bought on GetThere's checkout), <code>not_active</code> (the pass has already ended, for
+    example cancelled before) or <code>too_late</code> (we've started watching the first flight).</p>
     <p><b>When the airline cancels the flight before we start watching</b>, we end the pass ourselves and send
-    <code>pass.ended</code> with <code>reason: "flight_cancelled_before_watch"</code>. Refund the customer, and it's netted on
-    your statement.</p>
+    <code>pass.ended</code> with <code>reason: "flight_cancelled_before_watch"</code>. For an <code>in-line</code> pass,
+    refund the customer, and it's netted on your statement.</p>
 
     <h2 id="events">9. Funnel events: <code>POST /partner/v1/events</code></h2>
-    <div class="callout must"><b>This is not optional if you draw the plans yourself.</b> Funnel events are how you, we and
-    the Underwriter learn what sells the pass on your site, and how we keep the price right for your customers:
+    <div class="callout must"><b>This is not optional if you draw the plans yourself on a page.</b> Funnel events are how
+    you, we and the Underwriter learn what sells the pass on your site, and how we keep the price right for your customers:
       <ul>
         <li><b>Your prices and plans.</b> When we and the Underwriter review your prices and which plan to feature, we look at
         how often each plan is picked once it's shown. Without <code>shown</code> and <code>selected</code>, that review rests
         on other sites' customers, not yours.</li>
         <li><b>Your conversion numbers.</b> Your funnel (quoted, shown, selected, removed, pass created, WhatsApp added,
-        rescue card issued and used) is only as good as the events behind it. With no <code>shown</code> it can't tell a pass
-        nobody saw from one nobody wanted.</li>
-        <li><b>Your A/B tests.</b> <code>placement</code> and <code>ab_variant</code> results come from these events.</li>
+        rescue card issued and used, abandoned) is only as good as the events behind it. With no <code>shown</code> it can't
+        tell a pass nobody saw from one nobody wanted.</li>
+        <li><b>Your A/B tests.</b> The funnel splits by <code>placement</code>, <code>placement_detail</code>,
+        <code>ab_variant</code> and the plan featured, and those splits come from these events.</li>
         <li><b>Proof of what the customer saw.</b> If a customer later says they never chose the pass, <code>shown</code>,
         <code>selected</code> and <code>removed</code> are the record of what happened.</li>
       </ul>
-      Our widget sends <code>shown</code> and <code>selected</code> for you. Everyone sends <code>removed</code> and
-      <code>abandoned</code>.</div>
-<pre><code>{"offer_id": "de01b698-…", "type": "selected", "at": "2026-10-14T11:18:40Z"}
+      Our widget sends <code>shown</code> and <code>selected</code> for you. In-line, everyone sends <code>removed</code>
+      and <code>abandoned</code>.</div>
+<pre><code>{"offer_id": "de01b698-…", "type": "selected", "at": "2026-10-14T11:18:40+00:00"}
 {"session_id": "cart-77120", "type": "shown"}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
@@ -605,72 +711,109 @@
         now.</td><td class="why">Send it if you queue events, so the funnel's timing is right.</td></tr>
     </table>
     <p>Answers <code>200 {"ok": true}</code>. <code>shown</code> counts once per quote, so sending it again is harmless.
-    <code>404</code>: no such offer or session for this key. Send events from your server, or from the browser through your
+    <code>404</code>: no such offer or session for this key. <code>422</code>: an unknown <code>type</code>, or neither
+    <code>offer_id</code> nor <code>session_id</code>. Send events from your server, or from the browser through your
     server: never put your key in the page.</p>
 
-    <h2 id="webhooks">10. Webhooks</h2>
+    <h2 id="forwarding">10. Your forwarding address</h2>
+    <p>Every partner has a forwarding address, <code>quote@&lt;you&gt;.getthere.now</code>. A customer who forwards a booking
+    confirmation email to it gets the plans back by email within minutes, and buys on GetThere's checkout. It's a way in for
+    customers you haven't quoted through the API: someone who booked before you integrated, or who found the offer
+    elsewhere. Nothing to build: you only tell us where your booking emails come from.</p>
+    <ul>
+      <li><b>Only your own booking emails.</b> Your address reads only booking confirmations sent from your own domains,
+      set as <code>forwarding.booking_domains</code> in the GetThere admin, like <code>["example-travel.com"]</code>. A
+      subdomain of one counts too. With none set, it accepts nothing.</li>
+      <li><b>Anything else is refused.</b> An airline's email, or another site's, gets a reply saying we can only quote
+      bookings made on your site and asking for your confirmation email instead. We record it as
+      <code>not_from_this_site</code>.</li>
+      <li><b>Prices in the email are before tax.</b> We don't know where a forwarding customer lives, so the email shows each
+      plan before tax, and GetThere's checkout adds the tax for the country they choose there.</li>
+      <li><b>Test first.</b> Until you go live, your address makes test passes. After that,
+      <code>test@&lt;you&gt;.getthere.now</code> still does.</li>
+    </ul>
+
+    <h2 id="webhooks">11. Webhooks</h2>
     <p>Set a test and a live address with us, and we'll tell your systems about every pass: issued, changed, ended, an email
-    that bounced, WhatsApp added, a rescue card issued and used. The format, retries, every event type and how to check the
-    signature are on <a href="api.html#webhooks">the basics page</a>. The three to handle first:</p>
+    that bounced, WhatsApp added, a rescue card issued and used. That includes every placement, and passes from your forwarding
+    address too. The format, retries, every event type and how to check the signature are on
+    <a href="api.html#webhooks">the basics page</a>. The three to handle first:</p>
     <ul>
       <li><code>pass.issued</code>: your record of the sale.</li>
       <li><code>email.bounced</code>: the customer won't get their pass or rescue card by email. Contact them and correct it.</li>
       <li><code>rescue_card.used</code>: they've rebooked with you, using the rescue card.</li>
     </ul>
 
-    <h2 id="merchant-ids">11. Your merchant IDs</h2>
+    <h2 id="merchant-ids">12. Your merchant IDs</h2>
     <p>A rescue card from your site works on your site only, so the customer rebooks with you. We hold the card to that
     with the <b>merchant IDs</b> your card payments carry: the IDs your payment provider (acquirer) gives each of your
     merchant accounts. Once we have them, a charge is approved only if it carries one of them, whatever name the merchant
     trades under. <b>We can't switch you live without them.</b> Send us every merchant ID your flight bookings are charged
     under (each country, each acquirer). If you add an acquirer later, send us its IDs before it takes payments.</p>
 
-    <h2 id="testing">12. Test cases</h2>
-    <p>Run these with your test key before asking to go live. Use a first flight at least 3 days ahead.</p>
+    <h2 id="testing">13. Test cases</h2>
+    <p>Run these with your test key before asking to go live. Use a first flight at least 3 days ahead. Run the quote cases
+    for each placement you use.</p>
     <table class="fields">
       <tr><th>Do this</th><th>Expect</th><th>Proves</th></tr>
-      <tr><td>Quote a return trip for 3 travellers</td><td><code>quoted</code>, 2 or more
-        offers, <code>tax_country</code> is your <code>residence_country</code></td><td class="why">Your request is complete and prices include the
-        customer's tax.</td></tr>
+      <tr><td>Quote a return trip for 3 travellers, once per placement you use</td><td><code>quoted</code>, 2 or more
+        offers, <code>placement</code> echoed, <code>tax_country</code> is your <code>residence_country</code></td><td
+        class="why">Your request is complete and prices include the customer's tax.</td></tr>
+      <tr><td>Quote without <code>placement</code>, then without <code>residence_country</code></td><td><code>422</code>
+        naming each</td><td class="why">Every quote says where it's shown and where the customer lives.</td></tr>
+      <tr><td>Quote <code>booking-page</code> or <code>booking-email</code> without <code>booking_reference</code></td><td><code>422</code></td><td
+        class="why">You quote those once the booking exists.</td></tr>
       <tr><td>Quote the same cart again</td><td>The same <code>offer_id</code>s</td><td class="why">Re-quoting doesn't make
         duplicates.</td></tr>
-      <tr><td>Change a traveller's name in the cart and quote with the same <code>session_id</code></td><td>New offers. The old
-        offer's <code>GET /offers</code> shows <code>withdrawn</code></td><td class="why">A changed cart can't be sold at an
-        old price.</td></tr>
+      <tr><td>In-line: change a traveller's name in the cart and quote with the same <code>session_id</code></td><td>New
+        offers. The old offer's <code>GET /offers</code> shows <code>withdrawn</code></td><td class="why">A changed cart can't
+        be sold at an old price.</td></tr>
       <tr><td>Quote a flight leaving within 48 hours</td><td><code>declined</code>, <code>too_late</code></td><td class="why">You
         show nothing when declined.</td></tr>
-      <tr><td>Widget: pick a plan</td><td>Your page gets <code>getthere:plan</code></td><td class="why">The add-on reaches your
-        cart.</td></tr>
-      <tr><td>Create the pass (2c, 2d)</td><td><code>201</code>, <code>issued</code>, an email starting "[Test]"</td><td
+      <tr><td>Booking page: frame the widget and choose a plan</td><td>GetThere's checkout opens in the full window, filled
+        in, the price incl. tax</td><td class="why">The widget fits your page and hands over to our checkout.</td></tr>
+      <tr><td>Booking email: send yourself a confirmation and open its plans link</td><td>The plans in your booking-email
+        design, or the checkout you linked</td><td class="why">The links work in a real email app.</td></tr>
+      <tr><td>In-line widget: choose a plan</td><td>Your page gets <code>getthere:plan</code></td><td class="why">The add-on
+        reaches your cart.</td></tr>
+      <tr><td>In-line: create the pass</td><td><code>201</code>, <code>issued</code>, an email starting "[Test]"</td><td
         class="why">The happy path works end to end.</td></tr>
       <tr><td>Send the same call again</td><td><code>200</code>, same <code>policy_id</code></td><td class="why">Your retries are
         safe.</td></tr>
-      <tr><td>Create a pass with the address in another country than you quoted</td><td><code>409 amount_mismatch</code> with
-        the right amount</td><td class="why">You handle a buyer abroad.</td></tr>
-      <tr><td>Correct a name, then move the outbound flight a day, then cancel</td><td><code>changed</code>,
+      <tr><td>Call <code>/policies</code> with an offer from a <code>booking-page</code> quote</td><td><code>409
+        not_in_line</code></td><td class="why">Each offer is sold where it was quoted for.</td></tr>
+      <tr><td>Create a pass with <code>amount_paid</code> a cent too low</td><td><code>409 amount_mismatch</code> with the
+        right amount</td><td class="why">You charge exactly the quoted fee.</td></tr>
+      <tr><td>In-line: correct a name, then move the outbound flight a day, then cancel</td><td><code>changed</code>,
         <code>changed</code> with <code>replaces</code>, <code>cancelled</code></td><td class="why">Your changes flow
         works.</td></tr>
+      <tr><td>Forward one of your own booking confirmation emails to your forwarding address, then an airline's</td><td>A
+        "[Test]" price email for yours, a "can only quote bookings made on" reply for the airline's</td><td class="why">Your
+        <code>booking_domains</code> are set right.</td></tr>
       <tr><td>Ask us to delay your test flight by 4 hours</td><td><code>rescue_card.issued</code> by webhook, a test card by
         email</td><td class="why">You can see and handle the moment that matters most.</td></tr>
       <tr><td>Press "Simulate a purchase" on the test card</td><td><code>rescue_card.used</code></td><td class="why">The end of
         the journey.</td></tr>
       <tr><td>Send a webhook with a bad signature to your own endpoint</td><td>You reject it</td><td class="why">Nobody can fake
         an event.</td></tr>
-      <tr><td>Own design: show, pick, remove, abandon</td><td>Each step in the funnel we send you</td><td class="why">Your events
-        arrive.</td></tr>
+      <tr><td>Own design: show, choose, remove, abandon</td><td>Each step in the funnel we send you</td><td class="why">Your
+        events arrive.</td></tr>
     </table>
 
-    <h2 id="go-live">13. Go-live checklist</h2>
+    <h2 id="go-live">14. Go-live checklist</h2>
     <ul>
-      <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 11</a>).</li>
-      <li>The test cases above pass.</li>
-      <li>The offer's wording and, in your checkout, both consent boxes are agreed with us and the Underwriter.</li>
+      <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 12</a>).</li>
+      <li>The test cases above pass, for every placement you use.</li>
+      <li>Every quote sends the right <code>placement</code> and the customer's real <code>residence_country</code>.</li>
+      <li>The widget design for each placement you use is set in the admin.</li>
+      <li>Your <code>forwarding.booking_domains</code> are set, so customers can forward your confirmation emails.</li>
+      <li>The offer's wording and, in-line, both consent boxes are agreed with us and the Underwriter.</li>
       <li>Your live webhook address is set and checks signatures.</li>
       <li>Own design: funnel events arrive for <code>shown</code>, <code>selected</code>, <code>removed</code> and
       <code>abandoned</code>.</li>
-      <li>In your checkout: you create the pass from the airline's confirmation (not the payment), retry until answered, and
+      <li>In-line: you create the pass from the airline's confirmation (not the payment), retry until answered, and
       refund the add-on on any <code>409</code>.</li>
-      <li>In your checkout: someone on your side owns paying the monthly statement.</li>
+      <li>In-line: someone on your side owns paying the monthly statement.</li>
       <li>We issue your live key and switch you live. Swap the key: the code stays the same.</li>
     </ul>
 
