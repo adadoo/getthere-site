@@ -15,8 +15,8 @@ AUDIENCES = (("Traveller", "./", "index.html"), ("Card Issuer", "issuers.html", 
 COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#how"), ("FAQ", "./#faq"))),
            ("Card Issuer", (("The product", "issuers.html"), ("The numbers", "issuers.html#numbers"),
                             ("API reference", "api.html"))),
-           ("Online Travel Agency", (("The flow", "travel-sites.html#flow"), ("API", "travel-sites.html#api"),
-                                     ("The numbers", "travel-sites.html#numbers"))),
+           ("Online Travel Agency", (("The product", "travel-sites.html#product"), ("The numbers", "travel-sites.html#numbers"),
+                                     ("API reference", "api.html#travel-sites"))),
            ("Underwriter", (("Risk", "underwriters.html#risk"), ("Rollout", "underwriters.html#rollout"),
                             ("Reports", "underwriters.html#reports"))))
 # Which audience each page belongs to, for aria-current; and the last footer column, the page's own.
