@@ -1,6 +1,6 @@
 """Write the same header audiences and footer columns into every page (no build step: run it after changing
 them, then commit the pages). Audiences, in this order (Dadoo, 14 Oct 2026): Traveller, Card Issuer,
-Online Travel Agency, Underwriter.
+Travel Site, Underwriter.
 
     python3 tools/site_nav.py
 """
@@ -10,12 +10,12 @@ import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 AUDIENCES = (("Traveller", "./", "index.html"), ("Card Issuer", "issuers.html", "issuers.html"),
-             ("Online Travel Agency", "travel-sites.html", "travel-sites.html"),
+             ("Travel Site", "travel-sites.html", "travel-sites.html"),
              ("Underwriter", "underwriters.html", "underwriters.html"))
 COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#how"), ("FAQ", "./#faq"))),
            ("Card Issuer", (("The product", "issuers.html"), ("The numbers", "issuers.html#numbers"),
                             ("API reference", "api.html"))),
-           ("Online Travel Agency", (("The product", "travel-sites.html#product"), ("The numbers", "travel-sites.html#numbers"),
+           ("Travel Site", (("The product", "travel-sites.html#product"), ("The numbers", "travel-sites.html#numbers"),
                                      ("API reference", "api.html#travel-sites"))),
            ("Underwriter", (("Risk", "underwriters.html#risk"), ("Rollout", "underwriters.html#rollout"),
                             ("Reports", "underwriters.html#reports"))))
