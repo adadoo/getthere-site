@@ -336,3 +336,34 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .shot figcaption b { color: var(--ink); }
 .shot figcaption code, .points3 code { font-family: var(--mono); font-size: 0.9em; background: var(--soft); border-radius: 5px; padding: 1px 5px; }
 .points3 > div h3 { margin-bottom: 6px; }
+
+/* API docs, split per audience (Dadoo, 14 Oct 2026): the hub's two doors, the path chooser, field tables
+   with a "why it matters" column, and the must-do callout. */
+.api .doors, .api .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 8px; }
+.api .door, .api .path { display: block; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; color: inherit; text-decoration: none; }
+.api a.door:hover, .api a.path:hover { border-color: var(--accent); }
+.api .door h3, .api .path h3 { margin: 4px 0 6px; font-size: 18px; }
+.api .door p, .api .path p { margin: 0 0 6px; font-size: 15px; }
+.api .path .tag { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+.api .path ul { padding-left: 18px; margin: 6px 0 0; } .api .path li { font-size: 14px; margin-bottom: 4px; }
+.api .decide { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 14px 0; background: #fff; }
+.api .decide h3 { margin: 0 0 6px; font-size: 17px; }
+.api .decide p { margin: 0 0 8px; font-size: 15px; }
+.api table.fields td:first-child { white-space: nowrap; }
+.api table.fields td.why { color: #475569; }
+.api table.fields .req { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #b91c1c; }
+.api table.fields .optl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+.api .callout.must { background: #fff7ed; border: 1px solid #fed7aa; }
+.api .callout.must b:first-child { color: #9a3412; }
+.api .steps { padding-left: 22px; } .api .steps li { margin-bottom: 10px; }
+.api .toc { columns: 2; font-size: 15px; padding-left: 18px; }
+.api .toc li { margin-bottom: 4px; break-inside: avoid; }
+@media (max-width: 720px) {
+  .api .doors, .api .paths { grid-template-columns: 1fr; }
+  .api .toc { columns: 1; }
+  .api table.fields td:first-child { white-space: normal; }
+  .api table.fields, .api table.fields tbody, .api table.fields tr, .api table.fields td, .api table.fields th { display: block; }
+  .api table.fields tr:first-child { display: none; }
+  .api table.fields tr { border-top: 1px solid var(--line); padding: 8px 0; }
+  .api table.fields td { border: 0; padding: 2px 0; }
+}

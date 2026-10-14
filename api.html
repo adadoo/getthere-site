@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>API reference · GetThere for card issuers</title>
-<meta name="description" content="Every endpoint a card issuer connects to offer the Flight Delay Pass: the calls you make to GetThere and the calls GetThere makes to you.">
+<title>API reference · GetThere</title>
+<meta name="description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/api.html">
 <meta property="og:title" content="GetThere">
-<meta property="og:description" content="Every endpoint a card issuer connects to offer the Flight Delay Pass.">
+<meta property="og:description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta property="og:image" content="https://getthere.now/images/og.png?v=2">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GetThere">
-<meta name="twitter:description" content="Every endpoint a card issuer connects to offer the Flight Delay Pass.">
+<meta name="twitter:description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
@@ -28,7 +28,7 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html" aria-current="page">Card Issuer</a><a href="travel-sites.html">Online Travel Agency</a><a href="underwriters.html">Underwriter</a></div>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="travel-sites.html">Online Travel Agency</a><a href="underwriters.html">Underwriter</a></div>
     <a class="pill" href="mailto:partner@getthere.now?subject=API%20access">Contact us</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </nav>
@@ -37,424 +37,208 @@
 <section>
   <div class="wrap narrow legal-doc api">
 
-    <p class="eyebrow">For card issuers and online travel agencies</p>
+    <p class="eyebrow">For developers</p>
     <h1>API reference</h1>
-    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Your set-up on GetThere is your own: your pages, addresses and keys. Every partner starts in test mode: build and test with a test key, and we switch your partner to live once you and the Underwriter sign off.</p>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · One API for every partner, at
+    <code>https://api.getthere.now/partner/v1</code>. Start with the guide for your kind of business. Both guides rely on
+    the basics further down this page.</p>
 
-    <p class="doc-meta"><b>Online travel agency?</b> Jump to <a href="#travel-sites">quote and checkout</a>. The set-up, authentication and test mode below apply to you too.</p>
-
-    <div class="callout key">
-      <b>The short version for card issuers.</b> All you have to send is one push notification of your own, after an airline charge.
-      <b>Everything else on your side is optional, including GetThere's push notifications in your app.</b> Without them, the
-      cardholder still gets every message on WhatsApp and by email. GetThere builds the rest: the offer page, pricing,
-      checkout, flight tracking, pre-loaded rescue cards, messages to the cardholder and support.
+    <div class="doors">
+      <a class="door" href="api-issuers.html">
+        <span class="opt">Card issuers</span>
+        <h3>You issue cards and want to offer the pass to cardholders who just booked a flight</h3>
+        <p>You send one push notification of your own. Everything else on your side is optional: a push endpoint, a
+        purchase check and push receipts.</p>
+        <p><b>Read the card issuer guide →</b></p>
+      </a>
+      <a class="door" href="api-travel-sites.html">
+        <span class="opt">Online travel agencies</span>
+        <h3>You sell flights and want to offer the pass when your customer books</h3>
+        <p>Choose whether to offer it after booking or inside your own checkout, and whether to use our widget or your
+        own design. The guide walks through each path.</p>
+        <p><b>Read the online travel agency guide →</b></p>
+      </a>
     </div>
 
-    <h2>Who builds what</h2>
-    <div class="who">
-      <div class="who-card you">
-        <p class="who-tag">You build</p>
-        <ul>
-          <li><b>The "Just booked a flight?" push notification.</b> Your own push notification, from your own card data, after an airline
-          charge. It links to your offer page. No call to GetThere is needed.</li>
-          <li><b>A push notification endpoint</b> <span class="opt">optional</span> that receives GetThere's three messages (pass bought, pre-loaded rescue card ready, pre-loaded rescue card used)
-          and shows them in your app.</li>
-          <li><b>A purchase-match endpoint</b> <span class="opt">optional</span> that answers yes or no: did this
-          cardholder pay this airline this amount?</li>
-          <li><b>Push receipts</b> <span class="opt">optional</span>: a call back to GetThere saying which push notifications reached the cardholder. Only if you build the push notification endpoint.</li>
-        </ul>
-      </div>
-      <div class="who-card gt">
-        <p class="who-tag">GetThere provides</p>
-        <ul>
-          <li><b>Your offer page</b> at <code>https://&lt;issuer&gt;.getthere.now/offer</code>, in your colours.</li>
-          <li><b>Your forwarding address</b> <code>quote@&lt;issuer&gt;.getthere.now</code>, where cardholders send their booking.</li>
-          <li><b>The partner API</b> at <code>https://api.getthere.now/partner/v1</code>: a key check,
-          your offer link, and push receipts.</li>
-          <li><b>Every message to the cardholder:</b> the price email, the pass confirmation, and the pre-loaded rescue card on WhatsApp and by email.</li>
-        </ul>
-      </div>
-    </div>
-
-    <h2>The journey, call by call</h2>
-    <p>One cardholder, Mia, from booking to rebooking. Each step shows who acts and which call is made.</p>
-    <ol class="journey">
-      <li>
-        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane you">Your systems</span></div>
-        <h3>Mia pays an airline with your card</h3>
-        <p>Your systems see the airline charge. Nothing reaches GetThere: card data stays with you.</p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
-        <h3>You send "Just booked a flight?"</h3>
-        <p>Your own push notification, sent when you decide (for example, airline charges on premium cards). It opens your offer page.</p>
-        <p class="call">Link: <code>https://&lt;issuer&gt;.getthere.now/offer</code> · <span class="builder you">you send it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
-        <h3>Mia forwards her booking email</h3>
-        <p>She forwards the airline's confirmation to <code>quote@&lt;issuer&gt;.getthere.now</code>. GetThere reads every flight and traveller on it.</p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your API</span><span class="opt">optional</span></div>
-        <h3>GetThere checks the charge with you</h3>
-        <p>When the booking email shows the airfare, GetThere asks within seconds whether Mia paid that airline that amount. You answer yes or no.</p>
-        <p class="call"><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code> · <span class="builder you">you build it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
-        <h3>Mia gets a price and buys a pass</h3>
-        <p>GetThere emails her a price within minutes. She pays at checkout on <code>&lt;issuer&gt;.getthere.now</code>.</p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span><span class="opt">optional</span></div>
-        <h3>Push notification 1: pass bought</h3>
-        <p>The moment she pays, GetThere calls your push endpoint and your app confirms the purchase.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "pass_purchased"</code> · <span class="builder you">you build it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span><span class="opt">optional</span></div>
-        <h3>Push notification 2: her flight is late, her pre-loaded rescue card is ready</h3>
-        <p>When her flight is delayed 3+ hours or cancelled, GetThere sends the pre-loaded rescue card to Mia on WhatsApp and by email, and calls your push endpoint so your app alerts her too.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "card_issued"</code> · <span class="builder you">you build it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span><span class="opt">optional</span></div>
-        <h3>Push notification 3: she has rebooked</h3>
-        <p>When Mia uses the pre-loaded rescue card for a new flight, GetThere calls your push endpoint and your app thanks her.</p>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> with <code>"type": "card_used"</code> · <span class="builder you">you build it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span><span class="opt">optional</span></div>
-        <h3>You report which push notifications arrived</h3>
-        <p>Whenever you have them, in batches, you tell GetThere which push notifications were delivered, and which cardholders turned GetThere push notifications off.</p>
-        <p class="call"><code>POST /partner/v1/push-receipts</code> · <span class="builder gt">GetThere provides it</span></p>
-      </li>
-    </ol>
-
-    <h2>Every call at a glance</h2>
-    <div class="glance">
-      <div class="g-row">
-        <div class="g-when"><b>While you set up</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
-        <div class="g-call"><code>GET /partner/v1/ping</code><span class="builder gt">GetThere builds it</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>Before each push, for tracing</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
-        <div class="g-call"><code>GET /partner/v1/offer</code><span class="builder gt">GetThere builds it</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>After an airline charge</b><div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Cardholder</span></div></div>
-        <div class="g-call"><code>https://&lt;issuer&gt;.getthere.now/offer?o=&lt;offer_id&gt;</code><span class="builder gt">A link to a page GetThere hosts</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>A booking is forwarded</b><div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">You</span></div></div>
-        <div class="g-call"><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code><span class="builder you">You build it (optional)</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>Pass bought, pre-loaded rescue card ready or used</b><div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">You</span></div></div>
-        <div class="g-call"><code>POST &lt;your push URL&gt;</code><span class="builder you">You build it (optional)</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>After you deliver push notifications (optional)</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
-        <div class="g-call"><code>POST /partner/v1/push-receipts</code><span class="builder gt">GetThere builds it</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>Travel site: a booking is confirmed</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
-        <div class="g-call"><code>POST /partner/v1/quotes</code><span class="builder gt">GetThere builds it</span></div>
-      </div>
-      <div class="g-row">
-        <div class="g-when"><b>Travel site showing its own plans: the customer picks one</b><div class="lanes"><span class="lane you">You</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div></div>
-        <div class="g-call"><code>POST /partner/v1/checkouts</code><span class="builder gt">GetThere builds it</span></div>
-      </div>
-    </div>
-
-    <h2>Your set-up</h2>
-    <p>Each card issuer is its own partner with a short handle, <code>&lt;issuer&gt;</code>. The handle gives you your
-    own addresses, all in your colours:</p>
-    <ul>
-      <li>Pages: <code>https://&lt;issuer&gt;.getthere.now</code> (offer, checkout, pass and pre-loaded rescue card pages)</li>
-      <li>Booking forwarding address: <code>quote@&lt;issuer&gt;.getthere.now</code></li>
-      <li>Test forwarding address: <code>test@&lt;issuer&gt;.getthere.now</code> (always makes test passes)</li>
+    <h2 id="basics">The basics every integration shares</h2>
+    <ul class="toc">
+      <li><a href="#base">Base URL and format</a></li>
+      <li><a href="#keys">Keys: test and live</a></li>
+      <li><a href="#errors">Errors and what to do about them</a></li>
+      <li><a href="#retries">Retries and idempotency</a></li>
+      <li><a href="#test-mode">Test mode</a></li>
+      <li><a href="#webhooks">Webhooks: events we send you</a></li>
+      <li><a href="#verify">Checking a webhook's signature</a></li>
+      <li><a href="#support">Getting help</a></li>
     </ul>
-    <p>The API has one address for every card issuer, <code>https://api.getthere.now/partner/v1</code>.
-    Your API key tells GetThere which issuer is calling, so you only ever see your own data.</p>
 
-    <h2>Authentication</h2>
-    <p><b>You calling GetThere.</b> Each partner gets two kinds of API key. Send one on every call:</p>
+    <h3 id="base">Base URL and format</h3>
+    <p>Every call goes to <code>https://api.getthere.now/partner/v1</code>, over HTTPS, with JSON in and out
+    (<code>Content-Type: application/json</code>). Times are ISO 8601 with a time zone, such as
+    <code>2026-11-20T07:41:05Z</code>. Dates are <code>YYYY-MM-DD</code>. Flight times are the local time at that
+    airport, as printed on the ticket. Amounts are numbers in the currency named next to them. Currencies are 3-letter
+    ISO codes and countries are 2-letter ISO codes.</p>
+    <p><b>Call us from your server, never from a browser or app.</b> Your key would be visible to anyone.</p>
+
+    <h3 id="keys">Keys: test and live</h3>
 <pre><code>Authorization: Bearer gt_test_…   (test key)
 Authorization: Bearer gt_live_…   (live key)</code></pre>
+    <table class="fields">
+      <tr><th>Key</th><th>What it does</th><th>Why it matters</th></tr>
+      <tr><td><code>gt_test_…</code></td><td>Sees and makes test data only: test quotes, test passes, test pushes. Works
+        at any time, before and after you go live.</td><td class="why">You can build and keep testing against
+        production with no risk of selling a real pass or touching a real customer.</td></tr>
+      <tr><td><code>gt_live_…</code></td><td>Sees and makes real data. Answers <code>403</code> until we switch your
+        partner to live.</td><td class="why">The key, not the address, decides test or live, so the same code runs in
+        both. Swap the key to go live.</td></tr>
+    </table>
+    <p>The key also tells us who you are, so you only ever see your own data. We show each key once, keep only its last
+    4 characters, and can revoke and reissue one at any time. Ask for a test key at
+    <a href="mailto:partner@getthere.now?subject=API%20test%20key">partner@getthere.now</a>.
+    <code>GET /partner/v1/ping</code> checks a key: <code>200 {"ok": true, "partner": "&lt;you&gt;", "mode": "test"}</code>.</p>
+
+    <h3 id="errors">Errors and what to do about them</h3>
+    <p>Every error is JSON with a <code>detail</code> string. Where a call can be refused for a business reason, the
+    <code>detail</code> starts with a machine-readable reason and a colon, like
+    <code>"amount_mismatch: amount_paid must be 34.08 SGD …"</code>. Branch on the part before the colon. The rest is
+    for your logs and support team.</p>
+    <table class="fields">
+      <tr><th>Status</th><th>Means</th><th>What to do</th></tr>
+      <tr><td><code>200</code>, <code>201</code></td><td>Done. <code>201</code> means something new was made, and
+        <code>200</code> on the same call means you'd already made it.</td><td class="why">Treat both as success.</td></tr>
+      <tr><td><code>401</code></td><td>Missing, wrong or revoked key.</td><td class="why">Check the header. Don't
+        retry.</td></tr>
+      <tr><td><code>403</code></td><td>A live key before your partner is live.</td><td class="why">Use your test key
+        until we switch you live.</td></tr>
+      <tr><td><code>404</code></td><td>Not yours, or not in this mode. A test key can't see a live offer and the other
+        way round.</td><td class="why">Check you're using the key that made it.</td></tr>
+      <tr><td><code>409</code></td><td>Refused for a business reason, named before the colon.</td><td class="why">Don't
+        retry the same call. Each guide lists every reason and what to do.</td></tr>
+      <tr><td><code>422</code></td><td>A field is missing or malformed. <code>detail</code> names it, like
+        <code>"segments[1].departure.time must be HH:MM, local time at the airport"</code>.</td><td class="why">Fix the
+        request. Don't retry it unchanged.</td></tr>
+      <tr><td><code>503</code></td><td>Your partner is paused. No quotes or offers are made.</td><td class="why">Show
+        nothing and carry on with your own flow. Calls about passes already sold still work.</td></tr>
+      <tr><td><code>5xx</code>, timeout</td><td>Something went wrong on our side, or the network failed.</td><td
+        class="why">Retry with backoff (see below). Calls that create something are safe to retry.</td></tr>
+    </table>
+
+    <h3 id="retries">Retries and idempotency</h3>
     <ul>
-      <li><b>Test keys</b> (<code>gt_test_</code>) only ever see test passes and test pushes, and work at any time.</li>
-      <li><b>Live keys</b> (<code>gt_live_</code>) see real cardholders, and work once you're live. Before that they get
-      <code>403</code>.</li>
-    </ul>
-    <p>The key identifies you, so you only ever see your own data. A missing, wrong or revoked key gets
-    <code>401 {"detail": "invalid partner key"}</code>. We issue keys securely, show each one once, and can revoke and
-    reissue one at any time.</p>
-    <p><b>GetThere calling you.</b> You give us a token for your API, and we send it the same way, as
-    <code>Authorization: Bearer &lt;token&gt;</code>. If you have a test system, give us its addresses and a separate test
-    token too. We can add mutual TLS if you need it. Calls are JSON over HTTPS.</p>
-
-    <p class="dir">You call GetThere · GetThere builds these</p>
-
-    <div class="ep"><span class="verb get">LINK</span><h3>https://&lt;issuer&gt;.getthere.now/offer</h3></div>
-    <p class="meta"><b>Who:</b> your app links to it · <b>When:</b> in your "Just booked a flight?" push · <b>Built by:</b> GetThere</p>
-    <p>The page your "Just booked a flight?" push opens. It explains the Flight Delay Pass and shows the cardholder
-    where to forward their booking email. No key needed: it's a public page. You decide when to send this push,
-    for example after an airline charge on a premium card.</p>
-
-    <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/ping</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> while you set up, to test your key · <b>Built by:</b> GetThere</p>
-    <p>Checks your key and connection.</p>
-<pre><code>200 {"ok": true, "partner": "&lt;issuer&gt;", "mode": "test"}</code></pre>
-    <p><code>mode</code> is <code>test</code> for a test key and <code>live</code> for a live key.</p>
-
-    <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/offer</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> before each push notification · <b>Built by:</b> GetThere</p>
-    <p>A fresh offer link and forwarding address for one push. Each call gets its own <code>offer_id</code>, carried in
-    both the link and the address, so a booking forwarded from that push is traced back to it: you and we can see how many
-    customers opened the offer, forwarded a booking, got a quote and bought a pass. Your customer copies nothing. With a
-    test key, <code>forward_to</code> starts <code>test+</code>, so bookings forwarded from your test app make test passes.
-    The plain <code>https://&lt;issuer&gt;.getthere.now/offer</code> link works too: each visit to it gets its own
-    <code>offer_id</code>, counted as a direct visit rather than one of your pushes.</p>
-<pre><code>200 {"offer_id": "k7f2q9xm",
-     "offer_url": "https://&lt;issuer&gt;.getthere.now/offer?o=k7f2q9xm",
-     "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
-     "product_name": "Flight Delay Pass",
-     "reference": "R-K7F2Q9XM"}</code></pre>
-    <p><code>reference</code> is what the offer page shows the cardholder as "Your reference". Quote it to us and we
-    can find the cardholder's journey.</p>
-    <p>Optional query parameters tell us where each offer was shown, so you can see which pushes, banners and campaigns
-    sell passes. For example, <code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code>.</p>
-    <table>
-      <tr><th>Parameter</th><th>Meaning</th></tr>
-      <tr><td><code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code></td><td>The standard UTM tags for
-        where the offer is shown. <code>src</code> is short for <code>utm_source</code>. Up to 64 letters, digits,
-        <code>.</code>, <code>-</code> or <code>_</code>; lowercased, and spaces become <code>-</code>. Anything else is
-        counted as untagged.</td></tr>
-      <tr><td><code>referrer_url</code></td><td>When you show the offer on a web page: the address the visitor came
-        from (the page's <code>document.referrer</code>). We count it by site.</td></tr>
-      <tr><td><code>opened</code></td><td><code>true</code> when you show <code>forward_to</code> on your own page or
-        screen straight away, rather than linking to <code>offer_url</code>. The offer then counts as opened now. Show it
-        as our offer page does: the address without its code (<code>quote@&lt;issuer&gt;.getthere.now</code>), easier to
-        read, with a copy button that copies the whole <code>forward_to</code>.</td></tr>
-    </table>
-
-    <div class="ep"><span class="verb">POST</span><h3>/partner/v1/push-receipts</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> optional, after you deliver GetThere's push notifications, in batches · <b>Built by:</b> GetThere</p>
-    <p>Tells us what happened to the pushes we asked you to show. Send receipts in batches, whenever you have them.</p>
-<pre><code>{"receipts": [
-  {"push_id": "5b1f…", "status": "delivered", "at": "2026-11-20T07:41:05Z"},
-  {"push_id": "9c2e…", "status": "opted_out"}
-]}</code></pre>
-    <table>
-      <tr><th>Field</th><th>Meaning</th></tr>
-      <tr><td><code>push_id</code></td><td>The <code>push_id</code> we sent you with the push</td></tr>
-      <tr><td><code>status</code></td><td><code>delivered</code>, <code>not_delivered</code> or <code>opted_out</code>. <code>opted_out</code> stops all further pushes to that cardholder (an opt-out in your test app only stops test pushes).</td></tr>
-      <tr><td><code>at</code></td><td>Optional, ISO 8601. Defaults to when we receive it.</td></tr>
-    </table>
-<pre><code>200 {"results": [{"push_id": "5b1f…", "result": "ok"},
-                 {"push_id": "9c2e…", "result": "ok"}]}</code></pre>
-    <p>Each result is <code>ok</code>, <code>bad_status</code> or <code>unknown_push</code> (not one of your partner's
-    pushes, or a push of the other mode: test keys report test pushes, live keys real ones). A body without a <code>receipts</code> list gets <code>422</code>.</p>
-
-    <p class="dir">GetThere calls you · you build these</p>
-
-    <div class="ep"><span class="verb">POST</span><h3>&lt;your push URL&gt;</h3></div>
-    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> a pass is bought, a pre-loaded rescue card is ready, a pre-loaded rescue card is used · <b>Built by:</b> you (optional)</p>
-    <p><b>Optional.</b> Without a push URL, GetThere sends no push notifications and the cardholder still gets every
-    message on WhatsApp and by email.</p>
-    <p>Shows a GetThere message as a push notification in your app. You give us one URL. We call it when a pass is bought, when
-    a pre-loaded rescue card is ready and after the cardholder rebooks. Push notifications are alerts only: the pre-loaded rescue card itself always goes
-    to the cardholder on WhatsApp and by email.</p>
-<pre><code>Idempotency-Key: 5b1f…
-
-{"push_id": "5b1f…",
- "customer": {"email": "mia@example.com"},
- "type": "card_issued",
- "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
- "body": "We've sent it to you on WhatsApp and by email.",
- "link": null}</code></pre>
-    <table>
-      <tr><th>Field</th><th>Meaning</th></tr>
-      <tr><td><code>push_id</code></td><td>Unique per push. It's also the <code>Idempotency-Key</code> header, so a retry never shows twice.</td></tr>
-      <tr><td><code>customer.email</code></td><td>The email your cardholder forwarded their booking from. Match it to your customer.</td></tr>
-      <tr><td><code>type</code></td><td><code>pass_purchased</code>, <code>card_issued</code> or <code>card_used</code></td></tr>
-      <tr><td><code>title</code>, <code>body</code></td><td>Ready to show. We agree the wording with you before launch.</td></tr>
-      <tr><td><code>link</code></td><td>Optional page to open, or <code>null</code></td></tr>
-    </table>
-    <p>Reply when you've accepted the push notification. Report delivery later to <code>/partner/v1/push-receipts</code>.</p>
-<pre><code>202 {"accepted": true, "reference": "&lt;your id for the push&gt;"}</code></pre>
-
-    <div class="ep"><span class="verb">POST</span><h3>&lt;your API&gt;/v1/getthere/purchase-match</h3></div>
-    <p class="meta"><b>Who:</b> GetThere calls you · <b>When:</b> each time a cardholder forwards a booking that shows its airfare · <b>Built by:</b> you (optional)</p>
-    <p>Optional. When a cardholder forwards a booking, we ask whether you saw a matching airline charge on their
-    card. A match confirms the booking is real and its airfare is right, so we can offer a pass even when the airfare
-    looks unusually high for the route. We send only what's needed to match, and you answer yes or no: no transaction data
-    comes back.</p>
-<pre><code>{"email": "mia@example.com",
- "airline": "QF",
- "amount": "1550.00",
- "currency": "AUD",
- "booked_after": "2026-11-13T00:00:00Z"}</code></pre>
-<pre><code>200 {"match": true}</code></pre>
-    <ul>
-      <li>Answer <code>true</code> if a charge from that airline, within 1% of <code>amount</code>, was made on or after
-      <code>booked_after</code> on a card held by the customer with that email.</li>
-      <li>A customer you can't find by email is <code>false</code>.</li>
-      <li>We wait up to 5 seconds. A timeout or error doesn't block the cardholder: the booking simply goes through our
-      other checks.</li>
+      <li><b>Reads are always safe to retry.</b></li>
+      <li><b>Quotes:</b> quoting the same booking or cart again returns the same open offers rather than new ones.</li>
+      <li><b>Creating a pass</b> (travel sites selling in their own checkout) is keyed on your
+      <code>payment_reference</code>. Sending it again returns the pass already made, with <code>200</code> instead of
+      <code>201</code>. Retry until you get an answer, so a paying customer is never left without their pass.</li>
+      <li><b>Pushes and webhooks we send you</b> each carry a unique id. Use it to ignore a repeat.</li>
+      <li>Back off between retries: 1s, 2s, 4s, 8s, then every minute. Stop on any <code>4xx</code>.</li>
     </ul>
 
-    <h2 id="travel-sites">For online travel agencies: quote and checkout</h2>
-    <p>A travel site offers the Flight Delay Pass on its booking confirmation page. It makes one call,
-    <code>POST /partner/v1/quotes</code>, as soon as a booking is confirmed, and shows the
-    <code>merchandising_url</code> that comes back. The plan the customer picks there opens a checkout already filled in
-    with their details. A site that would rather show the plans in its own design makes a second call,
-    <code>POST /partner/v1/checkouts</code>, when the customer picks one. Both use the same base URL and keys as above;
-    call them from your server, never from the browser.</p>
-    <p>The plans page, checkout, pass, emails and terms carry your name and colours. How the plans page looks (layout,
-    background, buttons, what it shows, its width) is set for your partner in the GetThere admin.</p>
+    <h3 id="test-mode">Test mode</h3>
+    <p>Every partner starts in test mode. A test pass runs the whole journey with nothing real:</p>
+    <ul>
+      <li>a test payment page instead of a card payment (GetThere's checkout), or no payment check at all (a travel site's
+      own checkout);</li>
+      <li>a test pre-loaded rescue card that can't be charged, with a "Simulate a purchase" button on its page;</li>
+      <li>emails whose subject starts with "[Test]", and WhatsApp messages that are recorded rather than sent.</li>
+    </ul>
+    <p>On request we can delay or cancel a test pass's flight, so you see the rescue card a few minutes later instead of
+    on travel day. Test passes stay test passes after you go live, so you can keep testing.</p>
 
-    <div class="ep"><span class="verb">POST</span><h3>/partner/v1/quotes</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> right after a booking is confirmed · <b>Built by:</b> GetThere</p>
-    <p>Prices the booking your customer has just made. No booking email is needed and GetThere sends the customer no
-    email at this point. The same booking quoted again gets the same open offers.</p>
-<pre><code>{
-  "booking_reference": "K7QX2M",
-  "airline": "SQ",
-  "currency": "SGD",
-  "total_paid": 1842.60,
-  "paid_with_miles": false,
-  "customer": {
-    "email": "mia.tan@example.com",
-    "residence_country": "SG",
-    "first_name": "Mia", "last_name": "Tan",
-    "date_of_birth": "1990-04-02",
-    "phone": "+6581234567",
-    "address": {"line1": "1 Raffles Place", "line2": "#20-01",
-                "city": "Singapore", "postcode": "048616",
-                "country": "SG"}
-  },
-  "passengers": [
-    {"title": "Ms", "first_name": "Mia", "last_name": "Tan"},
-    {"title": "Mr", "first_name": "Wei", "last_name": "Lim"},
-    {"title": "Miss", "first_name": "Chloe", "last_name": "Lim"}
-  ],
-  "segments": [
-    {"flight": "SQ232", "cabin": "Economy",
-     "departure": {"airport": "SIN", "date": "2026-11-20", "time": "00:25"},
-     "arrival":   {"airport": "SYD", "date": "2026-11-20", "time": "10:55"}},
-    {"flight": "SQ231", "cabin": "Economy",
-     "departure": {"airport": "SYD", "date": "2026-11-27", "time": "09:30"},
-     "arrival":   {"airport": "SIN", "date": "2026-11-27", "time": "15:20"}}
-  ]
-}</code></pre>
-    <table>
-      <tr><th>Field</th><th>Meaning</th></tr>
-      <tr><td><code>booking_reference</code></td><td>Required. The airline or your booking reference.</td></tr>
-      <tr><td><code>airline</code></td><td>Optional. The airline that issued the ticket, as a 2-letter code. Without it, the first flight's airline.</td></tr>
-      <tr><td><code>currency</code>, <code>total_paid</code></td><td>Required. What the customer paid for the flights, as a 3-letter ISO currency and a number. <code>base_fare</code> and <code>taxes</code> are optional.</td></tr>
-      <tr><td><code>paid_with_miles</code></td><td>Optional. <code>true</code> for an award booking, which is declined.</td></tr>
-      <tr><td><code>customer.email</code></td><td>Required. The <code>customer</code> block is the person making the booking, who buys the pass and holds the rescue card. They needn't be travelling. Their email gets the pass confirmation and the rescue card.</td></tr>
-      <tr><td><code>customer.*</code></td><td>Optional, and used only to fill in the checkout: <code>residence_country</code> (the 2-letter ISO country the customer lives in, which also prices the plans with its sales tax), <code>first_name</code>, <code>last_name</code>, <code>date_of_birth</code> (YYYY-MM-DD), <code>phone</code> (international format, starting with +) and <code>address</code> (<code>line1</code>, <code>line2</code>, <code>city</code>, <code>state</code>, <code>postcode</code>, <code>country</code> as a 2-letter ISO code).</td></tr>
-      <tr><td><code>passengers</code></td><td>Required. Everyone travelling on the booking, booker included if they fly, each as <code>{"title", "first_name", "last_name"}</code> or a name string.</td></tr>
-      <tr><td><code>segments</code></td><td>Required. Every flight on the booking in order, outbound and return: <code>flight</code> (like <code>SQ232</code>), optional <code>cabin</code>, and <code>departure</code> and <code>arrival</code>, each with a 3-letter <code>airport</code> code, <code>date</code> (YYYY-MM-DD), <code>time</code> (HH:MM, local at that airport) and optional <code>terminal</code>.</td></tr>
-    </table>
-<pre><code>200
+    <h3 id="webhooks">Webhooks: events we send you</h3>
+    <p>Give us an HTTPS address, one for test and one for live, and we'll POST an event to it whenever something happens
+    to one of your passes. With them, your customer service sees what we see without asking us.</p>
+<pre><code>POST &lt;your webhook URL&gt;
+Content-Type: application/json
+GetThere-Signature: t=1763624465,v1=5f0c…e91a
+
 {
-  "status": "quoted",
-  "quote_id": "0b9e…",
-  "reference": "Q-…",
-  "merchandising_url": "https://&lt;partner&gt;.getthere.now/quote/q4LT…",
-  "prefilled": ["city", "country", "date_of_birth", "first_name", …],
-  "not_prefilled": {},
-  "product_name": "Flight Delay Pass",
-  "trigger_minutes": 180,
-  "fees_include_tax": true,
-  "tax_country": "SG",
-  "terms_url": "https://my.getthere.now/terms/…",
-  "offers": [
-    {"offer_id": "564fcce8-…", "plan": "basic", "label": "Basic",
-     "featured": true, "fee": 31.20, "fee_before_tax": 31.20,
-     "tax": 0.00, "tax_label": null, "rescue_card_limit": 656.64,
-     "currency": "SGD", "expires_at": "2026-10-14T20:43:30Z"},
-    {"offer_id": "de01b698-…", "plan": "plus", "label": "Plus",
-     "featured": false, "fee": 44.33, "fee_before_tax": 44.33,
-     "tax": 0.00, "tax_label": null, "rescue_card_limit": 984.96,
-     "currency": "SGD", "expires_at": "2026-10-14T20:43:30Z"}
-  ]
-}</code></pre>
-    <table>
-      <tr><th>Field</th><th>Meaning</th></tr>
-      <tr><td><code>merchandising_url</code></td><td>The plans page. Put it in an <code>&lt;iframe&gt;</code> on your confirmation page, or link to it. Each plan's button opens its checkout, filled in, in the full window.</td></tr>
-      <tr><td><code>prefilled</code>, <code>not_prefilled</code></td><td>Which customer fields will be filled in on the checkout, and which were left for the customer to type, with the reason (a name not in English letters, someone under 18, a phone number not in international format).</td></tr>
-      <tr><td><code>offers</code></td><td>Each plan's <code>fee</code> and <code>rescue_card_limit</code> in the booking's currency, for a site that shows the plans itself. An offer can be bought until <code>expires_at</code>.</td></tr>
-      <tr><td><code>fees_include_tax</code>, <code>tax_country</code></td><td>When we know where the customer lives (<code>residence_country</code>, the address's <code>country</code>, or what a returning customer told us), each <code>fee</code> includes the sales tax for that country, exactly as checkout will charge it, and <code>fee_before_tax</code>, <code>tax</code> and <code>tax_label</code> (like <code>"GST 9%"</code>, or <code>null</code> where no tax is added) break it down. Otherwise <code>fees_include_tax</code> is <code>false</code>, fees are before tax, and checkout adds the tax once the customer picks their country.</td></tr>
-      <tr><td><code>trigger_minutes</code></td><td>How late the flight must be for the rescue card: 180 is 3 hours. A cancellation counts too.</td></tr>
-      <tr><td><code>reference</code></td><td>Quote it to us and we can find the customer's journey.</td></tr>
-    </table>
-    <p>Instead of <code>quoted</code>, the status can be:</p>
-    <ul>
-      <li><code>{"status": "declined", "reason": "too_late"}</code>: show nothing. Reasons include <code>already_departed</code>, <code>too_late</code>, <code>paid_with_miles</code>, <code>currency_not_quoted</code>, <code>flight_not_found</code>, <code>airport_blackout</code>, <code>high_risk</code> and <code>flight_full</code>.</li>
-      <li><code>{"status": "already_has_pass"}</code>: the booking already has a Flight Delay Pass. One pass per booking.</li>
-    </ul>
-    <p>A missing or malformed field gets <code>422</code> with a <code>detail</code> naming it. A flight GetThere has never
-    priced before can take up to 10 seconds the first time.</p>
-
-    <div class="ep"><span class="verb get">LINK</span><h3>merchandising_url</h3></div>
-    <p class="meta"><b>Who:</b> your confirmation page frames or links it · <b>When:</b> after a <code>quoted</code> response · <b>Built by:</b> GetThere</p>
-    <p>The plans page for that booking: the customer's flight, each plan's fee and rescue card limit, and a button per
-    plan. No key needed. The page stays open while the offers can be bought; once the booking has a pass, it opens the
-    pass instead.</p>
-
-    <div class="ep"><span class="verb">POST</span><h3>/partner/v1/checkouts</h3></div>
-    <p class="meta"><b>Who:</b> you call GetThere · <b>When:</b> only if you show the plans yourself, when the customer picks one · <b>Built by:</b> GetThere</p>
-    <p>Returns the checkout page for the plan the customer picked, filled in. Every field in <code>customer</code> is
-    optional, uses the same format as in the quote, and replaces what came with the quote.</p>
-<pre><code>{
-  "offer_id": "de01b698-…",
-  "customer": {
-    "first_name": "Mia", "last_name": "Tan",
-    "date_of_birth": "1990-04-02",
-    "phone": "+6581234567",
-    "address": {"line1": "1 Raffles Place", "line2": "#20-01",
-                "city": "Singapore", "postcode": "048616",
-                "country": "SG"}
+  "id": "7c1e2f0a-…",
+  "created_at": "2026-11-20T07:41:05.120Z",
+  "type": "rescue_card.issued",
+  "livemode": true,
+  "data": {
+    "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
+    "ota_order_id": "TRV-5581203", "plan": "plus", "pass_status": "triggered",
+    "amount": "984.96", "currency": "SGD",
+    "expires_at": "2026-11-21T07:41:05Z", "reason": "delay"
   }
 }</code></pre>
-<pre><code>200
-{
-  "checkout_url": "https://&lt;partner&gt;.getthere.now/checkout/jPib…",
-  "expires_at": "2026-10-14T20:43:30Z",
-  "prefilled": ["city", "country", "date_of_birth", "first_name",
-                "last_name", "line1", "line2", "phone", "postcode"],
-  "not_prefilled": {}
-}</code></pre>
-    <p>Redirect the customer to <code>checkout_url</code>. They check their details, confirm their WhatsApp number,
-    agree to the terms and pay the Underwriter. <code>404</code>: not one of your offers (or an offer of the other mode);
-    <code>409</code>: the offer has closed or the booking already has a pass.</p>
-    <div class="callout"><b>What we keep.</b> The customer's email and name, and the booking you quote, are kept with the
-    quote, as for any booking we price: they are who the pass and its emails are for. The other details you send to fill in
-    the checkout (date of birth, address, mobile) are used only for that, and are deleted in the daily clean-up once sales
-    close, 48 hours before departure. What the customer confirms at checkout becomes the rescue card holder's details, as
-    the <a href="privacy.html">Privacy Notice</a> says.</div>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>id</code></td><td>Unique per event, the same on every retry.</td><td class="why">Store it and
+        ignore an event you've already handled. We retry until you answer 2xx, so you may see one twice.</td></tr>
+      <tr><td><code>created_at</code></td><td>When it happened.</td><td class="why">Events can arrive out of order after
+        a retry. Order them by this.</td></tr>
+      <tr><td><code>type</code></td><td>What happened (table below).</td><td class="why">Route on it. Ignore types you
+        don't use: new ones may be added.</td></tr>
+      <tr><td><code>livemode</code></td><td><code>true</code> for a real pass.</td><td class="why">A test event must never
+        touch a real customer record.</td></tr>
+      <tr><td><code>data.policy_id</code>, <code>data.reference</code></td><td>The pass, as our API and our customer
+        emails name it.</td><td class="why"><code>reference</code> is what your customer reads in our emails, so your
+        agents can search for it.</td></tr>
+      <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
+        event to your order without a lookup.</td></tr>
+      <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status now:
+        <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired</code> or
+        <code>refunded</code>.</td><td class="why">Show your agents the current state without calling us.</td></tr>
+    </table>
+    <table class="fields">
+      <tr><th>Type</th><th>Sent when, with</th><th>Why it matters</th></tr>
+      <tr><td><code>pass.issued</code></td><td>A pass is bought. <code>offer_id</code>, <code>amount_paid</code>,
+        <code>currency</code>, <code>pass_url</code>.</td><td class="why">Your record of the sale, and the link to send a
+        customer who asks "where's my pass?".</td></tr>
+      <tr><td><code>pass.changed</code></td><td>Names corrected (<code>change: "travellers"</code>,
+        <code>passengers</code>) or the pass moved to new flights (<code>change: "flights"</code>, <code>replaces</code>:
+        the old pass).</td><td class="why">Keeps your booking and our pass in step after a change.</td></tr>
+      <tr><td><code>pass.ended</code></td><td>The pass ended before travel. <code>reason</code>: <code>refunded</code>,
+        <code>replaced</code> (by a new pass), <code>flight_cancelled_before_watch</code> or <code>expired</code>, and
+        <code>refund</code> where one is due.</td><td class="why">Stops your agents promising a rescue card that won't
+        come, and tells you a refund to reconcile.</td></tr>
+      <tr><td><code>email.bounced</code></td><td>Our email to the customer bounced. <code>email_kind</code> says which,
+        like <code>policy_confirmation</code> or <code>card_issued</code>.</td><td class="why">The customer may never see
+        their pass or rescue card. Reach them another way and correct the address.</td></tr>
+      <tr><td><code>whatsapp.confirmed</code></td><td>The customer added their WhatsApp number after buying.</td><td
+        class="why">They'll get the rescue card in minutes at the airport rather than only by email.</td></tr>
+      <tr><td><code>rescue_card.issued</code></td><td>A flight was delayed past the trigger or cancelled, and the rescue
+        card was sent. <code>amount</code>, <code>currency</code>, <code>expires_at</code>, <code>reason</code>.</td><td
+        class="why">The moment your customer is most likely to contact you. Your agents can say "your rescue card was
+        sent at 07:41, check WhatsApp and email".</td></tr>
+      <tr><td><code>rescue_card.used</code></td><td>The customer booked a new flight with it. <code>amount</code>,
+        <code>currency</code>, <code>merchant</code>.</td><td class="why">They've rebooked. Close any open contact, and
+        for a travel site, expect the new booking on your own site.</td></tr>
+    </table>
+    <p><b>Answer quickly with any 2xx</b> and do the work afterwards. We wait 10 seconds. Anything else, or no answer, is
+    retried on our next sweep, with growing gaps (1, 3, 7, 15 … minutes after the event), 10 times in all over about 8
+    hours.</p>
 
-    <h2>Test mode</h2>
-    <p>Test passes run the whole journey with nothing real: a test payment page instead of a card payment, a test
-    pre-loaded rescue card that can't be charged, and emails whose subject starts with "[Test]". We can simulate a
-    delay on a test pass's flight, so you see the pre-loaded rescue card push minutes later instead of on travel day.</p>
-    <ul>
-      <li>Test passes come from bookings forwarded to <code>test@&lt;issuer&gt;.getthere.now</code>, and from your
-      partner's own address until it goes live.</li>
-      <li>Quotes made with a test key are test offers: their checkout takes a test payment and makes a test pass.</li>
-      <li>Their pushes go to your test push URL if you gave us one; otherwise we only record them.</li>
-      <li>Their purchase checks go to your test purchase-match API if you gave us one; otherwise we use test purchases
-      we set up with you. A test pass is never checked against your real cardholders.</li>
-      <li>Test passes stay test passes after you go live, so you can keep testing.</li>
-    </ul>
-    <p>Ask us for a test key at
-    <a href="mailto:partner@getthere.now?subject=API%20test%20key">partner@getthere.now</a>.</p>
+    <h3 id="verify">Checking a webhook's signature</h3>
+    <p>Every webhook is signed with your webhook secret (<code>whsec_…</code>), which we give you once when your first
+    address is set. <code>GetThere-Signature</code> holds the time we signed it (<code>t</code>) and an HMAC-SHA256 of
+    <code>t</code>, a full stop and the raw body (<code>v1</code>, in hex). Check it on the raw bytes, before parsing the
+    JSON, and reject anything more than 5 minutes old. Without the check, anyone who finds your address could tell you a
+    rescue card was used.</p>
+<pre><code>// Node (Express): app.post("/getthere/events", express.raw({type: "application/json"}), handler)
+const crypto = require("crypto");
+function verified(req, secret) {
+  const parts = Object.fromEntries(req.get("GetThere-Signature").split(",").map(p => p.split("=")));
+  const expected = crypto.createHmac("sha256", secret).update(`${parts.t}.`).update(req.body).digest("hex");
+  const fresh = Math.abs(Date.now() / 1000 - Number(parts.t)) &lt; 300;
+  return fresh &amp;&amp; crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(parts.v1 || ""));
+}</code></pre>
+<pre><code># Python
+import hashlib, hmac, time
+
+def verified(header: str, raw_body: bytes, secret: str) -> bool:
+    parts = dict(p.split("=", 1) for p in header.split(","))
+    expected = hmac.new(secret.encode(), f"{parts['t']}.".encode() + raw_body, hashlib.sha256).hexdigest()
+    fresh = abs(time.time() - int(parts["t"])) &lt; 300
+    return fresh and hmac.compare_digest(expected, parts.get("v1", ""))</code></pre>
+    <p>If your secret leaks, ask us for a new one. The old one stops working at once.</p>
+
+    <h3 id="support">Getting help</h3>
+    <p>Send us the <code>reference</code> from any response (<code>R-…</code>, <code>Q-…</code> or <code>P-…</code>) and
+    we can trace the whole journey: <a href="mailto:partner@getthere.now?subject=API%20help">partner@getthere.now</a>.</p>
 
   </div>
 </section>
@@ -466,13 +250,18 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
-      <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api.html">API reference</a></div>
-      <div><b style="color:#fff">Online Travel Agency</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api.html#travel-sites">API reference</a></div>
+      <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
+      <div><b style="color:#fff">Online Travel Agency</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
     <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues, and the Underwriter funds the pre-loaded rescue cards. GetThere provides the platform.<br>© 2026 GetThere.</div>
   </div>
 </footer>
+<script src="site.js"></script>
+<script>
+  // The old single page's anchors, now on their own guides.
+  if (location.hash === "#travel-sites") location.replace("api-travel-sites.html");
+</script>
 </body>
 </html>
