@@ -6,6 +6,9 @@ forward address the way a card issuer's app does, from GetThere's partner API wi
         site.js calls this when the home page opens. It asks GET /partner/v1/offer for a new offer,
         passing the page's utm tags and referring site, with opened=true (the page shows the address
         itself), and answers {"forward_to": "quote+<id>@my.getthere.now", "reference": "R-<ID>"}.
+    GET  /settings
+        The Direct partner's settings the home page quotes (GET /partner/v1/settings), for site.js. The app
+        keeps them behind the partner key (Dadoo, 2026-10-14); kept here for 5 minutes.
     GET  /health
         Up.
 
@@ -21,6 +24,7 @@ Standard library only. Run locally:  GETTHERE_PARTNER_KEY=gt_test_... python3 se
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -49,6 +53,25 @@ def new_offer(query):
     return {"forward_to": offer["forward_to"], "reference": offer["reference"]}
 
 
+_settings = {"at": 0.0, "body": None}
+
+
+def direct_settings():
+    """The Direct partner's settings from the partner API, kept for 5 minutes, or None."""
+    if _settings["body"] is not None and time.time() - _settings["at"] < 300:
+        return _settings["body"]
+    req = urllib.request.Request(f"{API_URL}/settings",
+                                 headers={"Authorization": f"Bearer {KEY}", "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            body = json.load(r)
+    except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        print(f"partner API: {e}", file=sys.stderr)
+        return None
+    _settings.update(at=time.time(), body=body)
+    return body
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, status, body=None):
         self.send_response(status)
@@ -67,6 +90,13 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/health":
             return self._send(200, {"ok": True, "key": bool(KEY)})
+        if self.path == "/settings":
+            if self.headers.get("Origin") not in ORIGINS:  # only our own pages
+                return self._send(403, {"error": "origin not allowed"})
+            if not KEY:
+                return self._send(503, {"error": "no partner key set"})
+            body = direct_settings()
+            return self._send(200, body) if body else self._send(502, {"error": "partner API unavailable"})
         self._send(404, {"error": "not found"})
 
     def do_POST(self):

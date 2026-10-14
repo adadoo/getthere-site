@@ -52,7 +52,34 @@ def service_name(c):
     return f"GetThere for {c['partner_name']}" if c["partner_name"] else "GetThere"
 
 
-def page(title, description, body, depth=1):
+OG_IMAGE = "https://getthere.now/images/og.png?v=2"
+OG_ALT = "Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready"
+
+
+def share_tags(title, description, url):
+    """The link-preview tags every page carries: canonical, Open Graph and Twitter card."""
+    t, d = escape(title), escape(description)
+    return f"""<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GetThere">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="{url}">
+<meta property="og:title" content="{t}">
+<meta property="og:description" content="{d}">
+<meta property="og:image" content="{OG_IMAGE}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{OG_ALT}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{t}">
+<meta name="twitter:description" content="{d}">
+<meta name="twitter:image" content="{OG_IMAGE}">
+<meta name="twitter:image:alt" content="{OG_ALT}">
+"""
+
+
+def page(title, description, body, depth=1, share_title=None, url="https://getthere.now/"):
     up = "../" * depth
     return f"""<!doctype html>
 <html lang="en">
@@ -61,7 +88,7 @@ def page(title, description, body, depth=1):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{escape(title)}</title>
 <meta name="description" content="{escape(description)}">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
+{share_tags(share_title or title, description, url)}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="{up}styles.css">
 </head>
 <body>
@@ -211,7 +238,8 @@ def privacy():
     <h2>{n + 4}. Changes</h2>
     <p>We'll post any changes to this notice on this page with a new effective date.</p>
 """
-    return page("Privacy notice · GetThere", "How GetThere uses your data, wherever you bought your pass.", body, depth=0)
+    return page("Privacy notice · GetThere", "How GetThere uses your data, wherever you bought your pass.", body, depth=0,
+                share_title="GetThere privacy notice", url="https://getthere.now/privacy.html")
 
 
 (ROOT / "privacy.html").write_text(privacy())

@@ -120,12 +120,16 @@ if (airlineList) {
   }).catch(() => {});   // keep the list in the page
 }
 
+// The website's own server (server/server.py), which holds the Direct partner's key.
+const SITE_SERVER = "https://getthere-site-server.onrender.com";
+
 // The Direct partner's settings the home page quotes (hours, plans, countries, booking values), from
-// the app (GET /settings.json), so the website says what the app's pages and the terms say. Each
-// [data-setting] keeps the value it was written with if the app can't be reached.
+// the app through the website's server (GET /settings: the app keeps them behind the partner key, Dadoo
+// 2026-10-14), so the website says what the app's pages and the terms say. Each [data-setting] keeps
+// the value it was written with if the server can't be reached.
 const settingSpots = document.querySelectorAll("[data-setting]");
 if (settingSpots.length) {
-  fetch("https://my.getthere.now/settings.json").then(r => r.ok ? r.json() : Promise.reject()).then(s => {
+  fetch(SITE_SERVER + "/settings").then(r => r.ok ? r.json() : Promise.reject()).then(s => {
     settingSpots.forEach(el => {
       const v = s[el.dataset.setting];
       if (typeof v === "string" && v) el.textContent = v;
@@ -158,7 +162,6 @@ function showPlans(s) {
 // issuer's app does. The offer's code rides in the address, so a booking forwarded from here is traced
 // to this visit, with this page's utm_* tags and referring site, in the admin's Offers. Kept for the
 // visit, so a reload isn't a second offer. The plain address stays if the server can't be reached.
-const SITE_SERVER = "https://getthere-site-server.onrender.com";
 const forwardSpots = document.querySelectorAll("[data-forward]");
 if (forwardSpots.length) {
   // The page shows the plain quote@ address, easier on the eye; only a copy carries the +code (Dadoo,
