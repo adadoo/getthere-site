@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Flight Delay Pass for travel sites · runs on GetThere</title>
-<meta name="description" content="Offer the Flight Delay Pass on your booking confirmation page: a priced offer from one API call, a checkout already filled in from a second, and a rescue card to rebook on any airline if the flight is delayed 3+ hours. GetThere is the platform it runs on.">
+<meta name="description" content="Offer the Flight Delay Pass on your booking confirmation page: a page of plans from one API call, a checkout already filled in with the customer's details, and a rescue card to rebook on any airline if the flight is delayed 3+ hours. GetThere is the platform it runs on.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/travel-sites.html">
 <meta property="og:title" content="Flight Delay Pass for travel sites">
-<meta property="og:description" content="Flight delay coverage on your booking confirmation page, from two API calls.">
+<meta property="og:description" content="Flight delay coverage on your booking confirmation page, from one API call.">
 <meta property="og:image" content="https://getthere.now/images/og.png?v=2">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -17,10 +17,11 @@
 <meta property="og:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Flight Delay Pass for travel sites">
-<meta name="twitter:description" content="Flight delay coverage on your booking confirmation page, from two API calls.">
+<meta name="twitter:description" content="Flight delay coverage on your booking confirmation page, from one API call.">
 <meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="nav.css">
 </head>
 <body>
 
@@ -28,12 +29,10 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-      <a class="hide-sm" href="#flow">The flow</a>
-      <a class="hide-sm" href="#api">API</a>
-      <a class="hide-sm" href="#numbers">The numbers</a>
-      <a class="hide-sm" href="issuers.html">For Issuers</a>
-      <a class="pill" href="mailto:partner@getthere.now?subject=The%20Flight%20Delay%20Pass%20for%20travel%20sites">Contact us</a>
-    </nav>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="travel-sites.html" aria-current="page">Online Travel Agency</a><a href="underwriters.html">Underwriter</a></div>
+    <a class="pill" href="mailto:partner@getthere.now?subject=The%20Flight%20Delay%20Pass%20for%20travel%20sites">Contact us</a>
+    <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </nav>
   </div>
 </header>
 
@@ -42,7 +41,7 @@
     <div>
       <p class="eyebrow">For online travel agencies</p>
       <h1>Sell flight delay coverage on your booking confirmation page.</h1>
-      <p class="lede">One API call prices the booking your customer just made. One more opens a checkout already filled in with their details. If the flight is delayed 3+ hours or cancelled, they get a pre-loaded rescue card within minutes to book another flight on any airline, and you earn a share of every pass.</p>
+      <p class="lede">One API call prices the booking your customer just made and returns a page of the plans for your confirmation page. The plan your customer picks opens a checkout already filled in with their details. If the flight is delayed 3+ hours or cancelled, they get a pre-loaded rescue card within minutes to book another flight on any airline, and you earn a share of every pass.</p>
       <div class="btns">
         <a class="btn" href="mailto:partner@getthere.now?subject=The%20Flight%20Delay%20Pass%20for%20travel%20sites">Contact us</a>
         <a class="btn ghost light" href="#flow">See the flow</a>
@@ -76,7 +75,7 @@
       <div class="tile"><h3>New revenue on every booking</h3><p class="muted">A share of each pass fee, paid monthly by the Underwriter. You fund nothing and hold no risk: the Underwriter issues the pass and funds every rescue card.</p></div>
       <div class="tile"><h3>Fewer disruption calls</h3><p class="muted">When a flight is delayed, your customer already has money to rebook, sent by WhatsApp and email within minutes. GetThere answers their questions about the pass.</p></div>
       <div class="tile"><h3>Any airline, including your site</h3><p class="muted">The rescue card works at any airline and at travel agencies, so the new flight can be booked back on your site. No waiting for the airline to rebook.</p></div>
-      <div class="tile"><h3>Two API calls</h3><p class="muted">A quote after the booking is confirmed and a checkout when the customer picks a plan. GetThere runs the checkout, payments, flight tracking, claims, rescue cards and support.</p></div>
+      <div class="tile"><h3>One API call</h3><p class="muted">A quote after the booking is confirmed, with a ready-made page of the plans to show. GetThere runs the plans page, checkout, payments, flight tracking, claims, rescue cards and support.</p></div>
       <div class="tile"><h3>In your brand</h3><p class="muted">The checkout page, emails and terms carry your name and colours, on your own subdomain or your own domain.</p></div>
       <div class="tile"><h3>Nothing to type twice</h3><p class="muted">You already have the passenger's name, mobile and address. The checkout arrives filled in; your customer checks it, ticks two boxes and pays.</p></div>
     </div>
@@ -86,20 +85,22 @@
 <section id="flow" class="tint">
   <div class="wrap">
     <p class="eyebrow">The flow</p>
-    <h2>From booking confirmed to rescue card, in four steps</h2>
+    <h2>From booking confirmed to checkout, in four steps</h2>
     <div class="steps4">
-      <div class="tile"><span class="time">YOUR SITE</span><h3>1. Booking confirmed</h3><p class="muted">Your server calls <code>POST /quotes</code> with the flights, the fare paid, the passengers and the booker's email.</p></div>
-      <div class="tile"><span class="time">YOUR SITE</span><h3>2. Offer on the confirmation page</h3><p class="muted">You show the plans GetThere returned: the fee and the rescue card limit for each, in the booking's currency. Declined bookings come back with a reason, and you simply show nothing.</p></div>
-      <div class="tile"><span class="time">YOUR SITE</span><h3>3. Customer picks a plan</h3><p class="muted">Your server calls <code>POST /checkouts</code> with the offer and everything you know about the customer, and redirects them to the <code>checkout_url</code> it gets back.</p></div>
+      <div class="tile"><span class="time">YOUR SITE</span><h3>1. Booking confirmed</h3><p class="muted">Your server calls <code>POST /quotes</code> with the flights, the fare paid, the passengers and everything you know about the booker.</p></div>
+      <div class="tile"><span class="time">YOUR SITE</span><h3>2. Offer on the confirmation page</h3><p class="muted">Show the <code>merchandising_url</code> GetThere returned in a frame, or link to it. It lists each plan's fee and rescue card limit in the booking's currency. A declined booking comes back with a reason, and you show nothing.</p></div>
+      <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>3. Customer picks a plan</h3><p class="muted">On the plans page, in your colours. It opens that plan's checkout in the full window.</p></div>
       <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>4. Checkout, filled in</h3><p class="muted">Name, date of birth, home address and mobile are already there. The customer checks them, confirms their WhatsApp number, agrees to the terms and pays the Underwriter.</p></div>
     </div>
-    <div class="grid2" style="margin-top:32px;align-items:center;gap:40px">
-      <figure class="shot"><img src="images/ota-checkout-filled.png" alt="GetThere checkout page with the customer's name, date of birth, address and WhatsApp number already filled in" loading="lazy"></figure>
-      <div class="points">
-        <div><h3>What happens next is GetThere's</h3><p class="muted">The pass confirmation by email, flight tracking from 48 hours before departure, and if the flight is delayed 3+ hours or cancelled, the rescue card by WhatsApp and email within minutes. No claim form.</p></div>
-        <div><h3>The customer can switch plans</h3><p class="muted">Both plans on the quote open filled in, so a customer who changes their mind at checkout keeps their details.</p></div>
-        <div><h3>One pass per booking</h3><p class="muted">Quote the same booking again and you get the same open offers. A booking that already has a pass comes back as <code>already_has_pass</code>.</p></div>
-      </div>
+    <div class="grid2 screens">
+      <figure class="shot"><img src="images/ota-plans.png" alt="GetThere plans page with Basic and Plus, each with its fee and rescue card limit" loading="lazy"><figcaption><b>The plans page</b> at <code>merchandising_url</code>, in your colours</figcaption></figure>
+      <figure class="shot"><img src="images/ota-checkout-filled.png" alt="GetThere checkout page with the customer's name, date of birth, address and WhatsApp number already filled in" loading="lazy"><figcaption><b>The checkout</b>, filled in from your quote call</figcaption></figure>
+    </div>
+    <div class="grid2 points3" style="margin-top:28px">
+      <div><h3>Or show the plans yourself</h3><p class="muted">The quote also returns each plan's fee and limit. Build your own offer box, and when the customer picks a plan, <code>POST /checkouts</code> gives you its filled-in <code>checkout_url</code>.</p></div>
+      <div><h3>What happens next is GetThere's</h3><p class="muted">The pass confirmation by email, flight tracking from 48 hours before departure, and if the flight is delayed 3+ hours or cancelled, the rescue card by WhatsApp and email within minutes. No claim form.</p></div>
+      <div><h3>The customer can switch plans</h3><p class="muted">Both plans on the quote open filled in, so a customer who changes their mind at checkout keeps their details.</p></div>
+      <div><h3>One pass per booking</h3><p class="muted">Quote the same booking again and you get the same open offers. A booking that already has a pass comes back as <code>already_has_pass</code>.</p></div>
     </div>
   </div>
 </section>
@@ -107,12 +108,12 @@
 <section id="api">
   <div class="wrap api">
     <p class="eyebrow">The API</p>
-    <h2>Two calls, one key</h2>
+    <h2>One call, or two if you show the plans yourself</h2>
     <p class="lede">Base URL <code>https://api.getthere.now/partner/v1</code>. Every call takes <code>Authorization: Bearer &lt;key&gt;</code>. Keys come from the GetThere admin: <code>gt_test_…</code> makes test passes with test payments, test rescue cards and simulated delays; <code>gt_live_…</code> works once you're live. Call from your server, never from the browser.</p>
     <div class="grid2" style="gap:32px;align-items:start;margin-top:24px">
       <div>
         <h3>1. Quote the booking</h3>
-        <p class="muted">Right after the booking is confirmed. Times are local at each airport. <code>airline</code> is the airline that issued the ticket; without it, the first flight's airline.</p>
+        <p class="muted">Right after the booking is confirmed. Times are local at each airport. <code>airline</code> is the airline that issued the ticket; without it, the first flight's airline. In <code>customer</code>, only <code>email</code> is required; the rest fills in the checkout.</p>
 <pre><code>POST /quotes
 {
   "booking_reference": "K7QX2M",
@@ -120,8 +121,15 @@
   "currency": "SGD",
   "total_paid": 486.40,
   "paid_with_miles": false,
-  "customer": {"email": "mia.tan@example.com",
-               "first_name": "Mia", "last_name": "Tan"},
+  "customer": {
+    "email": "mia.tan@example.com",
+    "first_name": "Mia", "last_name": "Tan",
+    "date_of_birth": "1990-04-02",
+    "phone": "+6581234567",
+    "address": {"line1": "1 Raffles Place", "line2": "#20-01",
+                "city": "Singapore", "postcode": "048616",
+                "country": "SG"}
+  },
   "passengers": [{"first_name": "Mia", "last_name": "Tan"}],
   "segments": [{
     "flight": "SQ232", "cabin": "Economy",
@@ -132,6 +140,9 @@
 <pre><code>200
 {
   "status": "quoted",
+  "merchandising_url": "https://yoursite.getthere.now/plans/q4LT…",
+  "prefilled": ["city", "country", "date_of_birth", "first_name", …],
+  "not_prefilled": {},
   "product_name": "Flight Delay Pass",
   "trigger_minutes": 180,
   "fees_include_tax": false,
@@ -145,11 +156,11 @@
      "currency": "SGD", "expires_at": "2026-10-14T20:43:30Z"}
   ]
 }</code></pre>
-        <p class="muted">Or <code>{"status": "declined", "reason": "too_late"}</code>: show nothing. Reasons include <code>already_departed</code>, <code>too_late</code>, <code>paid_with_miles</code>, <code>currency_not_quoted</code>, <code>flight_not_found</code>, <code>airport_blackout</code>, <code>high_risk</code> and <code>flight_full</code>. A missing or malformed field is a <code>422</code> naming it. A flight GetThere has never priced may take up to 10 seconds the first time.</p>
+        <p class="muted"><code>merchandising_url</code> is the plans page: put it in an <code>&lt;iframe&gt;</code> on your confirmation page or link to it. A field the checkout wouldn't accept is left for the customer to type and listed in <code>not_prefilled</code>. Or <code>{"status": "declined", "reason": "too_late"}</code>: show nothing. Reasons include <code>already_departed</code>, <code>too_late</code>, <code>paid_with_miles</code>, <code>currency_not_quoted</code>, <code>flight_not_found</code>, <code>airport_blackout</code>, <code>high_risk</code> and <code>flight_full</code>. A missing or malformed field is a <code>422</code> naming it. A flight GetThere has never priced may take up to 10 seconds the first time.</p>
       </div>
       <div>
-        <h3>2. Open the checkout</h3>
-        <p class="muted">When the customer picks a plan. Send whatever you have; every field in <code>customer</code> is optional.</p>
+        <h3>2. Open the checkout <span class="muted" style="font-weight:400">· only if you show the plans yourself</span></h3>
+        <p class="muted">When the customer picks a plan in your own offer box. Every field in <code>customer</code> is optional, and replaces what came with the quote.</p>
 <pre><code>POST /checkouts
 {
   "offer_id": "de01b698-…",
@@ -171,7 +182,7 @@
   "not_prefilled": {}
 }</code></pre>
         <p class="muted">Redirect the customer to <code>checkout_url</code>. A field the checkout wouldn't accept (a name not in English letters, someone under 18, a number not in international format) is left for the customer to type and listed in <code>not_prefilled</code> with the reason. <code>404</code>: not your offer; <code>409</code>: the offer has closed or the booking already has a pass.</p>
-        <div class="callout" style="margin-top:16px"><b>What we keep.</b> The details you send are used only to fill in the checkout, and are deleted once sales close, 48 hours before departure. What the customer confirms at checkout becomes the rescue card holder's details, as the Privacy Notice says.</div>
+        <div class="callout" style="margin-top:16px"><b>What we keep.</b> The customer details you send, with the quote or here, are used only to fill in the checkout, and are deleted once sales close, 48 hours before departure. What the customer confirms at checkout becomes the rescue card holder's details, as the Privacy Notice says.</div>
       </div>
     </div>
   </div>
@@ -236,12 +247,13 @@
   <div class="wrap">
     <div>
       <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for underwriters, Issuers and travel sites.</p>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, online travel agencies and underwriters.</p>
     </div>
     <div class="cols">
-      <div><b style="color:#fff">Travellers</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
-      <div><b style="color:#fff">Travel sites</b><a href="#flow">The flow</a><a href="#api">API</a><a href="#numbers">The numbers</a></div>
-      <div><b style="color:#fff">Partners</b><a href="issuers.html">For Issuers</a><a href="underwriters.html">For underwriters</a></div>
+      <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
+      <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api.html">API reference</a></div>
+      <div><b style="color:#fff">Online Travel Agency</b><a href="travel-sites.html#flow">The flow</a><a href="travel-sites.html#api">API</a><a href="travel-sites.html#numbers">The numbers</a></div>
+      <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
     <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues, and the Underwriter funds the pre-loaded rescue cards. GetThere provides the platform.<br>© 2026 GetThere. Figures on this page are illustrative assumptions, not forecasts.</div>
