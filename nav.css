@@ -1,4 +1,4 @@
-/* The header's audiences (Traveller, Card Issuer, Online Travel Agency, Underwriter) on every page,
+/* The header's audiences (Traveller, Card Issuer, Travel Site, Underwriter) on every page,
    behind a menu button on narrow screens (site.js opens it). Kept out of traveller.css, which is the app's. */
 .menu { display: flex; align-items: center; gap: 22px; }
 .menu a { color: #14213d; text-decoration: none; font-weight: 500; font-size: 15px; white-space: nowrap; }

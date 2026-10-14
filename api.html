@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>API reference · GetThere</title>
-<meta name="description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
+<meta name="description" content="The GetThere partner API: pick your guide (card issuers or travel sites), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GetThere">
 <meta property="og:url" content="https://getthere.now/api.html">
 <meta property="og:title" content="GetThere">
-<meta property="og:description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
+<meta property="og:description" content="The GetThere partner API: pick your guide (card issuers or travel sites), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta property="og:image" content="https://getthere.now/images/og.png?v=2">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GetThere">
-<meta name="twitter:description" content="The GetThere partner API: pick your guide (card issuers or online travel agencies), then the basics every integration shares: keys, errors, test mode and webhooks.">
+<meta name="twitter:description" content="The GetThere partner API: pick your guide (card issuers or travel sites), then the basics every integration shares: keys, errors, test mode and webhooks.">
 <meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
@@ -28,7 +28,7 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="travel-sites.html">Online Travel Agency</a><a href="underwriters.html">Underwriter</a></div>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="travel-sites.html">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
     <a class="pill" href="mailto:partner@getthere.now?subject=API%20access">Contact us</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </nav>
@@ -52,11 +52,11 @@
         <p><b>Read the card issuer guide →</b></p>
       </a>
       <a class="door" href="api-travel-sites.html">
-        <span class="opt">Online travel agencies</span>
+        <span class="opt">Travel sites</span>
         <h3>You sell flights and want to offer the pass when your customer books</h3>
-        <p>Choose whether to offer it after booking or inside your own checkout, and whether to use our widget or your
-        own design. The guide walks through each path.</p>
-        <p><b>Read the online travel agency guide →</b></p>
+        <p>Show it on your confirmation page, in your own checkout or in your booking email, in any mix, with our widget or
+        your own design. The guide walks through each path.</p>
+        <p><b>Read the travel site guide →</b></p>
       </a>
     </div>
 
@@ -74,8 +74,9 @@
 
     <h3 id="base">Base URL and format</h3>
     <p>Every call goes to <code>https://api.getthere.now/partner/v1</code>, over HTTPS, with JSON in and out
-    (<code>Content-Type: application/json</code>). Times are ISO 8601 with a time zone, such as
-    <code>2026-11-20T07:41:05Z</code>. Dates are <code>YYYY-MM-DD</code>. Flight times are the local time at that
+    (<code>Content-Type: application/json</code>). Times are ISO 8601 with a time zone. Times we send are in UTC, with
+    microseconds and <code>+00:00</code>, such as <code>2026-11-20T07:41:05.120345+00:00</code>: parse them with a
+    full ISO 8601 parser. Times you send may end in <code>Z</code> or any offset. Dates are <code>YYYY-MM-DD</code>. Flight times are the local time at that
     airport, as printed on the ticket. Amounts are numbers in the currency named next to them. Currencies are 3-letter
     ISO codes and countries are 2-letter ISO codes.</p>
     <p><b>Call us from your server, never from a browser or app.</b> Your key would be visible to anyone.</p>
@@ -100,7 +101,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <h3 id="errors">Errors and what to do about them</h3>
     <p>Every error is JSON with a <code>detail</code> string. Where a call can be refused for a business reason, the
     <code>detail</code> starts with a machine-readable reason and a colon, like
-    <code>"amount_mismatch: amount_paid must be 34.08 SGD …"</code>. Branch on the part before the colon. The rest is
+    <code>"amount_mismatch: amount_paid must be 34.08 SGD …"</code>. Every business <code>409</code> carries one. Branch on the part before the colon. The rest is
     for your logs and support team.</p>
     <table class="fields">
       <tr><th>Status</th><th>Means</th><th>What to do</th></tr>
@@ -127,9 +128,11 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <ul>
       <li><b>Reads are always safe to retry.</b></li>
       <li><b>Quotes:</b> quoting the same booking or cart again returns the same open offers rather than new ones.</li>
-      <li><b>Creating a pass</b> (travel sites selling in their own checkout) is keyed on your
-      <code>payment_reference</code>. Sending it again returns the pass already made, with <code>200</code> instead of
-      <code>201</code>. Retry until you get an answer, so a paying customer is never left without their pass.</li>
+      <li><b>Creating a pass</b> (travel sites selling in-line, in their own checkout) is keyed on your
+      <code>payment_reference</code>, per mode: a test sale and a live sale never share one. Sending it again in the same
+      mode returns the pass already made, with <code>200</code> instead of <code>201</code>. Retry until you get an answer,
+      so a paying customer is never left without their pass. A flight change sent again with the same
+      <code>payment_reference</code> returns the same answer too.</li>
       <li><b>Pushes and webhooks we send you</b> each carry a unique id. Use it to ignore a repeat.</li>
       <li>Back off between retries: 1s, 2s, 4s, 8s, then every minute. Stop on any <code>4xx</code>.</li>
     </ul>
@@ -138,7 +141,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <p>Every partner starts in test mode. A test pass runs the whole journey with nothing real:</p>
     <ul>
       <li>a test payment page instead of a card payment (GetThere's checkout), or no payment check at all (a travel site's
-      own checkout);</li>
+      own checkout, in-line);</li>
       <li>a test pre-loaded rescue card that can't be charged, with a "Simulate a purchase" button on its page;</li>
       <li>emails whose subject starts with "[Test]", and WhatsApp messages that are recorded rather than sent.</li>
     </ul>
@@ -154,14 +157,14 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
 
 {
   "id": "7c1e2f0a-…",
-  "created_at": "2026-11-20T07:41:05.120Z",
+  "created_at": "2026-11-20T07:41:05.120345+00:00",
   "type": "rescue_card.issued",
   "livemode": true,
   "data": {
     "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
     "ota_order_id": "TRV-5581203", "plan": "plus", "pass_status": "triggered",
     "amount": "984.96", "currency": "SGD",
-    "expires_at": "2026-11-21T07:41:05Z", "reason": "delay"
+    "expires_at": "2026-11-21T07:41:05.118902+00:00", "reason": "delay"
   }
 }</code></pre>
     <table class="fields">
@@ -179,9 +182,11 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         agents can search for it.</td></tr>
       <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
         event to your order without a lookup.</td></tr>
-      <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status now:
-        <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired</code> or
-        <code>refunded</code>.</td><td class="why">Show your agents the current state without calling us.</td></tr>
+      <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status when the
+        event was made: <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired_no_claim</code> (every
+        flight watched, no delay past the trigger), <code>refunded</code> (refunded, replaced by a new pass, or ended by an
+        early cancellation) or <code>voided</code> (no rescue card: the airline said the booking was cancelled or never
+        existed).</td><td class="why">Show your agents the current state without calling us.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Type</th><th>Sent when, with</th><th>Why it matters</th></tr>
@@ -192,8 +197,8 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         <code>passengers</code>) or the pass moved to new flights (<code>change: "flights"</code>, <code>replaces</code>:
         the old pass).</td><td class="why">Keeps your booking and our pass in step after a change.</td></tr>
       <tr><td><code>pass.ended</code></td><td>The pass ended before travel. <code>reason</code>: <code>refunded</code>,
-        <code>replaced</code> (by a new pass), <code>flight_cancelled_before_watch</code> or <code>expired</code>, and
-        <code>refund</code> where one is due.</td><td class="why">Stops your agents promising a rescue card that won't
+        <code>replaced</code> (by a new pass), <code>flight_cancelled_before_watch</code> or <code>expired</code> (watching
+        ended with no delay past the trigger), and <code>refund</code> (the amount) where one is due.</td><td class="why">Stops your agents promising a rescue card that won't
         come, and tells you a refund to reconcile.</td></tr>
       <tr><td><code>email.bounced</code></td><td>Our email to the customer bounced. <code>email_kind</code> says which,
         like <code>policy_confirmation</code> or <code>card_issued</code>.</td><td class="why">The customer may never see
@@ -201,16 +206,20 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
       <tr><td><code>whatsapp.confirmed</code></td><td>The customer added their WhatsApp number after buying.</td><td
         class="why">They'll get the rescue card in minutes at the airport rather than only by email.</td></tr>
       <tr><td><code>rescue_card.issued</code></td><td>A flight was delayed past the trigger or cancelled, and the rescue
-        card was sent. <code>amount</code>, <code>currency</code>, <code>expires_at</code>, <code>reason</code>.</td><td
+        card was sent. <code>amount</code>, <code>currency</code>, <code>expires_at</code>, <code>reason</code>
+        (<code>delay</code> or <code>cancellation</code>).</td><td
         class="why">The moment your customer is most likely to contact you. Your agents can say "your rescue card was
         sent at 07:41, check WhatsApp and email".</td></tr>
       <tr><td><code>rescue_card.used</code></td><td>The customer booked a new flight with it. <code>amount</code>,
         <code>currency</code>, <code>merchant</code>.</td><td class="why">They've rebooked. Close any open contact, and
         for a travel site, expect the new booking on your own site.</td></tr>
     </table>
-    <p><b>Answer quickly with any 2xx</b> and do the work afterwards. We wait 10 seconds. Anything else, or no answer, is
-    retried on our next sweep, with growing gaps (1, 3, 7, 15 … minutes after the event), 10 times in all over about 8
-    hours.</p>
+    <p><b>Answer quickly with any 2xx</b> and do the work afterwards. We send events on a sweep that runs every few
+    minutes, and wait 10 seconds for your answer. Anything else, or no answer, is tried again on a later sweep: after
+    <i>n</i> tries, not until 2<sup><i>n</i></sup> − 1 minutes after the event (1, 3, 7, 15, 31 … 511 minutes). That's 10
+    tries in all, the last about 8.5 hours after the event, then we stop. If your address times out or can't be reached,
+    your other events wait for the next sweep. Events happen only while an address is set for that mode: nothing is kept
+    for an address added later.</p>
 
     <h3 id="verify">Checking a webhook's signature</h3>
     <p>Every webhook is signed with your webhook secret (<code>whsec_…</code>), which we give you once when your first
@@ -246,12 +255,12 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
   <div class="wrap">
     <div>
       <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, online travel agencies and underwriters.</p>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, travel sites and underwriters.</p>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
       <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
-      <div><b style="color:#fff">Online Travel Agency</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
+      <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
