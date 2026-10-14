@@ -162,7 +162,7 @@
     bought a pass.</p>
 <pre><code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
 <pre><code>200 {"offer_id": "k7f2q9xm",
-     "offer_url": "https://&lt;issuer&gt;.getthere.now/offer?o=k7f2q9xm",
+     "offer_url": "https://&lt;issuer&gt;.getthere.now/?o=k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
      "product_name": "Flight Delay Pass",
@@ -186,7 +186,7 @@
       <tr><td><code>merchandising_url</code></td><td>The short offer page, made to sit inside your app (a web view or an
         iframe), in your widget settings.</td><td class="why">The cardholder stays in your app: they read the offer, copy their
         address and go to their email. Use it as your push's destination.</td></tr>
-      <tr><td><code>offer_url</code></td><td>The full offer page, with how it works and FAQs.</td><td class="why">For a
+      <tr><td><code>offer_url</code></td><td>Your full GetThere home page, with how it works and FAQs, carrying this offer's own address. <code>/offer</code> on your domain is the short page for your app.</td><td class="why">For a
         browser, an email or a banner, where there's room to explain more.</td></tr>
       <tr><td><code>forward_to</code></td><td>The cardholder's forwarding address for this offer,
         <code>quote+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>. While your partner is in test mode, that address makes
