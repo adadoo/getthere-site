@@ -15,6 +15,11 @@ Plain HTML, CSS and a little JavaScript; no build step.
 
 Phone screens in `images/` come from the Head of Cards deck.
 
+Every page's header lists the four audiences, Traveller, Card Issuer, Online Travel Agency and Underwriter
+(Dadoo, 14 Oct 2026), behind a menu button on narrow screens (`nav.css`, opened by `site.js`), and every footer
+has a column for each. They're written into the pages by `python3 tools/site_nav.py`: change them there, run it,
+and commit the pages.
+
 The website is the Direct partner's app. Like a card issuer's app, it gets each visitor's forward address
 from GetThere's partner API (`GET /partner/v1/offer`), with the page's utm tags and referring site, so a booking
 forwarded from the site is traced to that visit in the admin's Offers. The partner key is a secret, so a small

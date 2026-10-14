@@ -1,0 +1,20 @@
+/* The header's audiences (Traveller, Card Issuer, Online Travel Agency, Underwriter) on every page,
+   behind a menu button on narrow screens (site.js opens it). Kept out of traveller.css, which is the app's. */
+.menu { display: flex; align-items: center; gap: 22px; }
+.menu a { color: #14213d; text-decoration: none; font-weight: 500; font-size: 15px; white-space: nowrap; }
+.menu a:hover, .menu a[aria-current="page"] { color: #0f766e; }
+.menu a[aria-current="page"], .tp .top nav .menu a[aria-current="page"] { color: #0f766e; font-weight: 700; }
+.menu-btn { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0;
+            border: 1px solid #e3e8ef; border-radius: 10px; background: #fff; color: #14213d; cursor: pointer; }
+.menu-btn svg { display: block; }
+.menu-btn .close, header.open .menu-btn .bars { display: none; }
+header.open .menu-btn .close { display: block; }
+@media (max-width: 960px) {
+  .menu { display: none; }
+  .menu-btn { display: inline-flex; }
+  header.open .menu { display: flex; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column;
+                      align-items: stretch; gap: 0; background: #fff; border-bottom: 1px solid #e3e8ef;
+                      box-shadow: 0 16px 30px -18px rgba(20,33,61,.35); padding: 6px 16px 12px; }
+  header.open .menu a { padding: 14px 4px; font-size: 17px; border-bottom: 1px solid #eef1f5; }
+  header.open .menu a:last-child { border-bottom: 0; }
+}

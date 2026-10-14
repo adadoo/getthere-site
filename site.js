@@ -194,3 +194,12 @@ if (forwardSpots.length) {
       }).catch(() => {});
   }
 }
+
+// The header's menu button on narrow screens (nav.css): opens and closes the list of audiences.
+document.querySelectorAll(".menu-btn").forEach(btn => {
+  const header = btn.closest("header");
+  const set = open => { header.classList.toggle("open", open); btn.setAttribute("aria-expanded", open); };
+  btn.addEventListener("click", () => set(!header.classList.contains("open")));
+  header.querySelectorAll(".menu a").forEach(a => a.addEventListener("click", () => set(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") set(false); });
+});
