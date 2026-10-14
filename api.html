@@ -324,7 +324,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
   "booking_reference": "K7QX2M",
   "airline": "SQ",
   "currency": "SGD",
-  "total_paid": 486.40,
+  "total_paid": 1842.60,
   "paid_with_miles": false,
   "customer": {
     "email": "mia.tan@example.com",
@@ -335,12 +335,19 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
                 "city": "Singapore", "postcode": "048616",
                 "country": "SG"}
   },
-  "passengers": [{"first_name": "Mia", "last_name": "Tan"}],
-  "segments": [{
-    "flight": "SQ232", "cabin": "Economy",
-    "departure": {"airport": "SIN", "date": "2026-11-20", "time": "00:25"},
-    "arrival":   {"airport": "SYD", "date": "2026-11-20", "time": "10:55"}
-  }]
+  "passengers": [
+    {"title": "Ms", "first_name": "Mia", "last_name": "Tan"},
+    {"title": "Mr", "first_name": "Wei", "last_name": "Lim"},
+    {"title": "Miss", "first_name": "Chloe", "last_name": "Lim"}
+  ],
+  "segments": [
+    {"flight": "SQ232", "cabin": "Economy",
+     "departure": {"airport": "SIN", "date": "2026-11-20", "time": "00:25"},
+     "arrival":   {"airport": "SYD", "date": "2026-11-20", "time": "10:55"}},
+    {"flight": "SQ231", "cabin": "Economy",
+     "departure": {"airport": "SYD", "date": "2026-11-27", "time": "09:30"},
+     "arrival":   {"airport": "SIN", "date": "2026-11-27", "time": "15:20"}}
+  ]
 }</code></pre>
     <table>
       <tr><th>Field</th><th>Meaning</th></tr>
@@ -348,10 +355,10 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
       <tr><td><code>airline</code></td><td>Optional. The airline that issued the ticket, as a 2-letter code. Without it, the first flight's airline.</td></tr>
       <tr><td><code>currency</code>, <code>total_paid</code></td><td>Required. What the customer paid for the flights, as a 3-letter ISO currency and a number. <code>base_fare</code> and <code>taxes</code> are optional.</td></tr>
       <tr><td><code>paid_with_miles</code></td><td>Optional. <code>true</code> for an award booking, which is declined.</td></tr>
-      <tr><td><code>customer.email</code></td><td>Required. The booker's email: the pass confirmation and the rescue card go there.</td></tr>
+      <tr><td><code>customer.email</code></td><td>Required. The <code>customer</code> block is the person making the booking, who buys the pass and holds the rescue card. They needn't be travelling. Their email gets the pass confirmation and the rescue card.</td></tr>
       <tr><td><code>customer.*</code></td><td>Optional, and used only to fill in the checkout: <code>first_name</code>, <code>last_name</code>, <code>date_of_birth</code> (YYYY-MM-DD), <code>phone</code> (international format, starting with +) and <code>address</code> (<code>line1</code>, <code>line2</code>, <code>city</code>, <code>state</code>, <code>postcode</code>, <code>country</code> as a 2-letter ISO code).</td></tr>
-      <tr><td><code>passengers</code></td><td>Required. Everyone on the booking, each as <code>{"title", "first_name", "last_name"}</code> or a name string.</td></tr>
-      <tr><td><code>segments</code></td><td>Required. The booking's flights in order: <code>flight</code> (like <code>SQ232</code>), optional <code>cabin</code>, and <code>departure</code> and <code>arrival</code>, each with a 3-letter <code>airport</code> code, <code>date</code> (YYYY-MM-DD), <code>time</code> (HH:MM, local at that airport) and optional <code>terminal</code>.</td></tr>
+      <tr><td><code>passengers</code></td><td>Required. Everyone travelling on the booking, booker included if they fly, each as <code>{"title", "first_name", "last_name"}</code> or a name string.</td></tr>
+      <tr><td><code>segments</code></td><td>Required. Every flight on the booking in order, outbound and return: <code>flight</code> (like <code>SQ232</code>), optional <code>cabin</code>, and <code>departure</code> and <code>arrival</code>, each with a 3-letter <code>airport</code> code, <code>date</code> (YYYY-MM-DD), <code>time</code> (HH:MM, local at that airport) and optional <code>terminal</code>.</td></tr>
     </table>
 <pre><code>200
 {
