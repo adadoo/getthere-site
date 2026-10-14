@@ -3,18 +3,19 @@ document.querySelectorAll("[data-copy]").forEach(btn => {
   btn.addEventListener("click", () => copy(btn.dataset.copy, btn));
 });
 
-// A tick and Copied once copied, as on the app's traveller page; where the browser won't copy, the address is
-// selected to copy by hand.
+// A tick and Copied once copied, as on the app's traveller page. Where the browser won't use the clipboard
+// API, a hidden field holding the text is copied instead.
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return; } catch (e) {}
+  const t = document.createElement("textarea");
+  t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;opacity:0";
+  document.body.append(t); t.select(); document.execCommand("copy"); t.remove();
+}
 function copy(text, btn) {
-  const done = () => {
+  copyText(text).then(() => {
     btn.classList.add("copied"); btn.setAttribute("aria-label", "Copied");
     setTimeout(() => { btn.classList.remove("copied"); btn.setAttribute("aria-label", "Copy the address"); }, 2000);
-  };
-  const select = () => {
-    const range = document.createRange(); range.selectNodeContents(btn.previousElementSibling);
-    getSelection().removeAllRanges(); getSelection().addRange(range);
-  };
-  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, select); else select();
+  });
 }
 
 // Mail-app tabs in the home page's How to forward it
@@ -160,16 +161,17 @@ function showPlans(s) {
 const SITE_SERVER = "https://getthere-site-server.onrender.com";
 const forwardSpots = document.querySelectorAll("[data-forward]");
 if (forwardSpots.length) {
-  // The page shows the plain quote@ address, which is easier on the eye; only the copy button carries the
-  // +code (Dadoo, 2026-10-14). Copying the shown address by hand copies the full one too. Typed by hand,
-  // the plain address still gets a price, counted as a plain forward rather than to this visit.
-  let full = null;
-  forwardSpots.forEach(el => el.addEventListener("copy", e => {
-    if (!full || getSelection().toString().trim() !== el.textContent.trim()) return;
-    e.clipboardData.setData("text/plain", full); e.preventDefault();
+  // The page shows the plain quote@ address, easier on the eye; only a copy carries the +code (Dadoo,
+  // 2026-10-14). The shown address can't be selected: tapping anywhere on it copies what the Copy button
+  // does. Typed by hand, the plain address still gets a price, counted as a plain forward.
+  const btn = document.querySelector("[data-forward-copy]");
+  document.querySelectorAll(".addr").forEach(box => box.addEventListener("click", e => {
+    if (!e.target.closest(".copy")) btn.click();
+  }));
+  document.querySelectorAll("b.fwd").forEach(el => el.addEventListener("click", () => {
+    copyText(btn.dataset.copy).then(() => { el.classList.add("copied"); setTimeout(() => el.classList.remove("copied"), 2000); });
   }));
   const show = offer => {
-    full = offer.forward_to;
     document.querySelectorAll("[data-forward-copy]").forEach(el => el.dataset.copy = offer.forward_to);
     document.querySelectorAll("[data-reference]").forEach(el => el.textContent = offer.reference);
     document.querySelectorAll("[data-reference-line]").forEach(el => el.hidden = false);
