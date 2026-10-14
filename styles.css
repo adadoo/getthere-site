@@ -304,3 +304,30 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .api .g-call code { font-size: 13px; overflow-wrap: anywhere; align-self: flex-start; }
 .api .g-call .builder { font-size: 13px; }
 @media (max-width: 700px) { .api .who { grid-template-columns: 1fr; } .api .g-row { grid-template-columns: 1fr; } }
+
+/* travel sites: the booking confirmation page with the offer, and the four steps */
+.confirm-mock { background: #fff; color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0,0,0,.45); max-width: 440px; width: 100%; justify-self: center; }
+.cm-bar { display: flex; align-items: center; gap: 6px; background: #e8ecf2; padding: 10px 14px; }
+.cm-bar span { width: 10px; height: 10px; border-radius: 50%; background: #c3cad6; }
+.cm-bar b { margin-left: 8px; font: 500 12px var(--font); color: var(--muted); background: #fff; border-radius: 6px; padding: 3px 10px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cm-body { padding: 18px; }
+.confirm-mock p { color: var(--muted); }
+.confirm-mock .cm-ok { color: #15803d; font-weight: 700; margin: 0 0 10px; font-size: 15px; }
+.cm-flight { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--muted); }
+.cm-flight b { color: var(--ink); font-size: 16px; }
+.cm-offer { margin-top: 14px; border: 2px solid var(--accent); border-radius: 12px; padding: 14px; background: var(--soft); }
+.confirm-mock .cm-title { color: var(--ink); font-weight: 800; margin: 0 0 4px; font-size: 16px; }
+.confirm-mock .cm-sub { margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+.cm-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cm-plan { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 12px; display: flex; flex-direction: column; color: var(--muted); }
+.cm-plan b { color: var(--ink); font-size: 14px; }
+.cm-plan i { font-style: normal; font-weight: 800; color: var(--ink); font-size: 15px; margin-top: 2px; }
+.cm-plan.on { border: 2px solid var(--accent); }
+.cm-btn { display: block; text-align: center; margin-top: 12px; background: var(--accent); color: #fff; font-weight: 700; border-radius: 22px; padding: 9px; font-size: 14px; }
+.cm-fine { margin: 8px 0 0; font-size: 11px; color: var(--muted); text-align: center; }
+.steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+@media (max-width: 960px) { .steps4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .steps4 { grid-template-columns: 1fr; } }
+.steps4 code, .points code { font-family: var(--mono); font-size: 0.9em; background: var(--soft); border-radius: 5px; padding: 1px 5px; }
+.shot { margin: 0; }
+.shot img { display: block; width: 100%; max-width: 440px; margin: 0 auto; border-radius: 16px; box-shadow: 0 20px 40px -18px rgba(20,33,61,.35), 0 0 0 1px var(--line); }
