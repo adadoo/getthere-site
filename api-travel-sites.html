@@ -158,8 +158,9 @@
     <ul>
       <li>Show each plan's <code>label</code>, <code>fee</code> with its <code>currency</code>, and
       <code>rescue_card_limit</code> ("Pre-loaded rescue card with SGD 984.96").</li>
-      <li>Show the fee as it comes: it always includes sales tax (0% where none is added). Say "incl." with its
-      <code>tax_label</code> (like "incl. GST 9%"), or "incl. tax" when <code>tax_label</code> is <code>null</code>.</li>
+      <li>Show the <code>fee</code> as it comes, with "incl. tax": it always includes the tax for where the customer lives
+      (0% where none is added). No breakdown is needed; <code>fee_before_tax</code> and <code>tax</code> are for your
+      accounts.</li>
       <li>Say what triggers the rescue card, using <code>trigger_minutes</code> ("delayed 3+ hours or cancelled"), and that it
       works for one purchase, for new flights, on your site.</li>
       <li>Link to <code>terms_url</code>.</li>
@@ -237,10 +238,11 @@
       <tr><td><code>customer.email</code> <span class="req">required</span></td><td>The person booking. They buy the pass and
         hold the rescue card, and needn't be travelling.</td><td class="why">The pass confirmation and the rescue card are
         sent here. It must be an inbox they read.</td></tr>
-      <tr><td><code>customer.residence_country</code> <span class="optl">optional</span></td><td>Where the customer lives, as
-        a 2-letter country code.</td><td class="why">Fees then include that country's sales tax, exactly as they'll be
-        charged, so the price you show is the price they pay. In your checkout, a country where no rescue card can be issued
-        is declined (<code>not_on_sale</code>), so you never sell a pass that can't pay out.</td></tr>
+      <tr><td><code>customer.residence_country</code> <span class="req">required</span></td><td>Where the customer lives, as
+        a 2-letter country code. You know it from the booking; a missing or malformed code is a <code>422</code>.</td><td
+        class="why">Every fee includes that country's tax from the underwriter's country table, so the price you show is the
+        price they pay. With a live key, a country the underwriter doesn't sell in is declined (<code>not_on_sale</code>), so
+        you never sell a pass that can't pay out.</td></tr>
       <tr><td><code>customer.first_name</code>, <code>last_name</code>, <code>date_of_birth</code>, <code>phone</code>,
         <code>address</code> <span class="optl">optional</span></td><td>Anything else you know about the booker. Date as
         YYYY-MM-DD, phone starting with +, address with <code>line1</code>, <code>line2</code>, <code>city</code>,
@@ -268,7 +270,6 @@
   "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
   "fees_include_tax": true,
   "tax_country": "SG",
-  "tax_country_from": "customer",
   "prefilled": ["city", "country", "date_of_birth", "first_name", "last_name", "line1", "line2", "phone", "postcode"],
   "not_prefilled": {},
   "offers": [
@@ -297,15 +298,13 @@
       <tr><td><code>offers[].fee</code>, <code>currency</code></td><td>The price, in the booking's currency.</td><td
         class="why">In your checkout, this is what you charge, and <code>amount_paid</code> must match it when you create the
         pass.</td></tr>
-      <tr><td><code>fees_include_tax</code>, <code>tax_country</code>, <code>tax_country_from</code></td><td><code>fee</code>
-        always includes sales tax, 0% where none is added. <code>tax_country</code> is the country it's for: where the
-        customer lives (<code>tax_country_from: "customer"</code>), or where the trip starts when we don't know that
-        (<code>"departure"</code>).</td><td class="why">The price you show is the price the customer pays. Send
-        <code>residence_country</code> so it's right first time. If the buyer turns out to live elsewhere, charge that
-        country's price.</td></tr>
+      <tr><td><code>fees_include_tax</code>, <code>tax_country</code></td><td><code>fee</code> always includes tax, 0% where
+        none is added. <code>tax_country</code> is the <code>residence_country</code> you sent.</td><td class="why">The price
+        you show is the price the customer pays. If the buyer turns out to live elsewhere, quote again with that
+        country.</td></tr>
       <tr><td><code>offers[].fee_before_tax</code>, <code>tax</code>, <code>tax_label</code></td><td>The fee split into its
         price before tax and the tax (<code>tax_label</code> like <code>"GST 9%"</code>, or <code>null</code> at 0%).</td><td
-        class="why">For your invoice and your accounts. Show customers the <code>fee</code>.</td></tr>
+        class="why">For your invoice and your accounts. Show customers the <code>fee</code>, "incl. tax".</td></tr>
       <tr><td><code>offers[].rescue_card_limit</code></td><td>How much the rescue card is pre-loaded with.</td><td
         class="why">The value the customer is buying. Show it next to the fee.</td></tr>
       <tr><td><code>offers[].expires_at</code></td><td>Until when the offer can be bought.</td><td class="why">Prices move as
@@ -331,7 +330,7 @@
       <tr><td><code>airport_blackout</code>, <code>high_risk</code>, <code>flight_full</code></td><td>Disruption is already
         expected, or this flight has reached its limit of passes.</td><td class="why">Show nothing. It may be offered again
         later.</td></tr>
-      <tr><td><code>not_on_sale</code></td><td>In your checkout: no rescue card can be issued where this customer lives.</td>
+      <tr><td><code>not_on_sale</code></td><td>Live keys: the underwriter doesn't sell where this customer lives.</td>
         <td class="why">Show nothing.</td></tr>
       <tr><td><code>already_has_pass</code> (as <code>status</code>)</td><td>The booking already has a pass.</td><td
         class="why">Show nothing, or "Your trip already has a Flight Delay Pass".</td></tr>
@@ -398,7 +397,7 @@
 <pre><code>200 {"offer_id": "de01b698-…", "quote_id": "0b9e…", "session_id": "cart-77120",
      "plan": "plus", "label": "Plus", "featured": false,
      "fee": 48.32, "fee_before_tax": 44.33, "tax": 3.99, "tax_label": "GST 9%",
-     "fees_include_tax": true, "tax_country": "SG", "tax_country_from": "customer",
+     "fees_include_tax": true, "tax_country": "SG",
      "rescue_card_limit": 984.96, "currency": "SGD",
      "expires_at": "2026-10-14T20:43:30Z", "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
      "buyable": true, "status": "open",
@@ -514,11 +513,11 @@
         above.</td></tr>
       <tr><td><code>409 amount_mismatch</code></td><td>Wrong amount or currency for the buyer's country. The
         <code>detail</code> gives the right amount.</td><td class="why">Charge that amount. This happens when the buyer lives
-        somewhere other than the country you quoted with.</td></tr>
+        somewhere other than the <code>residence_country</code> you quoted with.</td></tr>
       <tr><td><code>409 terms_mismatch</code></td><td><code>terms_url</code> isn't the offer's.</td><td class="why">Send the
         quote's <code>terms_url</code> unchanged.</td></tr>
       <tr><td><code>409 not_on_sale</code></td><td>No rescue card can be issued where the buyer lives.</td><td class="why">Refund
-        the add-on. Send <code>residence_country</code> with the quote to avoid it.</td></tr>
+        the add-on. Quoting with the right <code>residence_country</code> catches it before you sell.</td></tr>
       <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Refund the
         duplicate.</td></tr>
       <tr><td><code>409 payment_reference_reused</code></td><td>The reference was used for another offer.</td><td
@@ -630,8 +629,8 @@
     <p>Run these with your test key before asking to go live. Use a first flight at least 3 days ahead.</p>
     <table class="fields">
       <tr><th>Do this</th><th>Expect</th><th>Proves</th></tr>
-      <tr><td>Quote a return trip for 3 travellers with <code>residence_country</code></td><td><code>quoted</code>, 2 or more
-        offers, <code>tax_country_from: "customer"</code></td><td class="why">Your request is complete and prices include the
+      <tr><td>Quote a return trip for 3 travellers</td><td><code>quoted</code>, 2 or more
+        offers, <code>tax_country</code> is your <code>residence_country</code></td><td class="why">Your request is complete and prices include the
         customer's tax.</td></tr>
       <tr><td>Quote the same cart again</td><td>The same <code>offer_id</code>s</td><td class="why">Re-quoting doesn't make
         duplicates.</td></tr>
