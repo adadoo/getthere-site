@@ -274,9 +274,9 @@
         sent here. It must be an inbox they read.</td></tr>
       <tr><td><code>customer.residence_country</code> <span class="req">required</span></td><td>Where the customer lives, as
         a 2-letter country code. Missing or malformed is a <code>422</code>.</td><td class="why">Every fee includes that
-        country's tax from the Underwriter's country table, so the price you show is the price they pay, at your checkout
-        or ours. With a live key, a country the Underwriter doesn't sell in is declined (<code>not_on_sale</code>), so you
-        never sell a pass that can't pay out.</td></tr>
+        country's tax from the table of the Underwriter selling there, so the price you show is the price they pay, at your
+        checkout or ours. Each country has its own Underwriter, with its own terms. With a live key, a country that isn't
+        active for you yet is declined (<code>not_on_sale</code>), so you never sell a pass that can't pay out.</td></tr>
       <tr><td><code>customer.first_name</code>, <code>last_name</code>, <code>date_of_birth</code>, <code>phone</code>,
         <code>address</code> <span class="optl">optional</span></td><td>Anything else you know about the booker. Date as
         YYYY-MM-DD, phone starting with +, address with <code>line1</code>, <code>line2</code>, <code>city</code>,
@@ -308,6 +308,7 @@
   "product_name": "Flight Delay Pass",
   "trigger_minutes": 180,
   "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
+  "underwriter": "GetThere",
   "fees_include_tax": true,
   "tax_country": "SG",
   "prefilled": ["city", "country", "date_of_birth", "first_name", "last_name", "line1", "line2", "phone", "postcode"],
@@ -353,7 +354,8 @@
         this. In-line, a customer who paid before it expired still gets the pass (<a href="#policies">section 7</a>).</td></tr>
       <tr><td><code>trigger_minutes</code></td><td>How late a flight must be: 180 is 3 hours. A cancellation counts too.</td>
         <td class="why">Required wording if you show the plans yourself.</td></tr>
-      <tr><td><code>terms_url</code></td><td>The terms these offers are sold under.</td><td class="why">Link to it next to the
+      <tr><td><code>terms_url</code>, <code>underwriter</code></td><td>The terms these offers are sold under: those of the
+        Underwriter selling where the customer lives, named in <code>underwriter</code>.</td><td class="why">Link to it next to the
         add-on. In-line, send it back when you create the pass, to show which terms the customer accepted.</td></tr>
       <tr><td><code>prefilled</code>, <code>not_prefilled</code></td><td>Which customer fields will fill in our checkout, and
         which we left out and why (a name not in English letters, someone under 18, a phone not starting with +).</td><td
@@ -386,7 +388,7 @@
         class="why">Show nothing.</td></tr>
       <tr><td><code>price_too_high</code></td><td>Even the cheapest plan would cost more than the price ceiling, 10% of
         the fare paid. This is usually a long trip with several flights that are often late.</td><td class="why">Show nothing.</td></tr>
-      <tr><td><code>not_on_sale</code></td><td>Live keys: the Underwriter doesn't sell where this customer lives.</td>
+      <tr><td><code>not_on_sale</code></td><td>Live keys: this customer's country isn't active for you yet.</td>
         <td class="why">Show nothing.</td></tr>
       <tr><td><code>paused</code></td><td>Your partner was paused while the quote was being made.</td><td class="why">Show
         nothing. Usually a paused partner gets a <code>503</code> instead.</td></tr>
@@ -476,7 +478,7 @@
      "fee": 48.32, "fee_before_tax": 44.33, "tax": 3.99, "tax_label": "GST 9%",
      "fees_include_tax": true, "tax_country": "SG",
      "rescue_card_limit": 984.96, "currency": "SGD",
-     "expires_at": "2026-10-14T20:43:30.418207+00:00", "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
+     "expires_at": "2026-10-14T20:43:30.418207+00:00", "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7", "underwriter": "GetThere",
      "buyable": true, "status": "open",
      "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": null},
                  {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": null}],
@@ -567,7 +569,8 @@
     everything reaches them by email.</p>
 <pre><code>201 {"status": "issued", "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
      "plan": "plus", "pass_status": "active", "amount_paid": 48.32, "currency": "SGD",
-     "ota_order_id": "TRV-5581203", "pass_url": "https://&lt;you&gt;.getthere.now/pass/jPib…"}</code></pre>
+     "ota_order_id": "TRV-5581203", "pass_url": "https://&lt;you&gt;.getthere.now/pass/jPib…",
+     "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7", "underwriter": "GetThere"}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>policy_id</code></td><td>The pass.</td><td class="why">Keep it with your order. Changes and cancellations
