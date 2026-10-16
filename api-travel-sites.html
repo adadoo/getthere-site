@@ -31,7 +31,7 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="loyalty-programs.html">Loyalty Program</a><a href="travel-sites.html" aria-current="page">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="loyalty-programs.html">Loyalty Program</a><a href="travel-sites.html" aria-current="page">Travel Site</a><a href="travel-platforms.html">Travel Platform</a><a href="underwriters.html">Underwriter</a></div>
     <a class="pill" href="mailto:partner@getthere.now?subject=API%20access">Contact us</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </nav>
@@ -121,7 +121,7 @@
 
     <h2 id="path-page">2a. On your booking page</h2>
     <ol class="steps">
-      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      <li><b>Required: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
       so the quote is priced on each flight's own record.</li>
       <li><b>The airline confirms the booking.</b> From your server, call <a href="#quotes"><code>POST /partner/v1/quotes</code></a>
       with <code>placement: "booking-page"</code>, the booking reference, flights, fare, travellers, and the booker's email
@@ -142,7 +142,7 @@
 
     <h2 id="path-inline">2b. In-line, in your own checkout</h2>
     <ol class="steps">
-      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      <li><b>Required: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
       so the quote is priced on each flight's own record.</li>
       <li><b>The customer's cart has flights in it.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> with
       <code>placement: "in-line"</code>, your cart or session id as <code>session_id</code>, the flights, fare, travellers,
@@ -169,7 +169,7 @@
 
     <h2 id="path-email">2c. In your booking email</h2>
     <ol class="steps">
-      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      <li><b>Required: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
       so the quote is priced on each flight's own record.</li>
       <li><b>The airline confirms the booking.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> as in 2a,
       with <code>placement: "booking-email"</code>.</li>
@@ -208,7 +208,7 @@
     · <code>in-line</code>: whenever the cart's flights, travellers or fare change</p>
     <p>Prices the booking or cart. No email goes to the customer. A flight we've never priced before adds at most a
     second while we look up its history; it's then priced on its route, airport and airline until its own history is in.</p>
-    <p id="warm"><b>Get ahead of it:</b> as soon as the customer picks flights, from your server or your page's backend, send
+    <p id="warm"><b>Required, so the price is ready at once:</b> as soon as the customer picks flights, from your server or your page's backend, send
     the flight numbers to <code>POST /partner/v1/flights</code>. It answers <code>202</code> at once, prices nothing and
     counts as no quote; it starts loading the history of any flight we've never priced, so by the time you quote, it's in.
     Up to 8 flights a call; calling it again for the same flights is harmless.</p>
@@ -870,13 +870,14 @@
   <div class="wrap">
     <div>
       <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, loyalty programs, travel sites and underwriters.</p>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, loyalty programs, travel sites, travel platforms and underwriters.</p>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
       <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
       <div><b style="color:#fff">Loyalty Program</b><a href="loyalty-programs.html">The product</a><a href="loyalty-programs.html#award">Award bookings</a><a href="loyalty-programs.html#numbers">The numbers</a></div>
       <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
+      <div><b style="color:#fff">Travel Platform</b><a href="travel-platforms.html#product">The product</a><a href="travel-platforms.html#company">Company cover</a><a href="travel-platforms.html#numbers">The numbers</a></div>
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
