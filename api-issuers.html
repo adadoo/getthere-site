@@ -106,7 +106,8 @@
       <li>
         <div class="lanes"><span class="lane you">Your server</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
         <h3>You ask for an offer</h3>
-        <p>One call per push, so a booking forwarded from it is traced back to it.</p>
+        <p>One call per push, with the country your cardholder lives in, so a booking forwarded from it is traced back to it
+        and priced with that country's tax.</p>
         <p class="call"><code>GET /partner/v1/offer</code> · <span class="builder gt">GetThere provides it</span></p>
       </li>
       <li>
@@ -162,9 +163,12 @@
     <p class="meta"><b>You call GetThere</b> · from your server, once per push or banner you show</p>
     <p>Makes a fresh offer: a code, carried in the offer's links and in the forwarding address, that ties a booking
     forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
-    bought a pass.</p>
-<pre><code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
-<pre><code>200 {"offer_id": "k7f2q9xm",
+    bought a pass. Tell us the country your cardholder lives in: the booking they forward is then quoted by the underwriter
+    selling there, with that country's tax already in each price, so the price in their email is the price at checkout.</p>
+<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
+<pre><code>200 {"status": "offered",
+     "residence_country": "SG",
+     "offer_id": "k7f2q9xm",
      "offer_url": "https://&lt;issuer&gt;.getthere.now/?o=k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
@@ -172,6 +176,10 @@
      "reference": "R-K7F2Q9XM"}</code></pre>
     <table class="fields">
       <tr><th>Parameter</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>residence_country</code> <span class="req">required</span></td><td>The 2-letter ISO country your
+        cardholder lives in, like <code>SG</code>: the country on their card account.</td><td class="why">Picks the
+        underwriter and the tax, so their quote email shows the full price. With a live key, a country we don't sell in
+        yet answers <code>{"status": "declined", "reason": "not_on_sale"}</code>: don't send that push.</td></tr>
       <tr><td><code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code> <span class="optl">optional</span></td>
         <td>Where you show the offer. Up to 64 letters, digits, <code>.</code>, <code>-</code> or <code>_</code>, lowercased.
         <code>src</code> is short for <code>utm_source</code>.</td><td class="why">Your offer report splits by them, so you see
@@ -184,6 +192,9 @@
     </table>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>status</code></td><td><code>offered</code>, or <code>declined</code> with <code>reason</code>
+        <code>not_on_sale</code> where we don't sell yet.</td><td class="why">Send the push only when it's
+        <code>offered</code>.</td></tr>
       <tr><td><code>offer_id</code></td><td>The offer's code.</td><td class="why">Store it with the push you sent, to join
         our numbers to yours.</td></tr>
       <tr><td><code>merchandising_url</code></td><td>The short offer page, made to sit inside your app (a web view or an
