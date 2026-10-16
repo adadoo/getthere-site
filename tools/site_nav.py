@@ -1,6 +1,6 @@
 """Write the same header audiences and footer columns into every page (no build step: run it after changing
-them, then commit the pages). Audiences, in this order (Dadoo, 14 Oct 2026): Traveller, Card Issuer,
-Loyalty Program, Travel Site, Underwriter.
+them, then commit the pages). Audiences, in this order (Dadoo, 14 and 16 Oct 2026): Traveller, Card Issuer,
+Loyalty Program, Travel Site, Travel Platform, Underwriter.
 
     python3 tools/site_nav.py
 """
@@ -12,6 +12,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 AUDIENCES = (("Traveller", "./", "index.html"), ("Card Issuer", "issuers.html", "issuers.html"),
              ("Loyalty Program", "loyalty-programs.html", "loyalty-programs.html"),
              ("Travel Site", "travel-sites.html", "travel-sites.html"),
+             ("Travel Platform", "travel-platforms.html", "travel-platforms.html"),
              ("Underwriter", "underwriters.html", "underwriters.html"))
 COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#how"), ("FAQ", "./#faq"))),
            ("Card Issuer", (("The product", "issuers.html"), ("The numbers", "issuers.html#numbers"),
@@ -20,12 +21,16 @@ COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#ho
                                 ("The numbers", "loyalty-programs.html#numbers"))),
            ("Travel Site", (("The product", "travel-sites.html#product"), ("The numbers", "travel-sites.html#numbers"),
                                      ("API reference", "api-travel-sites.html"))),
+           ("Travel Platform", (("The product", "travel-platforms.html#product"),
+                                ("Company cover", "travel-platforms.html#company"),
+                                ("The numbers", "travel-platforms.html#numbers"))),
            ("Underwriter", (("Risk", "underwriters.html#risk"), ("Rollout", "underwriters.html#rollout"),
                             ("Reports", "underwriters.html#reports"))))
 # Which audience each page belongs to, for aria-current; and the last footer column, the page's own.
 CURRENT = {"index.html": "index.html", "issuers.html": "issuers.html", "api.html": "issuers.html", "api-issuers.html": "issuers.html",
            "api-travel-sites.html": "travel-sites.html", "loyalty-programs.html": "loyalty-programs.html",
-           "travel-sites.html": "travel-sites.html", "underwriters.html": "underwriters.html"}
+           "travel-sites.html": "travel-sites.html", "travel-platforms.html": "travel-platforms.html",
+           "underwriters.html": "underwriters.html"}
 LAST = {"privacy.html": ("Legal", (("Terms", "https://my.getthere.now/terms.html"), ("Privacy", "privacy.html"))),
         "404.html": ("Help", (("help@getthere.now", "mailto:help@getthere.now"),))}
 CONTACT = ("Contact", (("partner@getthere.now", "mailto:partner@getthere.now"),))
@@ -76,6 +81,6 @@ def rewrite(page):
 
 
 if __name__ == "__main__":
-    for page in ("index.html", "issuers.html", "loyalty-programs.html", "travel-sites.html", "underwriters.html",
-                 "api.html", "api-issuers.html", "api-travel-sites.html", "privacy.html", "404.html"):
+    for page in ("index.html", "issuers.html", "loyalty-programs.html", "travel-sites.html", "travel-platforms.html",
+                 "underwriters.html", "api.html", "api-issuers.html", "api-travel-sites.html", "privacy.html", "404.html"):
         rewrite(page)
