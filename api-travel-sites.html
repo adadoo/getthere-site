@@ -299,14 +299,11 @@
         that airport) and optional <code>terminal</code>.</td><td class="why">These are the flights we track and price.
         Local times as on the ticket avoid time zone mistakes, and a wrong date means the wrong flight is tracked.</td></tr>
     </table>
-    <p><b>Loyalty programme codes.</b> <code>GET /partner/v1/miles-programs</code> lists every code
-    <code>miles_program</code> takes, with the name to show and the airlines whose miles they are. The list only grows: a
-    programme we first see in a booking email gets a code then. Codes include <code>krisflyer</code>,
-    <code>asia_miles</code>, <code>avios</code>, <code>qantas_points</code>, <code>velocity</code>, <code>skywards</code>,
-    <code>etihad_guest</code>, <code>flying_blue</code>, <code>miles_and_more</code>, <code>aeroplan</code>,
-    <code>mileageplus</code>, <code>aadvantage</code>, <code>skymiles</code>, <code>enrich</code>,
-    <code>royal_orchid_plus</code>, <code>maharaja_club</code>, <code>ana_mileage_club</code> and
-    <code>jal_mileage_bank</code>.</p>
+    <p><b>Loyalty programme codes.</b> The list of codes <code>miles_program</code> takes isn't fixed in this guide:
+    it lives on our side and grows, because a programme we first see in a booking email gets a code then. Fetch it from
+    <code>GET /partner/v1/miles-programs</code>, which gives each code with the name to show and the airlines whose miles
+    they are, and refresh your copy daily. A code never changes or disappears once it's listed, so a code you've stored
+    keeps working.</p>
 <pre><code>GET /partner/v1/miles-programs
 200
 {"programs": [{"code": "krisflyer", "name": "KrisFlyer", "airlines": ["SQ", "TR"]},
