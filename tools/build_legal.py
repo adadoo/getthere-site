@@ -228,7 +228,8 @@ def privacy():
     <h2>{n + 1}. How long we keep it</h2>
     <ul>
       <li>Links in our emails to your pass and pre-loaded rescue card keep working for 12 months after your trip, then stop.</li>
-      <li>We keep booking emails and booking data for 12 months after your last flight, then delete them.</li>
+      <li>We keep booking emails and booking data, including the details you gave at checkout and our copies of
+        the messages we sent you, for 12 months after your last flight, then delete them.</li>
       <li>We keep offer page visits for 12 months. Then we delete the visit, or, if you forwarded a booking from it,
         delete the page you came from and its campaign tags, and keep only the link
         between your booking and the offer.</li>
