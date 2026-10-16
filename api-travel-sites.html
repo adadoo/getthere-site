@@ -121,6 +121,8 @@
 
     <h2 id="path-page">2a. On your booking page</h2>
     <ol class="steps">
+      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      so the quote is priced on each flight's own record.</li>
       <li><b>The airline confirms the booking.</b> From your server, call <a href="#quotes"><code>POST /partner/v1/quotes</code></a>
       with <code>placement: "booking-page"</code>, the booking reference, flights, fare, travellers, and the booker's email
       and <code>residence_country</code>.</li>
@@ -140,6 +142,8 @@
 
     <h2 id="path-inline">2b. In-line, in your own checkout</h2>
     <ol class="steps">
+      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      so the quote is priced on each flight's own record.</li>
       <li><b>The customer's cart has flights in it.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> with
       <code>placement: "in-line"</code>, your cart or session id as <code>session_id</code>, the flights, fare, travellers,
       and the booker's email and <code>residence_country</code>. There's no booking reference yet: if you send one, it's
@@ -165,6 +169,8 @@
 
     <h2 id="path-email">2c. In your booking email</h2>
     <ol class="steps">
+      <li><b>Recommended: the customer picks flights.</b> Send them to <a href="#warm"><code>POST /partner/v1/flights</code></a>,
+      so the quote is priced on each flight's own record.</li>
       <li><b>The airline confirms the booking.</b> Call <a href="#quotes"><code>POST /partner/v1/quotes</code></a> as in 2a,
       with <code>placement: "booking-email"</code>.</li>
       <li><b>If <code>status</code> is <code>quoted</code></b>, add the plans to your confirmation email. Any other status:
@@ -200,8 +206,16 @@
     <h2 id="quotes">3. <code>POST /partner/v1/quotes</code></h2>
     <p class="meta"><b>Every path</b> · <code>booking-page</code> and <code>booking-email</code>: once the airline confirms
     · <code>in-line</code>: whenever the cart's flights, travellers or fare change</p>
-    <p>Prices the booking or cart. No email goes to the customer. A flight we've never priced before can take up to 10
-    seconds, so call it in the background rather than holding a page on it.</p>
+    <p>Prices the booking or cart. No email goes to the customer. A flight we've never priced before adds at most a
+    second while we look up its history; it's then priced on its route, airport and airline until its own history is in.</p>
+    <p id="warm"><b>Get ahead of it:</b> as soon as the customer picks flights, from your server or your page's backend, send
+    the flight numbers to <code>POST /partner/v1/flights</code>. It answers <code>202</code> at once, prices nothing and
+    counts as no quote; it starts loading the history of any flight we've never priced, so by the time you quote, it's in.
+    Up to 8 flights a call; calling it again for the same flights is harmless.</p>
+<pre><code>POST /partner/v1/flights
+{ "flights": ["SQ321", "SQ322"] }
+
+202 { "status": "accepted", "loading": ["SQ322"] }</code></pre>
 <pre><code>{
   "placement": "in-line",
   "placement_detail": "seat-selection",
@@ -311,7 +325,9 @@
     <p><b>Quoting again.</b> The same booking (or the same cart) quoted again returns the same open offers, and they take
     the <code>placement</code>, <code>placement_detail</code> and tags of the latest call. So if you show one booking on
     your confirmation page and in your email, the second quote's placement is the one your funnel counts and the one whose
-    widget design <code>merchandising_url</code> shows.</p>
+    widget design <code>merchandising_url</code> shows. The one exception: a flight first priced before its own history
+    was in is priced again on its own record once it is, so that call returns new offers. The earlier ones can still be
+    bought until they expire, except in a cart, where a new quote replaces them as usual.</p>
 <pre><code>200
 {
   "status": "quoted",
