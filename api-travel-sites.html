@@ -69,8 +69,9 @@
       <li><a href="#forwarding">10. Your forwarding address</a></li>
       <li><a href="#webhooks">11. Webhooks</a></li>
       <li><a href="#merchant-ids">12. Your merchant IDs</a></li>
-      <li><a href="#testing">13. Test cases</a></li>
-      <li><a href="#go-live">14. Go-live checklist</a></li>
+      <li><a href="#rebook">13. Your rebook page</a></li>
+      <li><a href="#testing">14. Test cases</a></li>
+      <li><a href="#go-live">15. Go-live checklist</a></li>
     </ul>
 
     <h2 id="choose">1. Choose your path</h2>
@@ -266,6 +267,9 @@
         <td>The airline's booking reference (PNR), or yours.</td>
         <td class="why">One pass per booking: it stops the same trip being sold twice. In-line there's no reference yet, so
         you send each flight's when you create the pass.</td></tr>
+      <tr><td><code>ota_order_id</code> <span class="optl">optional</span></td><td>Your own booking or order ID, up to 200
+        characters.</td><td class="why">If a flight is disrupted, the rescue card's link opens this booking on
+        <a href="#rebook">your rebook page</a>. Without it we send the airline's PNR.</td></tr>
       <tr><td><code>session_id</code> <span class="optl">optional</span></td><td>Your cart or session id, up to 200
         characters.</td><td class="why">Quoting the same session again withdraws its older offers, so a changed cart can
         never be sold at an old price. It also lets you fetch the latest quote if you lose the <code>offer_id</code>, and send
@@ -568,7 +572,7 @@
         anything else.</td></tr>
       <tr><td><code>ota_order_id</code> <span class="req">required</span></td><td>Your order id, up to 200 characters.</td><td
         class="why">Each line of your monthly statement and every webhook carries it, so you can reconcile without a
-        lookup.</td></tr>
+        lookup. The rescue card's link opens this booking on <a href="#rebook">your rebook page</a>.</td></tr>
       <tr><td><code>payment_reference</code> <span class="req">required</span></td><td>Your id for the customer's payment,
         unique per sale, up to 200 characters.</td><td class="why">Makes the call safe to retry: the same reference returns
         the same pass. It's kept per mode, so a test sale never meets a live one. Reusing it for another offer is
@@ -798,7 +802,79 @@
     trades under. <b>We can't switch you live without them.</b> Send us every merchant ID your flight bookings are charged
     under (each country, each acquirer). If you add an acquirer later, send us its IDs before it takes payments.</p>
 
-    <h2 id="testing">13. Test cases</h2>
+    <h2 id="rebook">13. Your rebook page</h2>
+    <p>When a flight is disrupted, the rescue card email and the rescue card page give the customer a
+    <b>Rebook on &lt;your site&gt;</b> button. It's a GetThere link with its own random token,
+    <code>https://&lt;you&gt;.getthere.now/rebook/&lt;token&gt;</code>, like every link we send. Opening it sends the
+    customer straight on to your rebook page, with their booking and their trip from the disrupted flight onwards filled
+    in. They pay there with the rescue card, which works on your site only (<a href="#merchant-ids">section 12</a>).</p>
+    <p><b>This page is yours to build, and we can't switch you live without it.</b> Give us its address as a template,
+    for example:</p>
+<pre><code>https://www.yoursite.com/trips/rebook?booking={booking_id}&amp;flights={flights}&amp;date={date}</code></pre>
+    <p>We fill in each placeholder, URL-encoded. It must include <code>{booking_id}</code> or <code>{pnr}</code>.</p>
+    <p><b>Test it on your staging site.</b> Give us a second address for test cards, the same page on your staging
+    system, with the same placeholders. A test pass's rescue card (your test key, or a booking forwarded to your test
+    address) then takes the customer there, so you can try the whole journey before you go live. Without one, test
+    cards use your live address.</p>
+    <table class="fields">
+      <tr><th>Placeholder</th><th>What we fill in</th><th>Example</th></tr>
+      <tr><td><code>{booking_id}</code></td><td>Your own booking ID: the <code>ota_order_id</code> you sent with the quote
+        or the pass. Without one, the airline's PNR.</td><td><code>TRV-5581203</code></td></tr>
+      <tr><td><code>{pnr}</code></td><td>The disrupted flight's airline booking reference.</td><td><code>K7QX2M</code></td></tr>
+      <tr><td><code>{flights}</code></td><td>The disrupted flight and every later one on the booking.</td><td><code>SQ232,SQ231</code></td></tr>
+      <tr><td><code>{segments}</code></td><td>The same, each with its route and local departure date.</td><td><code>SQ232:SIN-SYD:2026-11-20,SQ231:SYD-SIN:2026-11-27</code></td></tr>
+      <tr><td><code>{from}</code>, <code>{to}</code></td><td>The disrupted flight's origin; the last flight's destination.</td><td><code>SIN</code>, <code>SIN</code></td></tr>
+      <tr><td><code>{date}</code></td><td>The disrupted flight's local departure date.</td><td><code>2026-11-20</code></td></tr>
+      <tr><td><code>{passengers}</code></td><td>How many travellers are on the booking.</td><td><code>2</code></td></tr>
+    </table>
+    <h3 id="rebook-check">Check the link with us</h3>
+    <p>Anyone can type an address, so don't trust the placeholders on their own. Every time the customer opens the link,
+    we add a fresh code to your address, <code>gt_rebook=rb_…</code>, good for 15 minutes. Your server checks it with your
+    key before your page shows anything:</p>
+    <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/rebooks/{gt_rebook}</h3></div>
+<pre><code>200 {"status": "valid", "expires_at": "2026-11-20T08:02:00+00:00",
+     "booking_id": "TRV-5581203", "ota_order_id": "TRV-5581203", "booking_reference": "K7QX2M",
+     "policy_id": "0e5b…", "user_reference": "cust-88412", "request_id": null,
+     "disruption": {"flight": "SQ232", "reason": "delay", "delay_minutes": 230},
+     "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": "K7QX2M"},
+                 {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": "K7QX2M"}],
+     "travellers": ["Mia Tan", "Leo Tan"],
+     "unavailable_url": "https://&lt;you&gt;.getthere.now/rebook/Kq3v…/unavailable",
+     "rescue_card": {"status": "active", "last4": "9764", "currency": "SGD", "available": 984.96,
+                     "expires_at": "2026-11-21T07:47:00+00:00"}}</code></pre>
+    <table class="fields">
+      <tr><th>Answer</th><th>What it means</th><th>What to do</th></tr>
+      <tr><td><code>200 valid</code></td><td>A real link, opened by your customer in the last 15 minutes.</td><td
+        class="why">Open the booking and start the search from <code>flights</code>, for <code>travellers</code>, using
+        these values rather than the ones in the address.</td></tr>
+      <tr><td><code>404</code></td><td>Not a code we gave you, or a test code checked with a live key (and the other way
+        round).</td><td class="why">Show your normal page, with nothing filled in.</td></tr>
+      <tr><td><code>410</code></td><td>The code is more than 15 minutes old.</td><td class="why">Ask the customer to tap
+        Rebook in our email or on the rescue card page again: each tap brings a new code.</td></tr>
+    </table>
+    <p>A <code>rescue_card.status</code> other than <code>active</code> (used or expired) means the card can't pay, so
+    tell the customer before they search. Check the code once per visit and keep the answer in your session.</p>
+    <p><b>If your page can't open the trip</b> (your search or booking system is down, or anything else goes wrong), send
+    the customer to <code>unavailable_url</code> instead of showing your own error. Our page asks them to go directly to
+    your website to rebook and links to their rescue card. We also check that your rebook page answers before we send
+    anyone to it: if it doesn't answer within 3 seconds, or answers with a 5xx, the customer gets that same page.</p>
+    <p><b>No rebook address, no button.</b> Until we have your address (your staging one for test cards), the rescue card
+    email, page and WhatsApp message carry no Rebook button or link, in test or live.</p>
+    <p>Your page should:</p>
+    <ul>
+      <li>Sign the customer in, or ask them to, and open the booking <code>{booking_id}</code> names. Check it's theirs
+      before showing anything: the link can be forwarded.</li>
+      <li>Start a search from <code>{from}</code> on <code>{date}</code> to <code>{to}</code> for the same travellers, with
+      every later flight in <code>{flights}</code> included, so they rebook the rest of the trip in one purchase. The
+      rescue card works once.</li>
+      <li>Take a card payment through one of the merchant IDs you gave us, or the rescue card is declined.</li>
+      <li>Still work after the customer's original flights have changed status with the airline.</li>
+    </ul>
+    <p>On a travel platform it's the same: the page is in your booking tool, and opens the employee's trip there.</p>
+    <p>The link works while the rescue card does. Once the card is used or expired, it opens the card page instead. If
+    you move the page, send us the new address: links already sent follow it.</p>
+
+    <h2 id="testing">14. Test cases</h2>
     <p>Run these with your test key before asking to go live. Use a first flight at least 3 days ahead. Run the quote cases
     for each placement you use.</p>
     <table class="fields">
@@ -839,6 +915,16 @@
         <code>booking_domains</code> are set right.</td></tr>
       <tr><td>Ask us to delay your test flight by 4 hours</td><td><code>rescue_card.issued</code> by webhook, a test card by
         email</td><td class="why">You can see and handle the moment that matters most.</td></tr>
+      <tr><td>Change a flight in the rebook address, or check a <code>gt_rebook</code> code older than 15 minutes</td><td>You
+        use the checked values only; <code>410</code> for the old code</td><td class="why">Nobody can open someone else's
+        booking or a made-up trip.</td></tr>
+      <tr><td>Make your staging rebook page fail, then tap Rebook</td><td>You send the customer to
+        <code>unavailable_url</code>, which asks them to go to your website directly</td><td class="why">A customer is
+        never left on an error page.</td></tr>
+      <tr><td>On the test card email or page, press "Rebook on &lt;your site&gt;"</td><td>Your staging rebook page opens
+        with the test booking and the trip from the delayed flight onwards, after your server checks
+        <code>gt_rebook</code> (<code>200 valid</code>)</td><td class="why">The customer gets back to you with
+        nothing to retype.</td></tr>
       <tr><td>Press "Simulate a purchase" on the test card</td><td><code>rescue_card.used</code></td><td class="why">The end of
         the journey.</td></tr>
       <tr><td>Send a webhook with a bad signature to your own endpoint</td><td>You reject it</td><td class="why">Nobody can fake
@@ -847,9 +933,10 @@
         events arrive.</td></tr>
     </table>
 
-    <h2 id="go-live">14. Go-live checklist</h2>
+    <h2 id="go-live">15. Go-live checklist</h2>
     <ul>
       <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 12</a>).</li>
+      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us, and it checks every <code>gt_rebook</code> code with us (<a href="#rebook">section 13</a>).</li>
       <li>The test cases above pass, for every placement you use.</li>
       <li>Every quote sends the right <code>placement</code> and the customer's real <code>residence_country</code>.</li>
       <li>The widget design for each placement you use is set in the admin.</li>
