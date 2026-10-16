@@ -812,6 +812,10 @@
     for example:</p>
 <pre><code>https://www.yoursite.com/trips/rebook?booking={booking_id}&amp;flights={flights}&amp;date={date}</code></pre>
     <p>We fill in each placeholder, URL-encoded. It must include <code>{booking_id}</code> or <code>{pnr}</code>.</p>
+    <p><b>Test it on your staging site.</b> Give us a second address for test cards, the same page on your staging
+    system, with the same placeholders. A test pass's rescue card (your test key, or a booking forwarded to your test
+    address) then takes the customer there, so you can try the whole journey before you go live. Without one, test
+    cards use your live address.</p>
     <table class="fields">
       <tr><th>Placeholder</th><th>What we fill in</th><th>Example</th></tr>
       <tr><td><code>{booking_id}</code></td><td>Your own booking ID: the <code>ota_order_id</code> you sent with the quote
@@ -878,8 +882,8 @@
         <code>booking_domains</code> are set right.</td></tr>
       <tr><td>Ask us to delay your test flight by 4 hours</td><td><code>rescue_card.issued</code> by webhook, a test card by
         email</td><td class="why">You can see and handle the moment that matters most.</td></tr>
-      <tr><td>On the test card email or page, press "Rebook on &lt;your site&gt;"</td><td>Your rebook page opens with the
-        test booking and the trip from the delayed flight onwards</td><td class="why">The customer gets back to you with
+      <tr><td>On the test card email or page, press "Rebook on &lt;your site&gt;"</td><td>Your staging rebook page opens
+        with the test booking and the trip from the delayed flight onwards</td><td class="why">The customer gets back to you with
         nothing to retype.</td></tr>
       <tr><td>Press "Simulate a purchase" on the test card</td><td><code>rescue_card.used</code></td><td class="why">The end of
         the journey.</td></tr>
@@ -892,7 +896,7 @@
     <h2 id="go-live">15. Go-live checklist</h2>
     <ul>
       <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 12</a>).</li>
-      <li>Your <b>rebook page</b> is built and its address is with us (<a href="#rebook">section 13</a>).</li>
+      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us (<a href="#rebook">section 13</a>).</li>
       <li>The test cases above pass, for every placement you use.</li>
       <li>Every quote sends the right <code>placement</code> and the customer's real <code>residence_country</code>.</li>
       <li>The widget design for each placement you use is set in the admin.</li>
