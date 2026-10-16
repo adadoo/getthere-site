@@ -236,7 +236,7 @@
 }</code></pre>
     <p>For <code>booking-page</code> or <code>booking-email</code>, add <code>"booking_reference": "K7QX2M"</code>. For a
     booking paid with miles or points, send the money paid as <code>total_paid</code> and add
-    <code>"miles_used": 85500, "miles_program": "KrisFlyer"</code>.</p>
+    <code>"miles_used": 85500, "miles_program": "krisflyer"</code>.</p>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>placement</code> <span class="req">required</span></td><td><code>booking-page</code>,
@@ -267,11 +267,12 @@
         for the flights, all travellers, as a 3-letter currency and a number. <code>base_fare</code> and <code>taxes</code>
         are optional.</td><td class="why">The rescue card's limit is set from the fare, so it's enough to buy comparable new
         seats. Plans and fees are in this currency.</td></tr>
-      <tr><td><code>miles_used</code>, <code>miles_program</code> <span class="optl">optional</span></td><td>For a booking
-        paid with miles or points, even in part: how many (a whole number), and the loyalty programme they came from, as your
-        customer knows it (like <code>KrisFlyer</code>, <code>Avios</code>, <code>Asia Miles</code>). <code>total_paid</code> is
-        then the money paid, usually the taxes and fees. <code>paid_with_miles: true</code> on its own still works when you
-        don't have the count.</td><td class="why">Award bookings get a pass too. We value the flights at the miles × what
+      <tr><td><code>miles_used</code>,<br><code>miles_program</code><br><span class="optl">optional</span></td><td>For a booking
+        paid with miles or points, even in part: how many (a whole number), and the loyalty programme they came from, as one
+        of the codes <code>GET /partner/v1/miles-programs</code> lists (like <code>krisflyer</code>, <code>avios</code>,
+        <code>asia_miles</code>). Any other value is a <code>422</code>. Without it we go by the airline.
+        <code>total_paid</code> is then the money paid, usually the taxes and fees. <code>paid_with_miles: true</code> on its
+        own still works when you don't have the count.</td><td class="why">Award bookings get a pass too. We value the flights at the miles × what
         the programme's miles are worth, plus the money paid, never above what the same seats cost to buy, and size the
         rescue card from that. A stranded award traveller pays cash for a new seat, so the card matters more, not
         less. A programme we haven't seen is valued from the market on its first booking.</td></tr>
@@ -298,6 +299,18 @@
         that airport) and optional <code>terminal</code>.</td><td class="why">These are the flights we track and price.
         Local times as on the ticket avoid time zone mistakes, and a wrong date means the wrong flight is tracked.</td></tr>
     </table>
+    <p><b>Loyalty programme codes.</b> <code>GET /partner/v1/miles-programs</code> lists every code
+    <code>miles_program</code> takes, with the name to show and the airlines whose miles they are. The list only grows: a
+    programme we first see in a booking email gets a code then. Codes include <code>krisflyer</code>,
+    <code>asia_miles</code>, <code>avios</code>, <code>qantas_points</code>, <code>velocity</code>, <code>skywards</code>,
+    <code>etihad_guest</code>, <code>flying_blue</code>, <code>miles_and_more</code>, <code>aeroplan</code>,
+    <code>mileageplus</code>, <code>aadvantage</code>, <code>skymiles</code>, <code>enrich</code>,
+    <code>royal_orchid_plus</code>, <code>maharaja_club</code>, <code>ana_mileage_club</code> and
+    <code>jal_mileage_bank</code>.</p>
+<pre><code>GET /partner/v1/miles-programs
+200
+{"programs": [{"code": "krisflyer", "name": "KrisFlyer", "airlines": ["SQ", "TR"]},
+              {"code": "asia_miles", "name": "Asia Miles", "airlines": ["CX"]}, …]}</code></pre>
     <p><b>Quoting again.</b> The same booking (or the same cart) quoted again returns the same open offers, and they take
     the <code>placement</code>, <code>placement_detail</code> and tags of the latest call. So if you show one booking on
     your confirmation page and in your email, the second quote's placement is the one your funnel counts and the one whose
@@ -365,8 +378,8 @@
         Underwriter selling where the customer lives, named in <code>underwriter</code>.</td><td class="why">Link to it next to the
         add-on. In-line, send it back when you create the pass, to show which terms the customer accepted.</td></tr>
       <tr><td><code>award</code></td><td><code>null</code> for a booking paid with money. For one paid with miles or points:
-        <code>{"miles_used": 85500, "miles_program": "KrisFlyer", "currency": "SGD", "cash_paid": 157.80,
-        "valued_at": 1800.00}</code>, where <code>valued_at</code> is the value the plans were set from.</td><td
+        <code>{"miles_used": 85500, "miles_program": "krisflyer", "miles_program_name": "KrisFlyer", "currency": "SGD",
+        "cash_paid": 157.80, "valued_at": 1800.00}</code>, where <code>valued_at</code> is the value the plans were set from.</td><td
         class="why">Show it if you show the plans yourself: "Your flights are valued at SGD 1,800", next to the miles
         your customer redeemed.</td></tr>
       <tr><td><code>prefilled</code>, <code>not_prefilled</code></td><td>Which customer fields will fill in our checkout, and
