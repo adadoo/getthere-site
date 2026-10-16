@@ -697,7 +697,8 @@
         pass replaces the old one, and the old one's fee is netted on your statement. No refund email goes to the customer:
         the new pass's confirmation says it all. Sending the same change again returns the same answer.</td><td
         class="why">The pass always matches the flights the customer will take. <code>difference</code> in the answer is
-        what you charge (or refund, if negative) on top of what was paid.</td></tr>
+        what you charge (or refund, if negative) on top of what was paid. After the cooling-off period a cheaper pass
+        refunds nothing: <code>difference</code> is <code>0</code>, and the old fee pays for the new pass.</td></tr>
       <tr><td><code>cancelled</code></td><td>Ends the pass. Within its cooling-off period (24 hours after it was paid
         for, unless the Underwriter sets its own), you refund the customer, and it's netted on your statement. After it,
         the pass ends with no refund: the fee stays paid, and we email the customer that it was cancelled.</td>
