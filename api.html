@@ -165,7 +165,8 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
   "livemode": true,
   "data": {
     "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
-    "ota_order_id": "TRV-5581203", "plan": "plus", "pass_status": "triggered",
+    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "user_reference": "C-88213",
+    "plan": "plus", "pass_status": "triggered", "fee_before_tax": "37.50",
     "amount": "984.96", "currency": "SGD",
     "expires_at": "2026-11-21T07:41:05.118902+00:00", "reason": "delay"
   }
@@ -185,6 +186,13 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         agents can search for it.</td></tr>
       <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
         event to your order without a lookup.</td></tr>
+      <tr><td><code>data.request_id</code>, <code>data.user_reference</code></td><td>The <code>GET /offer</code> the
+        booking was forwarded on, and your own id for the customer, when you gave one. A booking forwarded without an
+        offer has no <code>request_id</code>, but keeps the latest <code>user_reference</code> you gave for that
+        customer.</td><td class="why">Tells you which customer the pass is for in your own terms. A loyalty program credits
+        miles to that member.</td></tr>
+      <tr><td><code>data.fee_before_tax</code></td><td>The pass fee without sales tax.</td><td class="why">What miles or
+        points are earned on: <code>amount_paid</code> on <code>pass.issued</code> includes the tax.</td></tr>
       <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status when the
         event was made: <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired_no_claim</code> (every
         flight watched, no delay past the trigger), <code>refunded</code> (refunded, replaced by a new pass, or ended by an

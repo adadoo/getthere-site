@@ -163,7 +163,7 @@
     <p>Makes a fresh offer: a code, carried in the offer's links and in the forwarding address, that ties a booking
     forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
     bought a pass.</p>
-<pre><code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
+<pre><code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;user_reference=C-88213</code></pre>
 <pre><code>200 {"offer_id": "k7f2q9xm",
      "offer_url": "https://&lt;issuer&gt;.getthere.now/?o=k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
@@ -181,6 +181,10 @@
       <tr><td><code>opened</code> <span class="optl">optional</span></td><td><code>true</code> when you show
         <code>forward_to</code> on your own screen at once instead of opening one of our pages.</td><td class="why">Counts the
         offer as opened now, so your funnel doesn't show it as never seen.</td></tr>
+      <tr><td><code>user_reference</code> <span class="optl">optional</span></td><td>Your own id for the customer: 1 to 128
+        printable characters, no spaces. Never a card number. Echoed in the answer.</td><td class="why">It comes back on every
+        webhook event, push and purchase check about this customer, even for a later booking they forward without an
+        offer, so you find them by your own id rather than by email. A loyalty program uses it to credit miles.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
@@ -237,7 +241,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
 Idempotency-Key: 5b1f…
 
 {"push_id": "5b1f…",
- "customer": {"email": "mia@example.com"},
+ "customer": {"email": "mia@example.com", "user_reference": "C-88213"},
  "type": "card_issued",
  "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
  "body": "We've sent it to you on WhatsApp and by email.",
@@ -288,13 +292,15 @@ Idempotency-Key: 5b1f…
 <pre><code>POST &lt;your API&gt;/v1/getthere/purchase-match
 Authorization: Bearer &lt;the token you gave us&gt;
 
-{"email": "mia@example.com", "airline": "QF", "seller": null, "amount": "1550.00", "currency": "AUD",
- "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
+{"email": "mia@example.com", "user_reference": "C-88213", "airline": "QF", "seller": null, "amount": "1550.00",
+ "currency": "AUD", "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
 <pre><code>200 {"match": true}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>email</code></td><td>The email the booking was forwarded from.</td><td class="why">How you find the
         cardholder. Not found is <code>false</code>.</td></tr>
+      <tr><td><code>user_reference</code></td><td>Your own id for the customer, when you gave one on <code>GET /offer</code>;
+        otherwise <code>null</code>.</td><td class="why">Find the cardholder by it first, then by email.</td></tr>
       <tr><td><code>airline</code></td><td>The airline whose flights were bought, 2-letter code.</td><td class="why">Match
         on the merchant when <code>seller</code> is <code>null</code>.</td></tr>
       <tr><td><code>seller</code></td><td>Who charged the card when it wasn't the airline, such as a travel agency
