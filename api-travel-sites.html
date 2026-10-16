@@ -698,8 +698,11 @@
         the new pass's confirmation says it all. Sending the same change again returns the same answer.</td><td
         class="why">The pass always matches the flights the customer will take. <code>difference</code> in the answer is
         what you charge (or refund, if negative) on top of what was paid.</td></tr>
-      <tr><td><code>cancelled</code></td><td>Ends the pass. You refund the customer, and it's netted on your statement.</td>
-        <td class="why">A cancelled booking can't have a rescue card.</td></tr>
+      <tr><td><code>cancelled</code></td><td>Ends the pass. Within its cooling-off period (24 hours after it was paid
+        for, unless the Underwriter sets its own), you refund the customer, and it's netted on your statement. After it,
+        the pass ends with no refund: the fee stays paid, and we email the customer that it was cancelled.</td>
+        <td class="why">A cancelled booking can't have a rescue card. The Underwriter is paid for the pass once
+        cooling-off ends.</td></tr>
     </table>
 <pre><code>200 {"status": "changed", "policy_id": "&lt;new pass&gt;", "replaces": "0e5b…", "difference": 3.78, …}</code></pre>
     <table class="fields">
@@ -721,8 +724,11 @@
         <code>/policies</code>. The old pass stays as it was.</td></tr>
     </table>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/cancel</h3></div>
-    <p>The same as <code>{"type": "cancelled"}</code>, for a refund you've given (cooling-off, a chargeback). Returns
-    <code>"status": "cancelled"</code> and <code>"pass_status": "refunded"</code>. Its <code>409</code>s carry a reason:
+    <p>The same as <code>{"type": "cancelled"}</code>, for a booking that's been cancelled. Within the pass's
+    cooling-off period it returns <code>"status": "cancelled"</code> and <code>"pass_status": "refunded"</code>, and
+    <code>pass.ended</code> carries <code>reason: "refunded"</code>. After it, the pass ends with no refund: it returns
+    <code>"pass_status": "voided"</code>, and <code>pass.ended</code> carries <code>reason: "cancelled"</code> and
+    <code>refund: "0"</code>. Its <code>409</code>s carry a reason:
     <code>not_in_line</code> (bought on GetThere's checkout), <code>not_active</code> (the pass has already ended, for
     example cancelled before) or <code>too_late</code> (we've started watching the first flight).</p>
     <p><b>When the airline cancels the flight before we start watching</b>, we end the pass ourselves and send
