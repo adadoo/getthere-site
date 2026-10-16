@@ -145,12 +145,9 @@
 
     <h2 id="levels">3. How much to build</h2>
     <div class="paths">
-      <div class="path"><span class="tag">Smallest</span><h3>Push and link</h3>
-        <p>Your push opens <code>https://&lt;issuer&gt;.getthere.now/offer</code>. No API call at all.</p>
-        <ul><li>Live in days</li><li>Every visit is counted, but not per push</li></ul></div>
-      <div class="path"><span class="tag">Recommended</span><h3>Traced offers in your app</h3>
+      <div class="path"><span class="tag">Smallest</span><h3>Traced offers in your app</h3>
         <p>Call <code>GET /offer</code> per push and open its <code>merchandising_url</code> in your app.</p>
-        <ul><li>One API call</li><li>Each push traced to the passes it sells</li><li>The cardholder never leaves your
+        <ul><li>One API call</li><li>Prices in the quote email include your cardholder's tax</li><li>Each push traced to the passes it sells</li><li>The cardholder never leaves your
         app</li></ul></div>
       <div class="path"><span class="tag">Fullest</span><h3>Everything in your app</h3>
         <p>Add your push endpoint, push receipts, purchase match and webhooks.</p>
@@ -167,7 +164,7 @@
 <pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
 <pre><code>200 {"status": "offered",
      "residence_country": "SG",
-     "offer_id": "k7f2q9xm",
+     "request_id": "k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
      "product_name": "Flight Delay Pass",
@@ -193,7 +190,8 @@
       <tr><td><code>status</code></td><td><code>offered</code>, or <code>declined</code> with <code>reason</code>
         <code>not_on_sale</code> where we don't sell yet.</td><td class="why">Send the push only when it's
         <code>offered</code>.</td></tr>
-      <tr><td><code>offer_id</code></td><td>The offer's code.</td><td class="why">Store it with the push you sent, to join
+      <tr><td><code>request_id</code></td><td>This push's code, the one in its page link and forwarding address. It isn't
+        a quote: quotes come once the cardholder forwards a booking, and are traced back to it.</td><td class="why">Store it with the push you sent, to join
         our numbers to yours.</td></tr>
       <tr><td><code>merchandising_url</code></td><td>The offer page, in your widget settings. It sits inside your app (a web
         view or an iframe) and opens in a browser too.</td><td class="why">The one link for this offer: your push's
@@ -209,8 +207,7 @@
         it to us and we can find the cardholder's journey.</td></tr>
     </table>
     <p>Errors: <code>401</code>, <code>403</code> and <code>503</code> while you're paused (see
-    <a href="api.html#errors">errors</a>). If the call fails, link to <code>https://&lt;issuer&gt;.getthere.now/offer</code>
-    instead: it still works, just without tracing to the push.</p>
+    <a href="api.html#errors">errors</a>). If the call fails, don't send the push: try again with the next one.</p>
 
     <h2 id="show">5. Showing the offer in your app</h2>
 <pre><code>&lt;!-- In a web view, open merchandising_url full screen. Or in a page: --&gt;
