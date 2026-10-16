@@ -734,6 +734,9 @@
     <p><b>When the airline cancels the flight before we start watching</b>, we end the pass ourselves and send
     <code>pass.ended</code> with <code>reason: "flight_cancelled_before_watch"</code>. For an <code>in-line</code> pass,
     refund the customer, and it's netted on your statement.</p>
+    <p><b>When a customer disputes a payment taken on GetThere's checkout</b> with their bank (a chargeback), an active
+    pass ends: we send <code>pass.ended</code> with <code>reason: "disputed"</code> and <code>refund: "0"</code>, and
+    the customer is told. A pass that has already issued its rescue card keeps it, and GetThere contests the dispute.</p>
 
     <h2 id="events">9. Funnel events: <code>POST /partner/v1/events</code></h2>
     <div class="callout must"><b>This is not optional if you draw the plans yourself on a page.</b> Funnel events are how
