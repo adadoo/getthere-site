@@ -827,6 +827,32 @@
       <tr><td><code>{date}</code></td><td>The disrupted flight's local departure date.</td><td><code>2026-11-20</code></td></tr>
       <tr><td><code>{passengers}</code></td><td>How many travellers are on the booking.</td><td><code>2</code></td></tr>
     </table>
+    <h3 id="rebook-check">Check the link with us</h3>
+    <p>Anyone can type an address, so don't trust the placeholders on their own. Every time the customer opens the link,
+    we add a fresh code to your address, <code>gt_rebook=rb_…</code>, good for 15 minutes. Your server checks it with your
+    key before your page shows anything:</p>
+    <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/rebooks/{gt_rebook}</h3></div>
+<pre><code>200 {"status": "valid", "expires_at": "2026-11-20T08:02:00+00:00",
+     "booking_id": "TRV-5581203", "ota_order_id": "TRV-5581203", "booking_reference": "K7QX2M",
+     "policy_id": "0e5b…", "user_reference": "cust-88412", "request_id": null,
+     "disruption": {"flight": "SQ232", "reason": "delay", "delay_minutes": 230},
+     "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": "K7QX2M"},
+                 {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": "K7QX2M"}],
+     "travellers": ["Mia Tan", "Leo Tan"],
+     "rescue_card": {"status": "active", "last4": "9764", "currency": "SGD", "available": 984.96,
+                     "expires_at": "2026-11-21T07:47:00+00:00"}}</code></pre>
+    <table class="fields">
+      <tr><th>Answer</th><th>What it means</th><th>What to do</th></tr>
+      <tr><td><code>200 valid</code></td><td>A real link, opened by your customer in the last 15 minutes.</td><td
+        class="why">Open the booking and start the search from <code>flights</code>, for <code>travellers</code>, using
+        these values rather than the ones in the address.</td></tr>
+      <tr><td><code>404</code></td><td>Not a code we gave you, or a test code checked with a live key (and the other way
+        round).</td><td class="why">Show your normal page, with nothing filled in.</td></tr>
+      <tr><td><code>410</code></td><td>The code is more than 15 minutes old.</td><td class="why">Ask the customer to tap
+        Rebook in our email or on the rescue card page again: each tap brings a new code.</td></tr>
+    </table>
+    <p>A <code>rescue_card.status</code> other than <code>active</code> (used or expired) means the card can't pay, so
+    tell the customer before they search. Check the code once per visit and keep the answer in your session.</p>
     <p>Your page should:</p>
     <ul>
       <li>Sign the customer in, or ask them to, and open the booking <code>{booking_id}</code> names. Check it's theirs
@@ -882,8 +908,12 @@
         <code>booking_domains</code> are set right.</td></tr>
       <tr><td>Ask us to delay your test flight by 4 hours</td><td><code>rescue_card.issued</code> by webhook, a test card by
         email</td><td class="why">You can see and handle the moment that matters most.</td></tr>
+      <tr><td>Change a flight in the rebook address, or check a <code>gt_rebook</code> code older than 15 minutes</td><td>You
+        use the checked values only; <code>410</code> for the old code</td><td class="why">Nobody can open someone else's
+        booking or a made-up trip.</td></tr>
       <tr><td>On the test card email or page, press "Rebook on &lt;your site&gt;"</td><td>Your staging rebook page opens
-        with the test booking and the trip from the delayed flight onwards</td><td class="why">The customer gets back to you with
+        with the test booking and the trip from the delayed flight onwards, after your server checks
+        <code>gt_rebook</code> (<code>200 valid</code>)</td><td class="why">The customer gets back to you with
         nothing to retype.</td></tr>
       <tr><td>Press "Simulate a purchase" on the test card</td><td><code>rescue_card.used</code></td><td class="why">The end of
         the journey.</td></tr>
@@ -896,7 +926,7 @@
     <h2 id="go-live">15. Go-live checklist</h2>
     <ul>
       <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 12</a>).</li>
-      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us (<a href="#rebook">section 13</a>).</li>
+      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us, and it checks every <code>gt_rebook</code> code with us (<a href="#rebook">section 13</a>).</li>
       <li>The test cases above pass, for every placement you use.</li>
       <li>Every quote sends the right <code>placement</code> and the customer's real <code>residence_country</code>.</li>
       <li>The widget design for each placement you use is set in the admin.</li>
