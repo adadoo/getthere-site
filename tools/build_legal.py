@@ -202,8 +202,8 @@ def privacy():
       email delivery (Postmark), messaging (WhatsApp messages, through Twilio), and flight data (FlightAware).</li>
       <li>When you forward a booking from an airline or travel site we haven't seen before, an AI service
       (Anthropic's Claude) reads it for us to find the flights, travellers and fare.</li>
-      <li>The company that sells your pass, and its payment provider and card issuer (Airwallex, for passes sold by
-      GetThere), receive your legal name, date of birth, home address, email address and mobile number when you buy a
+      <li>Our payment provider (Stripe), which takes your payment for the company that sells your pass, and that
+      company and its card issuer (Airwallex, for passes sold by GetThere), receive your legal name, date of birth, home address, email address and mobile number when you buy a
       pass, to take your payment, check your identity (including sanctions screening), and fund and issue the
       pre-loaded rescue card in your name. The card issuer may ask for an identity document if it can't confirm who
       you are.</li>
