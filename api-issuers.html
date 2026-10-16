@@ -44,7 +44,8 @@
     <h1>API guide for card issuers</h1>
     <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Written for the developers who build it. Keys,
     error format, retries, test mode and webhook signatures are on <a href="api.html#basics">the basics page</a>.
-    Travel site? See <a href="api-travel-sites.html">the travel site guide</a>.</p>
+    Travel site? See <a href="api-travel-sites.html">the travel site guide</a>. Loyalty programs build the same calls,
+    plus <a href="#miles">crediting miles</a>.</p>
 
     <div class="callout key">
       <b>The short version.</b> All you must build is one push notification of your own, after an airline charge on your
@@ -63,8 +64,9 @@
       <li><a href="#receipts">7. POST /push-receipts</a></li>
       <li><a href="#match">8. Your purchase-match endpoint</a></li>
       <li><a href="#webhooks">9. Webhooks</a></li>
-      <li><a href="#testing">10. Test cases</a></li>
-      <li><a href="#go-live">11. Go-live checklist</a></li>
+      <li><a href="#miles">10. Crediting miles (loyalty programs)</a></li>
+      <li><a href="#testing">11. Test cases</a></li>
+      <li><a href="#go-live">12. Go-live checklist</a></li>
     </ul>
 
     <h2 id="who">1. Who builds what</h2>
@@ -319,7 +321,38 @@ Authorization: Bearer &lt;the token you gave us&gt;
     are on <a href="api.html#webhooks">the basics page</a>. They're most useful for your customer service: when a cardholder
     calls, your agent sees what we sent and when.</p>
 
-    <h2 id="testing">10. Test cases</h2>
+    <h2 id="miles">10. Crediting miles <span class="opt">loyalty programs</span></h2>
+    <p>Members earn your miles on the passes they buy. What you give them comes out of your share of the pass fee, as you
+    agree with the Underwriter, the way a merchant commission does. GetThere tells you who bought and what they paid; you
+    credit the miles in your own system.</p>
+    <ol>
+      <li><b>Name the member on every offer.</b> Call <code>GET /offer</code> with <code>user_reference</code> set to your
+        own id for the member. It comes back on every event about them, even for a later booking they forward without an
+        offer.</li>
+      <li><b>Credit pending miles on <code>pass.issued</code>.</b> Find the member by <code>data.user_reference</code> and
+        earn on <code>data.fee_before_tax</code>, never on <code>amount_paid</code>, which includes sales tax. Store the
+        <code>policy_id</code> with the credit.</li>
+      <li><b>Take them back if the pass is refunded.</b> On <code>pass.ended</code> with <code>reason: refunded</code>,
+        reverse the pending miles for that <code>policy_id</code>.</li>
+      <li><b>Confirm them once the trip starts.</b> Make the miles final after the first flight's departure date, if no
+        refund came. A pass that ends with <code>reason: expired</code> (no delay) or sends a rescue card keeps its
+        miles.</li>
+    </ol>
+    <table class="fields">
+      <tr><th>Event</th><th>What to do with the miles</th></tr>
+      <tr><td><code>pass.issued</code></td><td>Credit as pending: <code>fee_before_tax</code> × your earn rate, to
+        <code>user_reference</code>.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: refunded</code> or <code>flight_cancelled_before_watch</code></td><td>Reverse
+        them.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: replaced</code></td><td>Reverse them. The new pass sends its own
+        <code>pass.issued</code>, which you credit as usual.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: expired</code>; <code>rescue_card.issued</code></td><td>Keep them.</td></tr>
+      <tr><td>No <code>user_reference</code> on the event</td><td>The member never came through one of your offers with a
+        reference. Match on the email in your push, or leave it.</td></tr>
+    </table>
+    <p>Check what you credited against your monthly report of passes sold.</p>
+
+    <h2 id="testing">11. Test cases</h2>
     <table class="fields">
       <tr><th>Do this</th><th>Expect</th><th>Proves</th></tr>
       <tr><td><code>GET /ping</code> with your test key</td><td><code>"mode": "test"</code></td><td class="why">Your key and
@@ -340,7 +373,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
         to that cardholder</td><td class="why">Opt-outs are honoured.</td></tr>
     </table>
 
-    <h2 id="go-live">11. Go-live checklist</h2>
+    <h2 id="go-live">12. Go-live checklist</h2>
     <ul>
       <li>Your push wording, and our push wording if you use your push endpoint, is agreed with us and the Underwriter.</li>
       <li>The test cases above pass.</li>
