@@ -839,6 +839,7 @@
      "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": "K7QX2M"},
                  {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": "K7QX2M"}],
      "travellers": ["Mia Tan", "Leo Tan"],
+     "unavailable_url": "https://&lt;you&gt;.getthere.now/rebook/Kq3v…/unavailable",
      "rescue_card": {"status": "active", "last4": "9764", "currency": "SGD", "available": 984.96,
                      "expires_at": "2026-11-21T07:47:00+00:00"}}</code></pre>
     <table class="fields">
@@ -853,6 +854,12 @@
     </table>
     <p>A <code>rescue_card.status</code> other than <code>active</code> (used or expired) means the card can't pay, so
     tell the customer before they search. Check the code once per visit and keep the answer in your session.</p>
+    <p><b>If your page can't open the trip</b> (your search or booking system is down, or anything else goes wrong), send
+    the customer to <code>unavailable_url</code> instead of showing your own error. Our page asks them to go directly to
+    your website to rebook and links to their rescue card. We also check that your rebook page answers before we send
+    anyone to it: if it doesn't answer within 3 seconds, or answers with a 5xx, the customer gets that same page.</p>
+    <p><b>No rebook address, no button.</b> Until we have your address (your staging one for test cards), the rescue card
+    email, page and WhatsApp message carry no Rebook button or link, in test or live.</p>
     <p>Your page should:</p>
     <ul>
       <li>Sign the customer in, or ask them to, and open the booking <code>{booking_id}</code> names. Check it's theirs
@@ -911,6 +918,9 @@
       <tr><td>Change a flight in the rebook address, or check a <code>gt_rebook</code> code older than 15 minutes</td><td>You
         use the checked values only; <code>410</code> for the old code</td><td class="why">Nobody can open someone else's
         booking or a made-up trip.</td></tr>
+      <tr><td>Make your staging rebook page fail, then tap Rebook</td><td>You send the customer to
+        <code>unavailable_url</code>, which asks them to go to your website directly</td><td class="why">A customer is
+        never left on an error page.</td></tr>
       <tr><td>On the test card email or page, press "Rebook on &lt;your site&gt;"</td><td>Your staging rebook page opens
         with the test booking and the trip from the delayed flight onwards, after your server checks
         <code>gt_rebook</code> (<code>200 valid</code>)</td><td class="why">The customer gets back to you with
