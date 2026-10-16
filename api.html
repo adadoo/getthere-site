@@ -72,6 +72,7 @@
       <li><a href="#test-mode">Test mode</a></li>
       <li><a href="#webhooks">Webhooks: events we send you</a></li>
       <li><a href="#verify">Checking a webhook's signature</a></li>
+      <li><a href="#vouchers">Pass vouchers: points and card benefits</a></li>
       <li><a href="#support">Getting help</a></li>
     </ul>
 
@@ -201,8 +202,10 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
     </table>
     <table class="fields">
       <tr><th>Type</th><th>Sent when, with</th><th>Why it matters</th></tr>
-      <tr><td><code>pass.issued</code></td><td>A pass is bought. <code>offer_id</code>, <code>amount_paid</code>,
-        <code>currency</code>, <code>pass_url</code>.</td><td class="why">Your record of the sale, and the link to send a
+      <tr><td><code>pass.issued</code></td><td>A pass is bought. <code>offer_id</code>, <code>amount_paid</code> (what the
+        card paid), <code>currency</code>, <code>pass_url</code>, and <code>voucher</code> when a
+        <a href="#vouchers">pass voucher</a> paid some or all of it: its <code>code</code>, <code>id</code>,
+        <code>customer_ref</code> and <code>amount_used</code>.</td><td class="why">Your record of the sale, and the link to send a
         customer who asks "where's my pass?".</td></tr>
       <tr><td><code>pass.changed</code></td><td>Names corrected (<code>change: "travellers"</code>,
         <code>passengers</code>) or the pass moved to new flights (<code>change: "flights"</code>, <code>replaces</code>:
@@ -255,6 +258,54 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
     fresh = abs(time.time() - int(parts["t"])) &lt; 300
     return fresh and hmac.compare_digest(expected, parts.get("v1", ""))</code></pre>
     <p>If your secret leaks, ask us for a new one. The old one stops working at once.</p>
+
+    <h3 id="vouchers">Pass vouchers: points and card benefits</h3>
+    <p>Let your customers pay for a pass with your points, or give your top tier a pass as a benefit. You issue a voucher
+    with one call when the customer swaps points in your app, or when you hand out a benefit. The customer enters its code
+    at your own checkout. A voucher works only on your checkout, never another partner's.</p>
+<pre><code>POST /partner/v1/vouchers
+Authorization: Bearer gt_live_…
+
+{"kind": "points", "amount": 25, "currency": "SGD", "customer_ref": "KF-1001",
+ "note": "2,500 points", "expires_at": "2027-01-31T23:59:59Z"}
+
+201 Created
+{"id": "5d1c…", "code": "GTV-7KQ2-M9XD", "kind": "points", "amount": "25.00", "currency": "SGD",
+ "whole_pass": false, "customer_ref": "KF-1001", "status": "issued", "expires_at": "2027-01-31T23:59:59+00:00", …}</code></pre>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>kind</code></td><td><code>points</code> (swapped for points) or <code>benefit</code> (a card or tier
+        benefit). <code>points</code> if you leave it out.</td><td class="why">Your monthly statement splits them, so you
+        can charge each to the right budget.</td></tr>
+      <tr><td><code>amount</code>, <code>currency</code></td><td>How much of the price it pays, tax included. Leave both
+        out for a voucher that pays the whole pass, whichever plan.</td><td class="why">A card pays any rest. A voucher
+        is used once: one worth more than the price pays all of it, and the rest is gone.</td></tr>
+      <tr><td><code>customer_ref</code>, <code>note</code></td><td>Your own id for the customer, and your own words,
+        such as "Welcome offer". Optional.</td><td class="why">They come back on the voucher, its event and your statement,
+        so you know whose points to give back.</td></tr>
+      <tr><td><code>expires_at</code></td><td>When it stops working, with a time zone. Optional.</td><td class="why">After
+        it, the checkout says it has expired.</td></tr>
+    </table>
+    <table class="fields">
+      <tr><th>Call</th><th>What it does</th></tr>
+      <tr><td><code>GET /partner/v1/vouchers</code></td><td>Your vouchers, newest first. Add <code>?customer_ref=</code>
+        for one customer's.</td></tr>
+      <tr><td><code>GET /partner/v1/vouchers/&lt;code&gt;</code></td><td>One voucher, by its code or id.
+        <code>status</code>: <code>issued</code>, <code>used</code> (with <code>pass_reference</code> and
+        <code>amount_used</code>), <code>cancelled</code> or <code>expired</code>.</td></tr>
+      <tr><td><code>POST /partner/v1/vouchers/&lt;code&gt;/cancel</code></td><td>Takes back a voucher not used yet, when
+        the customer swaps it back for points. A used one answers 409.</td></tr>
+    </table>
+    <p><b>At checkout.</b> Once you've issued a voucher, your checkout shows a voucher box. The customer types the code, sees
+    what it pays and what's left for the card, and pays the rest. A voucher that pays it all needs no card: the pass is issued
+    at once. Sales tax is charged on the full price, and the pass and its rescue card are the same however it was paid.</p>
+    <p><b>Refunds.</b> If the pass is refunded, the voucher comes back and can be used again until it expires. You'll see
+    <code>pass.ended</code> as usual. Points earned on a pass (<code>data.loyalty</code>) are earned only on the part paid by
+    card.</p>
+    <p><b>Settling.</b> Nothing is bought up front. Each month your statement lists the vouchers used, and any given back by a
+    refund, with the Underwriter that sold each pass. You settle each total with that Underwriter, taken off your share.</p>
+    <p><b>Testing.</b> A test key makes test vouchers. They work only on test checkouts, and a real voucher never works on
+    one.</p>
 
     <h3 id="support">Getting help</h3>
     <p>Send us the <code>reference</code> from any response (<code>R-…</code>, <code>Q-…</code> or <code>P-…</code>) and
