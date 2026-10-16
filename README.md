@@ -9,14 +9,15 @@ Plain HTML, CSS and a little JavaScript; no build step.
 | `index.html` | Travellers: what the Flight Delay Pass is and how to forward a booking to `quote@my.getthere.now`. The same page, design and wording as each partner's home and offer page in the app (`getthere/templates/landing.html`); its stylesheet `traveller.css` is the app's `_traveller.css`, kept identical. |
 | `issuers.html` | Card issuers: the Flight Delay Pass story from the Head of Cards deck, a pass-fee calculator and the pilot offer. Contact us goes to partner@getthere.now. |
 | `underwriters.html` | Underwriters (insurers): why and how to underwrite the Flight Delay Pass on GetThere: the three buckets of risk (what GetThere captures, what the underwriter controls, what each partner decides), exposure limits, claims, the fee split, rolling out to partners, the monthly reports, money and data, getting started. Built from the underwriter concerns list (Claude Doc, 13 Oct 2026); it claims none of the gaps that list names. |
+| `loyalty-programs.html` | Loyalty programs (HeyMax-style programs that earn by selling miles; airline programs are a later, separate conversation): a marketing page like `issuers.html`, with the same integration (one `GET /partner/v1/offer` per push, the same optional pushes), sent when the program sees a flight booked from a tracked card charge or a click-through. It leads with the app opened every trip, miles the Underwriter pays for, and coverage on award bookings, with a calculator from bookings rather than airfare (Dadoo, 16 Oct 2026). |
 | `travel-sites.html` | Travel sites: a marketing page like `issuers.html`. The Underwriter offers the Flight Delay Pass on the site's booking confirmation page, the plans open a checkout filled in with what the site knows, and GetThere is only the platform. Who you work with, the customer journey, wins, the Underwriter, the numbers and a calculator, risk, the work, legal answers and a pilot. No API detail: the quote and checkout calls are in `api.html#travel-sites` (Dadoo, 14 Oct 2026). |
 | `api.html` | API reference for card issuers (the calls a card issuer makes to GetThere and the calls GetThere makes to the card issuer) and for travel sites (`POST /partner/v1/quotes`, the `merchandising_url` plans page and `POST /partner/v1/checkouts`, under `#travel-sites`). |
 | `404.html` | Page not found, for any address the site doesn't have. |
 
 Phone screens in `images/` come from the Head of Cards deck.
 
-Every page's header lists the four audiences, Traveller, Card Issuer, Travel Site and Underwriter
-(Dadoo, 14 Oct 2026), behind a menu button on narrow screens (`nav.css`, opened by `site.js`), and every footer
+Every page's header lists the five audiences, Traveller, Card Issuer, Loyalty Program, Travel Site and Underwriter
+(Dadoo, 14 and 16 Oct 2026), behind a menu button on narrow screens (`nav.css`, opened by `site.js`), and every footer
 has a column for each. They're written into the pages by `python3 tools/site_nav.py`: change them there, run it,
 and commit the pages.
 

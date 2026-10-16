@@ -31,7 +31,7 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="travel-sites.html">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html" aria-current="page">Card Issuer</a><a href="loyalty-programs.html">Loyalty Program</a><a href="travel-sites.html">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
     <a class="pill" href="mailto:partner@getthere.now?subject=API%20access">Contact us</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </nav>
@@ -165,7 +165,8 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
   "livemode": true,
   "data": {
     "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
-    "ota_order_id": "TRV-5581203", "plan": "plus", "pass_status": "triggered",
+    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "user_reference": "C-88213",
+    "plan": "plus", "pass_status": "triggered", "fee_before_tax": "37.50",
     "amount": "984.96", "currency": "SGD",
     "expires_at": "2026-11-21T07:41:05.118902+00:00", "reason": "delay"
   }
@@ -185,6 +186,13 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         agents can search for it.</td></tr>
       <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
         event to your order without a lookup.</td></tr>
+      <tr><td><code>data.request_id</code>, <code>data.user_reference</code></td><td>The <code>GET /offer</code> the
+        booking was forwarded on, and your own id for the customer, when you gave one. A booking forwarded without an
+        offer has no <code>request_id</code>, but keeps the latest <code>user_reference</code> you gave for that
+        customer.</td><td class="why">Tells you which customer the pass is for in your own terms. A loyalty program credits
+        miles to that member.</td></tr>
+      <tr><td><code>data.fee_before_tax</code></td><td>The pass fee without sales tax.</td><td class="why">What miles or
+        points are earned on: <code>amount_paid</code> on <code>pass.issued</code> includes the tax.</td></tr>
       <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status when the
         event was made: <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired_no_claim</code> (every
         flight watched, no delay past the trigger), <code>refunded</code> (refunded, replaced by a new pass, or ended by an
@@ -258,11 +266,12 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
   <div class="wrap">
     <div>
       <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, travel sites and underwriters.</p>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, loyalty programs, travel sites and underwriters.</p>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
       <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
+      <div><b style="color:#fff">Loyalty Program</b><a href="loyalty-programs.html">The product</a><a href="loyalty-programs.html#award">Award bookings</a><a href="loyalty-programs.html#numbers">The numbers</a></div>
       <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>

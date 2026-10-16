@@ -31,7 +31,7 @@
   <div class="wrap">
     <a class="logo" href="./">Get<span>There</span></a>
     <nav class="links">
-    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html" aria-current="page">Card Issuer</a><a href="travel-sites.html">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html" aria-current="page">Card Issuer</a><a href="loyalty-programs.html">Loyalty Program</a><a href="travel-sites.html">Travel Site</a><a href="underwriters.html">Underwriter</a></div>
     <a class="pill" href="mailto:partner@getthere.now?subject=API%20access">Contact us</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </nav>
@@ -44,7 +44,8 @@
     <h1>API guide for card issuers</h1>
     <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Written for the developers who build it. Keys,
     error format, retries, test mode and webhook signatures are on <a href="api.html#basics">the basics page</a>.
-    Travel site? See <a href="api-travel-sites.html">the travel site guide</a>.</p>
+    Travel site? See <a href="api-travel-sites.html">the travel site guide</a>. Loyalty programs build the same calls,
+    plus <a href="#miles">crediting miles</a>.</p>
 
     <div class="callout key">
       <b>The short version.</b> All you must build is one push notification of your own, after an airline charge on your
@@ -63,8 +64,9 @@
       <li><a href="#receipts">7. POST /push-receipts</a></li>
       <li><a href="#match">8. Your purchase-match endpoint</a></li>
       <li><a href="#webhooks">9. Webhooks</a></li>
-      <li><a href="#testing">10. Test cases</a></li>
-      <li><a href="#go-live">11. Go-live checklist</a></li>
+      <li><a href="#miles">10. Crediting miles (loyalty programs)</a></li>
+      <li><a href="#testing">11. Test cases</a></li>
+      <li><a href="#go-live">12. Go-live checklist</a></li>
     </ul>
 
     <h2 id="who">1. Who builds what</h2>
@@ -161,9 +163,10 @@
     forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
     bought a pass. Tell us the country your cardholder lives in: the booking they forward is then quoted by the underwriter
     selling there, with that country's tax already in each price, so the price in their email is the price at checkout.</p>
-<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked</code></pre>
+<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;user_reference=C-88213</code></pre>
 <pre><code>200 {"status": "offered",
      "residence_country": "SG",
+     "user_reference": "C-88213",
      "request_id": "k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
@@ -184,6 +187,10 @@
       <tr><td><code>opened</code> <span class="optl">optional</span></td><td><code>true</code> when you show
         <code>forward_to</code> on your own screen at once instead of opening one of our pages.</td><td class="why">Counts the
         offer as opened now, so your funnel doesn't show it as never seen.</td></tr>
+      <tr><td><code>user_reference</code> <span class="optl">optional</span></td><td>Your own id for the customer: 1 to 128
+        printable characters, no spaces. Never a card number. Echoed in the answer.</td><td class="why">It comes back on every
+        webhook event, push and purchase check about this customer, even for a later booking they forward without an
+        offer, so you find them by your own id rather than by email. A loyalty program uses it to credit miles.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
@@ -242,7 +249,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
 Idempotency-Key: 5b1f…
 
 {"push_id": "5b1f…",
- "customer": {"email": "mia@example.com"},
+ "customer": {"email": "mia@example.com", "user_reference": "C-88213"},
  "type": "card_issued",
  "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
  "body": "We've sent it to you on WhatsApp and by email.",
@@ -293,13 +300,15 @@ Idempotency-Key: 5b1f…
 <pre><code>POST &lt;your API&gt;/v1/getthere/purchase-match
 Authorization: Bearer &lt;the token you gave us&gt;
 
-{"email": "mia@example.com", "airline": "QF", "seller": null, "amount": "1550.00", "currency": "AUD",
- "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
+{"email": "mia@example.com", "user_reference": "C-88213", "airline": "QF", "seller": null, "amount": "1550.00",
+ "currency": "AUD", "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
 <pre><code>200 {"match": true}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>email</code></td><td>The email the booking was forwarded from.</td><td class="why">How you find the
         cardholder. Not found is <code>false</code>.</td></tr>
+      <tr><td><code>user_reference</code></td><td>Your own id for the customer, when you gave one on <code>GET /offer</code>;
+        otherwise <code>null</code>.</td><td class="why">Find the cardholder by it first, then by email.</td></tr>
       <tr><td><code>airline</code></td><td>The airline whose flights were bought, 2-letter code.</td><td class="why">Match
         on the merchant when <code>seller</code> is <code>null</code>.</td></tr>
       <tr><td><code>seller</code></td><td>Who charged the card when it wasn't the airline, such as a travel agency
@@ -318,7 +327,38 @@ Authorization: Bearer &lt;the token you gave us&gt;
     are on <a href="api.html#webhooks">the basics page</a>. They're most useful for your customer service: when a cardholder
     calls, your agent sees what we sent and when.</p>
 
-    <h2 id="testing">10. Test cases</h2>
+    <h2 id="miles">10. Crediting miles <span class="opt">loyalty programs</span></h2>
+    <p>Members earn your miles on the passes they buy. What you give them comes out of your share of the pass fee, as you
+    agree with the Underwriter, the way a merchant commission does. GetThere tells you who bought and what they paid; you
+    credit the miles in your own system.</p>
+    <ol>
+      <li><b>Name the member on every offer.</b> Call <code>GET /offer</code> with <code>user_reference</code> set to your
+        own id for the member. It comes back on every event about them, even for a later booking they forward without an
+        offer.</li>
+      <li><b>Credit pending miles on <code>pass.issued</code>.</b> Find the member by <code>data.user_reference</code> and
+        earn on <code>data.fee_before_tax</code>, never on <code>amount_paid</code>, which includes sales tax. Store the
+        <code>policy_id</code> with the credit.</li>
+      <li><b>Take them back if the pass is refunded.</b> On <code>pass.ended</code> with <code>reason: refunded</code>,
+        reverse the pending miles for that <code>policy_id</code>.</li>
+      <li><b>Confirm them once the trip starts.</b> Make the miles final after the first flight's departure date, if no
+        refund came. A pass that ends with <code>reason: expired</code> (no delay) or sends a rescue card keeps its
+        miles.</li>
+    </ol>
+    <table class="fields">
+      <tr><th>Event</th><th>What to do with the miles</th></tr>
+      <tr><td><code>pass.issued</code></td><td>Credit as pending: <code>fee_before_tax</code> × your earn rate, to
+        <code>user_reference</code>.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: refunded</code> or <code>flight_cancelled_before_watch</code></td><td>Reverse
+        them.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: replaced</code></td><td>Reverse them. The new pass sends its own
+        <code>pass.issued</code>, which you credit as usual.</td></tr>
+      <tr><td><code>pass.ended</code>, <code>reason: expired</code>; <code>rescue_card.issued</code></td><td>Keep them.</td></tr>
+      <tr><td>No <code>user_reference</code> on the event</td><td>The member never came through one of your offers with a
+        reference. Match on the email in your push, or leave it.</td></tr>
+    </table>
+    <p>Check what you credited against your monthly report of passes sold.</p>
+
+    <h2 id="testing">11. Test cases</h2>
     <table class="fields">
       <tr><th>Do this</th><th>Expect</th><th>Proves</th></tr>
       <tr><td><code>GET /ping</code> with your test key</td><td><code>"mode": "test"</code></td><td class="why">Your key and
@@ -339,7 +379,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
         to that cardholder</td><td class="why">Opt-outs are honoured.</td></tr>
     </table>
 
-    <h2 id="go-live">11. Go-live checklist</h2>
+    <h2 id="go-live">12. Go-live checklist</h2>
     <ul>
       <li>Your push wording, and our push wording if you use your push endpoint, is agreed with us and the Underwriter.</li>
       <li>The test cases above pass.</li>
@@ -355,11 +395,12 @@ Authorization: Bearer &lt;the token you gave us&gt;
   <div class="wrap">
     <div>
       <a class="logo" href="./">Get<span>There</span></a>
-      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, travel sites and underwriters.</p>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, loyalty programs, travel sites and underwriters.</p>
     </div>
     <div class="cols">
       <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
       <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
+      <div><b style="color:#fff">Loyalty Program</b><a href="loyalty-programs.html">The product</a><a href="loyalty-programs.html#award">Award bookings</a><a href="loyalty-programs.html#numbers">The numbers</a></div>
       <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>

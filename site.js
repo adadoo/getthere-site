@@ -26,17 +26,18 @@ document.querySelectorAll(".tabs button").forEach(tab => {
   });
 });
 
-// Pass fee calculator on the card issuers and underwriters pages
+// Pass fee calculator on the card issuers, loyalty programs and underwriters pages. Loyalty programs count
+// bookings, not airfare, at a $500 average booking.
 const calc = document.querySelector(".calc");
 if (calc) {
   const $ = id => document.getElementById(id);
   const num = s => parseFloat(String(s).replace(/[^0-9.]/g, ""));
   const money = n => n >= 1e9 ? "$" + +(n / 1e9).toFixed(2) + "B"
     : n >= 1e6 ? "$" + +(n / 1e6).toFixed(2) + "M"
-    : n >= 1e3 ? "$" + Math.round(n / 1e3) + "K" : "$" + Math.round(n);
+    : n >= 1e3 ? "$" + +(n / 1e3).toFixed(1) + "K" : "$" + Math.round(n);
   const count = n => Math.round(n).toLocaleString("en-US");
   const update = () => {
-    const airfare = num($("airfare").value) * +$("unit").value;
+    const airfare = ($("bookings") ? num($("bookings").value) * 500 : num($("airfare").value)) * +$("unit").value;
     const takeup = num($("takeup").value) / 100;
     $("takeupPresets").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === takeup * 100));
     if (!(airfare > 0) || !(takeup > 0) || takeup > 1) {
@@ -51,7 +52,7 @@ if (calc) {
     if ($("pool")) $("pool").textContent = money(fees * 0.4);              // after rescue money, card costs and the platform fee
     if ($("rescueMoney")) $("rescueMoney").textContent = money(fees * 0.4);
   };
-  ["airfare", "unit", "takeup"].forEach(id => $(id).addEventListener("input", update));
+  ["airfare", "bookings", "unit", "takeup"].forEach(id => $(id) && $(id).addEventListener("input", update));
   $("takeupPresets").addEventListener("click", e => {
     if (!e.target.dataset.v) return;
     $("takeup").value = e.target.dataset.v;
