@@ -84,7 +84,8 @@ p { margin: 0 0 14px; }
 /* grids */
 .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-@media (max-width: 860px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
+.grid3 > .span2 { grid-column: span 2; }
+@media (max-width: 860px) { .grid3, .grid2 { grid-template-columns: 1fr; } .grid3 > .span2 { grid-column: auto; } }
 .tile { background: #fff; border-radius: var(--r); padding: 26px; box-shadow: 0 0 0 1px var(--line); }
 section.tint .tile { box-shadow: none; }
 .num { width: 36px; height: 36px; border-radius: 50%; background: var(--soft); color: var(--accent); font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
