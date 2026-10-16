@@ -1,6 +1,6 @@
 """Write the same header audiences and footer columns into every page (no build step: run it after changing
 them, then commit the pages). Audiences, in this order (Dadoo, 14 Oct 2026): Traveller, Card Issuer,
-Travel Site, Underwriter.
+Loyalty Program, Travel Site, Underwriter.
 
     python3 tools/site_nav.py
 """
@@ -10,17 +10,21 @@ import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 AUDIENCES = (("Traveller", "./", "index.html"), ("Card Issuer", "issuers.html", "issuers.html"),
+             ("Loyalty Program", "loyalty-programs.html", "loyalty-programs.html"),
              ("Travel Site", "travel-sites.html", "travel-sites.html"),
              ("Underwriter", "underwriters.html", "underwriters.html"))
 COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#how"), ("FAQ", "./#faq"))),
            ("Card Issuer", (("The product", "issuers.html"), ("The numbers", "issuers.html#numbers"),
-                            ("API reference", "api.html"))),
+                            ("API reference", "api-issuers.html"))),
+           ("Loyalty Program", (("The product", "loyalty-programs.html"), ("Award bookings", "loyalty-programs.html#award"),
+                                ("The numbers", "loyalty-programs.html#numbers"))),
            ("Travel Site", (("The product", "travel-sites.html#product"), ("The numbers", "travel-sites.html#numbers"),
-                                     ("API reference", "api.html#travel-sites"))),
+                                     ("API reference", "api-travel-sites.html"))),
            ("Underwriter", (("Risk", "underwriters.html#risk"), ("Rollout", "underwriters.html#rollout"),
                             ("Reports", "underwriters.html#reports"))))
 # Which audience each page belongs to, for aria-current; and the last footer column, the page's own.
-CURRENT = {"index.html": "index.html", "issuers.html": "issuers.html", "api.html": "issuers.html",
+CURRENT = {"index.html": "index.html", "issuers.html": "issuers.html", "api.html": "issuers.html", "api-issuers.html": "issuers.html",
+           "api-travel-sites.html": "travel-sites.html", "loyalty-programs.html": "loyalty-programs.html",
            "travel-sites.html": "travel-sites.html", "underwriters.html": "underwriters.html"}
 LAST = {"privacy.html": ("Legal", (("Terms", "https://my.getthere.now/terms.html"), ("Privacy", "privacy.html"))),
         "404.html": ("Help", (("help@getthere.now", "mailto:help@getthere.now"),))}
@@ -72,6 +76,6 @@ def rewrite(page):
 
 
 if __name__ == "__main__":
-    for page in ("index.html", "issuers.html", "travel-sites.html", "underwriters.html", "api.html", "privacy.html",
-                 "404.html"):
+    for page in ("index.html", "issuers.html", "loyalty-programs.html", "travel-sites.html", "underwriters.html",
+                 "api.html", "api-issuers.html", "api-travel-sites.html", "privacy.html", "404.html"):
         rewrite(page)
