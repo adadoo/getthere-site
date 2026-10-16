@@ -21,9 +21,10 @@ import datetime as _dt
 EFFECTIVE_ISO = DATA["terms_effective"]          # the app's brand.TERMS_EFFECTIVE
 # The notice's own changes (offer page visits and their campaign tags, Dadoo 2026-10-12; the Underwriter
 # and its card issuing partner as recipients, a partner's pass as the Underwriter's policy, and no more IP
-# address or browser details from offer page visits, 2026-10-13) take effect on this date, or on the terms' date
+# address or browser details from offer page visits, 2026-10-13; an account that is only an email address, with
+# everything else kept with its booking or pass, 2026-10-16) take effect on this date, or on the terms' date
 # when that is later.
-PRIVACY_CHANGED_ISO = "2026-10-13"
+PRIVACY_CHANGED_ISO = "2026-10-16"
 EFFECTIVE = _dt.date.fromisoformat(max(EFFECTIVE_ISO[:10], PRIVACY_CHANGED_ISO)).strftime("%-d %B %Y")
 STATUS = "Draft for legal review"
 OPERATOR = "GetThere"          # replace with the legal entity once it's set up
@@ -151,6 +152,8 @@ def privacy():
     <div class="callout key">
       <b>The short version.</b> We use the booking you forward to price your pass, track your flights and send your
       pre-loaded rescue card. We don't sell your data and we don't send you marketing.
+      We keep no profile of you: your GetThere account is only your email address. Everything else is kept with
+      the booking or pass you gave it for, and deleted with it (section {n + 1}).
     </div>
 
     <h2>1. Who we are</h2>
@@ -167,11 +170,16 @@ def privacy():
       <li><b>The booking email you forward</b>, including its attachments: the names of the travellers, the booking
       reference, flights, fare and taxes, and anything else the airline put in it, such as contact details or the last
       digits of the card used.</li>
-      <li>Your <b>name and email address</b>, from the email you forward.</li>
+      <li>Your <b>email address</b>, the one you forward from. It is all your GetThere account holds: we don't keep
+      a profile of you across bookings.</li>
       <li>Your <b>mobile number</b>, which you give at checkout so we can send your pre-loaded rescue card there. We send a
-      code to it on WhatsApp to check it's yours, and we only send you WhatsApp messages once you've entered that code.</li>
+      code to it on WhatsApp to check it's yours, and we only send you WhatsApp messages once you've entered that code.
+      It is kept with that pass, not on your account. If you bought through a partner's own checkout, it comes from
+      the confirmation email instead.</li>
       <li>Your <b>legal name, date of birth, home address and the country you live in</b>, which you give at checkout
-      so the pre-loaded rescue card can be issued in your name.</li>
+      so the pre-loaded rescue card can be issued in your name. They are kept with that pass, not on your account,
+      so you give them again for each pass. If you leave checkout without buying, we delete them once that price
+      can no longer be bought.</li>
       <li><b>Payment details</b>: you type your card details into the payment form of the selling company's payment
       provider, embedded on our checkout page. We never see or store your card number; we get only the payment's
       result and amount.</li>
@@ -220,7 +228,8 @@ def privacy():
     <h2>{n + 1}. How long we keep it</h2>
     <ul>
       <li>Links in our emails to your pass and pre-loaded rescue card keep working for 12 months after your trip, then stop.</li>
-      <li>We keep booking emails and booking data for 12 months after your last flight, then delete them.</li>
+      <li>We keep booking emails and booking data, including the details you gave at checkout and our copies of
+        the messages we sent you, for 12 months after your last flight, then delete them.</li>
       <li>We keep offer page visits for 12 months. Then we delete the visit, or, if you forwarded a booking from it,
         delete the page you came from and its campaign tags, and keep only the link
         between your booking and the offer.</li>
