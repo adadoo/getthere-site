@@ -108,14 +108,14 @@
       <li>
         <div class="lanes"><span class="lane you">Your server</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
         <h3>You ask for an offer</h3>
-        <p>One call per push, so a booking forwarded from it is traced back to it.</p>
+        <p>One call per push, with the country your cardholder lives in, so a booking forwarded from it is traced back to it
+        and priced with that country's tax.</p>
         <p class="call"><code>GET /partner/v1/offer</code> · <span class="builder gt">GetThere provides it</span></p>
       </li>
       <li>
         <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>You send "Just booked a flight?"</h3>
-        <p>It opens the offer: the short page inside your app (<code>merchandising_url</code>), or the full page in a browser
-        (<code>offer_url</code>).</p>
+        <p>It opens the offer page (<code>merchandising_url</code>), inside your app or in a browser.</p>
       </li>
       <li>
         <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
@@ -147,12 +147,9 @@
 
     <h2 id="levels">3. How much to build</h2>
     <div class="paths">
-      <div class="path"><span class="tag">Smallest</span><h3>Push and link</h3>
-        <p>Your push opens <code>https://&lt;issuer&gt;.getthere.now/offer</code>. No API call at all.</p>
-        <ul><li>Live in days</li><li>Every visit is counted, but not per push</li></ul></div>
-      <div class="path"><span class="tag">Recommended</span><h3>Traced offers in your app</h3>
+      <div class="path"><span class="tag">Smallest</span><h3>Traced offers in your app</h3>
         <p>Call <code>GET /offer</code> per push and open its <code>merchandising_url</code> in your app.</p>
-        <ul><li>One API call</li><li>Each push traced to the passes it sells</li><li>The cardholder never leaves your
+        <ul><li>One API call</li><li>Prices in the quote email include your cardholder's tax</li><li>Each push traced to the passes it sells</li><li>The cardholder never leaves your
         app</li></ul></div>
       <div class="path"><span class="tag">Fullest</span><h3>Everything in your app</h3>
         <p>Add your push endpoint, push receipts, purchase match and webhooks.</p>
@@ -164,16 +161,23 @@
     <p class="meta"><b>You call GetThere</b> · from your server, once per push or banner you show</p>
     <p>Makes a fresh offer: a code, carried in the offer's links and in the forwarding address, that ties a booking
     forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
-    bought a pass.</p>
-<pre><code>GET /partner/v1/offer?utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;user_reference=C-88213</code></pre>
-<pre><code>200 {"offer_id": "k7f2q9xm",
-     "offer_url": "https://&lt;issuer&gt;.getthere.now/?o=k7f2q9xm",
+    bought a pass. Tell us the country your cardholder lives in: the booking they forward is then quoted by the underwriter
+    selling there, with that country's tax already in each price, so the price in their email is the price at checkout.</p>
+<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;user_reference=C-88213</code></pre>
+<pre><code>200 {"status": "offered",
+     "residence_country": "SG",
+     "user_reference": "C-88213",
+     "request_id": "k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
      "product_name": "Flight Delay Pass",
      "reference": "R-K7F2Q9XM"}</code></pre>
     <table class="fields">
       <tr><th>Parameter</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>residence_country</code> <span class="req">required</span></td><td>The 2-letter ISO country your
+        cardholder lives in, like <code>SG</code>: the country on their card account.</td><td class="why">Picks the
+        underwriter and the tax, so their quote email shows the full price. With a live key, a country we don't sell in
+        yet answers <code>{"status": "declined", "reason": "not_on_sale"}</code>: don't send that push.</td></tr>
       <tr><td><code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code> <span class="optl">optional</span></td>
         <td>Where you show the offer. Up to 64 letters, digits, <code>.</code>, <code>-</code> or <code>_</code>, lowercased.
         <code>src</code> is short for <code>utm_source</code>.</td><td class="why">Your offer report splits by them, so you see
@@ -190,13 +194,16 @@
     </table>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
-      <tr><td><code>offer_id</code></td><td>The offer's code.</td><td class="why">Store it with the push you sent, to join
+      <tr><td><code>status</code></td><td><code>offered</code>, or <code>declined</code> with <code>reason</code>
+        <code>not_on_sale</code> where we don't sell yet.</td><td class="why">Send the push only when it's
+        <code>offered</code>.</td></tr>
+      <tr><td><code>request_id</code></td><td>This push's code, the one in its page link and forwarding address. It isn't
+        a quote: quotes come once the cardholder forwards a booking, and are traced back to it.</td><td class="why">Store it with the push you sent, to join
         our numbers to yours.</td></tr>
-      <tr><td><code>merchandising_url</code></td><td>The short offer page, made to sit inside your app (a web view or an
-        iframe), in your widget settings.</td><td class="why">The cardholder stays in your app: they read the offer, copy their
-        address and go to their email. Use it as your push's destination.</td></tr>
-      <tr><td><code>offer_url</code></td><td>Your full GetThere home page, with how it works and FAQs, carrying this offer's own address. <code>/offer</code> on your domain is the short page for your app.</td><td class="why">For a
-        browser, an email or a banner, where there's room to explain more.</td></tr>
+      <tr><td><code>merchandising_url</code></td><td>The offer page, in your widget settings. It sits inside your app (a web
+        view or an iframe) and opens in a browser too.</td><td class="why">The one link for this offer: your push's
+        destination, and the link in an email or a banner. The cardholder reads the offer, copies their address and goes to
+        their email.</td></tr>
       <tr><td><code>forward_to</code></td><td>The cardholder's forwarding address for this offer,
         <code>quote+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>. While your partner is in test mode, that address makes
         test passes. Once you're live, a test key gets <code>test+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>
@@ -207,8 +214,7 @@
         it to us and we can find the cardholder's journey.</td></tr>
     </table>
     <p>Errors: <code>401</code>, <code>403</code> and <code>503</code> while you're paused (see
-    <a href="api.html#errors">errors</a>). If the call fails, link to <code>https://&lt;issuer&gt;.getthere.now/offer</code>
-    instead: it still works, just without tracing to the push.</p>
+    <a href="api.html#errors">errors</a>). If the call fails, don't send the push: try again with the next one.</p>
 
     <h2 id="show">5. Showing the offer in your app</h2>
 <pre><code>&lt;!-- In a web view, open merchandising_url full screen. Or in a page: --&gt;
