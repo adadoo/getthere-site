@@ -290,8 +290,8 @@ Authorization: Bearer gt_live_…
       <tr><td><code>kind</code></td><td><code>points</code> (swapped for points) or <code>benefit</code> (a card or tier
         benefit). <code>points</code> if you leave it out.</td><td class="why">Your monthly statement splits them, so you
         can charge each to the right budget.</td></tr>
-      <tr><td><code>amount</code>, <code>currency</code></td><td>How much of the price it pays, tax included, in the
-        currency the pass is priced in. Leave both out for a voucher that pays the whole pass, whichever plan.</td><td class="why">A
+      <tr><td><code>amount</code>, <code>currency</code></td><td>How much of the price it pays, tax included, in any
+        currency. One that isn't the pass's is converted at checkout at the day's rate. Leave both out for a voucher that pays the whole pass, whichever plan.</td><td class="why">A
         card pays any rest. A voucher is used once: one worth more than the price pays all of it, and the rest is gone.</td></tr>
       <tr><td><code>note</code></td><td>Your own words, such as "2,500 KrisFlyer miles". Optional.</td><td class="why">It
         comes back on the voucher, so you know what it was for.</td></tr>
@@ -304,11 +304,14 @@ Authorization: Bearer gt_live_…
         for one customer's.</td></tr>
       <tr><td><code>GET /partner/v1/vouchers/&lt;code&gt;</code></td><td>One voucher, by its code or id.
         <code>status</code>: <code>issued</code>, <code>used</code> (with <code>pass_reference</code> and
-        <code>amount_used</code>), <code>cancelled</code> or <code>expired</code> (with <code>expired_reason</code>).</td></tr>
+        <code>amount_used</code> in <code>currency_used</code>, the pass's, with the <code>rate</code> if it was converted),
+        <code>cancelled</code> or <code>expired</code> (with <code>expired_reason</code>).</td></tr>
       <tr><td><code>POST /partner/v1/vouchers/&lt;code&gt;/cancel</code></td><td>Takes back a voucher not used yet, when
         the customer swaps it back for points. A used one answers 409.</td></tr>
     </table>
-    <p><b>At checkout.</b> The checkout shows the voucher, what it pays and what's left for the card. A voucher is used
+    <p><b>At checkout.</b> The checkout shows the voucher, what it pays and what's left for the card. A
+    voucher in another currency than the pass shows its own amount too, and the rate it was converted at. We invoice you
+    for it in the pass's currency, at that rate, so the amount you pay is the amount the customer saw. A voucher is used
     once, so when it's worth more than the price the checkout says how much would go unused, and the customer can remove
     it and pay by card instead. A voucher that pays it all needs no card: the pass is issued at once. Sales tax is charged
     on the full price, and the pass and its rescue card are the same however it was paid.</p>
