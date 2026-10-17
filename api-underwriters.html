@@ -156,23 +156,25 @@
       <li><b>No sandbox payment keys yet?</b> Test passes are paid on GetThere's own Stripe sandbox, with Stripe's test card,
         so your team can try the whole journey on day one.</li>
       <li><b>No sandbox card keys yet?</b> Test rescue cards are made by GetThere, with a button to simulate a purchase.</li>
-      <li><b>Real passes never fall back.</b> A country sells real passes only once your own live keys are in for both its
-        vendors.</li>
+      <li><b>Real passes never fall back.</b> A country sells real passes only once GetThere has activated your own live keys
+        for both its vendors.</li>
+      <li><b>Sandbox keys count once activated.</b> Until GetThere activates them, test payments stay on GetThere's sandbox.</li>
     </ul>
 
     <h2 id="go-live">6. Going live, country by country</h2>
     <ul>
       <li>Your live Stripe and Airwallex Issuing keys are entered, and both webhook endpoints are added with their secrets.</li>
-      <li>Each country you serve is ticked, with its vendors and sales tax.</li>
-      <li>GetThere activates you for real passes. Activating makes a signed-in call to each vendor with your keys, and lists
-        anything that doesn't work yet.</li>
-      <li>Your partners make your countries active. Each one sells real passes from then on.</li>
+      <li>Each country you serve is ticked, then its vendors and sales tax are picked: vendors are picked only for a country
+        you serve.</li>
+      <li>GetThere activates each set of keys, one vendor and mode at a time. Activating makes a signed-in call to the vendor
+        with them and says what doesn't work yet. Changing the keys means activating them again.</li>
+      <li>Your partners pick you for your countries. Each one sells real passes there from then on.</li>
     </ul>
 
     <h2 id="keys">7. How your keys are kept</h2>
     <p>Keys are stored encrypted, test and live apart, and are never shown again: the admin shows only their last four
-    characters. To change one, enter just that field. Keys that an active country uses can't be removed until the country
-    is made inactive. Refunds go back through the account the payment was taken on, so keep those keys in while refunds
+    characters. To change one, enter just that field. Keys that a country on sale uses can't be removed until its partners
+    pick another underwriter there. Refunds go back through the account the payment was taken on, so keep those keys in while refunds
     may still come.</p>
 
     <h2 id="new">8. A vendor that isn't listed</h2>
@@ -197,7 +199,7 @@
       <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
-    <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues, and the Underwriter funds the pre-loaded rescue cards. GetThere provides the platform.<br>© 2026 GetThere.</div>
+    <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues. The Underwriter holds all the money and funds the pre-loaded rescue cards; GetThere orchestrates each pass on its behalf.<br>© 2026 GetThere.</div>
   </div>
 </footer>
 <script src="site.js"></script>
