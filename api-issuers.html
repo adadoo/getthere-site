@@ -163,10 +163,10 @@
     forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
     bought a pass. Tell us the country your cardholder lives in: the booking they forward is then quoted by the underwriter
     selling there, with that country's tax already in each price, so the price in their email is the price at checkout.</p>
-<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;user_reference=C-88213</code></pre>
+<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;customer_ref=C-88213</code></pre>
 <pre><code>200 {"status": "offered",
      "residence_country": "SG",
-     "user_reference": "C-88213",
+     "customer_ref": "C-88213",
      "request_id": "k7f2q9xm",
      "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
@@ -187,7 +187,7 @@
       <tr><td><code>opened</code> <span class="optl">optional</span></td><td><code>true</code> when you show
         <code>forward_to</code> on your own screen at once instead of opening one of our pages.</td><td class="why">Counts the
         offer as opened now, so your funnel doesn't show it as never seen.</td></tr>
-      <tr><td><code>user_reference</code> <span class="optl">optional</span></td><td>Your own id for the customer: 1 to 128
+      <tr><td><code>customer_ref</code> <span class="optl">optional</span></td><td>Your own id for the customer: 1 to 128
         printable characters, no spaces. Never a card number. Echoed in the answer.</td><td class="why">It comes back on every
         webhook event, push and purchase check about this customer, even for a later booking they forward without an
         offer, so you find them by your own id rather than by email. A loyalty program uses it to credit miles.</td></tr>
@@ -249,7 +249,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
 Idempotency-Key: 5b1f…
 
 {"push_id": "5b1f…",
- "customer": {"email": "mia@example.com", "user_reference": "C-88213"},
+ "customer": {"email": "mia@example.com", "customer_ref": "C-88213"},
  "type": "card_issued",
  "title": "Your flight is 3h 50m late. Your pre-loaded rescue card with A$2,325 is ready.",
  "body": "We've sent it to you on WhatsApp and by email.",
@@ -300,14 +300,14 @@ Idempotency-Key: 5b1f…
 <pre><code>POST &lt;your API&gt;/v1/getthere/purchase-match
 Authorization: Bearer &lt;the token you gave us&gt;
 
-{"email": "mia@example.com", "user_reference": "C-88213", "airline": "QF", "seller": null, "amount": "1550.00",
+{"email": "mia@example.com", "customer_ref": "C-88213", "airline": "QF", "seller": null, "amount": "1550.00",
  "currency": "AUD", "booked_after": "2025-11-20T07:41:05.120345+00:00"}</code></pre>
 <pre><code>200 {"match": true}</code></pre>
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>email</code></td><td>The email the booking was forwarded from.</td><td class="why">How you find the
         cardholder. Not found is <code>false</code>.</td></tr>
-      <tr><td><code>user_reference</code></td><td>Your own id for the customer, when you gave one on <code>GET /offer</code>;
+      <tr><td><code>customer_ref</code></td><td>Your own id for the customer, when you gave one on <code>GET /offer</code>;
         otherwise <code>null</code>.</td><td class="why">Find the cardholder by it first, then by email.</td></tr>
       <tr><td><code>airline</code></td><td>The airline whose flights were bought, 2-letter code.</td><td class="why">Match
         on the merchant when <code>seller</code> is <code>null</code>.</td></tr>
@@ -332,10 +332,10 @@ Authorization: Bearer &lt;the token you gave us&gt;
     agree with the Underwriter, the way a merchant commission does. GetThere tells you who bought and what they paid; you
     credit the miles in your own system.</p>
     <ol>
-      <li><b>Name the member on every offer.</b> Call <code>GET /offer</code> with <code>user_reference</code> set to your
+      <li><b>Name the member on every offer.</b> Call <code>GET /offer</code> with <code>customer_ref</code> set to your
         own id for the member. It comes back on every event about them, even for a later booking they forward without an
         offer.</li>
-      <li><b>Credit pending miles on <code>pass.issued</code>.</b> Find the member by <code>data.user_reference</code> and
+      <li><b>Credit pending miles on <code>pass.issued</code>.</b> Find the member by <code>data.customer_ref</code> and
         earn on <code>data.fee_before_tax</code>, never on <code>amount_paid</code>, which includes sales tax. Store the
         <code>policy_id</code> with the credit.</li>
       <li><b>Take them back if the pass is refunded.</b> On <code>pass.ended</code> with <code>reason: refunded</code>,
@@ -347,13 +347,13 @@ Authorization: Bearer &lt;the token you gave us&gt;
     <table class="fields">
       <tr><th>Event</th><th>What to do with the miles</th></tr>
       <tr><td><code>pass.issued</code></td><td>Credit as pending: <code>fee_before_tax</code> × your earn rate, to
-        <code>user_reference</code>.</td></tr>
+        <code>customer_ref</code>.</td></tr>
       <tr><td><code>pass.ended</code>, <code>reason: refunded</code> or <code>flight_cancelled_before_watch</code></td><td>Reverse
         them.</td></tr>
       <tr><td><code>pass.ended</code>, <code>reason: replaced</code></td><td>Reverse them. The new pass sends its own
         <code>pass.issued</code>, which you credit as usual.</td></tr>
       <tr><td><code>pass.ended</code>, <code>reason: expired</code>; <code>rescue_card.issued</code></td><td>Keep them.</td></tr>
-      <tr><td>No <code>user_reference</code> on the event</td><td>The member never came through one of your offers with a
+      <tr><td>No <code>customer_ref</code> on the event</td><td>The member never came through one of your offers with a
         reference. Match on the email in your push, or leave it.</td></tr>
     </table>
     <p>Check what you credited against your monthly report of passes sold.</p>

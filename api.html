@@ -72,6 +72,7 @@
       <li><a href="#test-mode">Test mode</a></li>
       <li><a href="#webhooks">Webhooks: events we send you</a></li>
       <li><a href="#verify">Checking a webhook's signature</a></li>
+      <li><a href="#vouchers">Pass vouchers: points and card benefits</a></li>
       <li><a href="#support">Getting help</a></li>
     </ul>
 
@@ -165,7 +166,7 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
   "livemode": true,
   "data": {
     "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
-    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "user_reference": "C-88213",
+    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "customer_ref": "C-88213",
     "plan": "plus", "pass_status": "triggered", "fee_before_tax": "37.50",
     "amount": "984.96", "currency": "SGD",
     "expires_at": "2026-11-21T07:41:05.118902+00:00", "reason": "delay"
@@ -186,9 +187,9 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         agents can search for it.</td></tr>
       <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
         event to your order without a lookup.</td></tr>
-      <tr><td><code>data.request_id</code>, <code>data.user_reference</code></td><td>The <code>GET /offer</code> the
+      <tr><td><code>data.request_id</code>, <code>data.customer_ref</code></td><td>The <code>GET /offer</code> the
         booking was forwarded on, and your own id for the customer, when you gave one. A booking forwarded without an
-        offer has no <code>request_id</code>, but keeps the latest <code>user_reference</code> you gave for that
+        offer has no <code>request_id</code>, but keeps the latest <code>customer_ref</code> you gave for that
         customer.</td><td class="why">Tells you which customer the pass is for in your own terms. A loyalty program credits
         miles to that member.</td></tr>
       <tr><td><code>data.fee_before_tax</code></td><td>The pass fee without sales tax.</td><td class="why">What miles or
@@ -201,8 +202,10 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
     </table>
     <table class="fields">
       <tr><th>Type</th><th>Sent when, with</th><th>Why it matters</th></tr>
-      <tr><td><code>pass.issued</code></td><td>A pass is bought. <code>offer_id</code>, <code>amount_paid</code>,
-        <code>currency</code>, <code>pass_url</code>.</td><td class="why">Your record of the sale, and the link to send a
+      <tr><td><code>pass.issued</code></td><td>A pass is bought. <code>offer_id</code>, <code>amount_paid</code> (what the
+        card paid), <code>currency</code>, <code>pass_url</code>, and <code>voucher</code> when a
+        <a href="#vouchers">pass voucher</a> paid some or all of it: its <code>code</code>, <code>id</code>,
+        <code>customer_ref</code> and <code>amount_used</code>.</td><td class="why">Your record of the sale, and the link to send a
         customer who asks "where's my pass?".</td></tr>
       <tr><td><code>pass.changed</code></td><td>Names corrected (<code>change: "travellers"</code>,
         <code>passengers</code>) or the pass moved to new flights (<code>change: "flights"</code>, <code>replaces</code>:
@@ -224,6 +227,12 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
       <tr><td><code>rescue_card.used</code></td><td>The customer booked a new flight with it. <code>amount</code>,
         <code>currency</code>, <code>merchant</code>.</td><td class="why">They've rebooked. Close any open contact, and
         for a travel site, expect the new booking on your own site.</td></tr>
+      <tr><td><code>voucher.used</code></td><td>A <a href="#vouchers">pass voucher</a> you issued paid for its pass.
+        <code>data.voucher</code>, with <code>customer_ref</code> and <code>pass_reference</code>.</td><td class="why">Mark
+        the points or benefit as spent.</td></tr>
+      <tr><td><code>voucher.expired</code></td><td>A pass voucher you issued ended unused. <code>data.voucher</code>, with
+        <code>customer_ref</code> and <code>expired_reason</code>.</td><td class="why">Give the customer back their points
+        or benefit.</td></tr>
     </table>
     <p><b>Answer quickly with any 2xx</b> and do the work afterwards. We send events on a sweep that runs every few
     minutes, and wait 10 seconds for your answer. Anything else, or no answer, is tried again on a later sweep: after
@@ -255,6 +264,67 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
     fresh = abs(time.time() - int(parts["t"])) &lt; 300
     return fresh and hmac.compare_digest(expected, parts.get("v1", ""))</code></pre>
     <p>If your secret leaks, ask us for a new one. The old one stops working at once.</p>
+
+    <h3 id="vouchers">Pass vouchers: points and card benefits</h3>
+    <p>Let your customers pay for a pass with your points, or give them a pass as a card or tier benefit. Any partner
+    can: a card issuer, a loyalty program or a travel site. A voucher is always for one trip, works only on your
+    checkout, and is applied for the customer: nothing to type.</p>
+    <p><b>Two calls.</b> First the trip, as usual: <code>GET /partner/v1/offer</code> with the customer's
+    <code>customer_ref</code> (they forward their booking), or for a travel site <code>POST /partner/v1/quotes</code>.
+    Then <code>POST /partner/v1/vouchers</code> with that offer's <code>request_id</code>, or that quote's
+    <code>quote_id</code>. The voucher works only on that booking, and its checkout opens with it applied. A quote sold
+    <code>in-line</code>, in your own checkout, needs no voucher: take the points there.</p>
+<pre><code>POST /partner/v1/vouchers
+Authorization: Bearer gt_live_…
+
+{"kind": "points", "amount": 25, "currency": "SGD", "request_id": "k7f2q9xm", "note": "2,500 points"}
+
+201 Created
+{"id": "5d1c…", "code": "GTV-7KQ2-M9XD", "kind": "points", "amount": "25.00", "currency": "SGD",
+ "whole_pass": false, "request_id": "k7f2q9xm", "quote_id": null, "customer_ref": "KF-1001", "status": "issued", …}</code></pre>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>request_id</code> or <code>quote_id</code> <span class="req">required</span></td><td>The offer
+        (<code>GET /offer</code>) or quote (<code>POST /quotes</code>) the voucher is for. One of them.</td><td class="why">The
+        voucher works only on that booking, takes its <code>customer_ref</code>, and ends with it.</td></tr>
+      <tr><td><code>kind</code></td><td><code>points</code> (swapped for points) or <code>benefit</code> (a card or tier
+        benefit). <code>points</code> if you leave it out.</td><td class="why">Your monthly statement splits them, so you
+        can charge each to the right budget.</td></tr>
+      <tr><td><code>amount</code>, <code>currency</code></td><td>How much of the price it pays, tax included, in the
+        currency the pass is priced in. Leave both out for a voucher that pays the whole pass, whichever plan.</td><td class="why">A
+        card pays any rest. A voucher is used once: one worth more than the price pays all of it, and the rest is gone.</td></tr>
+      <tr><td><code>note</code></td><td>Your own words, such as "2,500 KrisFlyer miles". Optional.</td><td class="why">It
+        comes back on the voucher, so you know what it was for.</td></tr>
+      <tr><td><code>expires_at</code></td><td>When it stops working, with a time zone. Optional.</td><td class="why">After
+        it, the voucher ends and we tell you.</td></tr>
+    </table>
+    <table class="fields">
+      <tr><th>Call</th><th>What it does</th></tr>
+      <tr><td><code>GET /partner/v1/vouchers</code></td><td>Your vouchers, newest first. Add <code>?customer_ref=</code>
+        for one customer's.</td></tr>
+      <tr><td><code>GET /partner/v1/vouchers/&lt;code&gt;</code></td><td>One voucher, by its code or id.
+        <code>status</code>: <code>issued</code>, <code>used</code> (with <code>pass_reference</code> and
+        <code>amount_used</code>), <code>cancelled</code> or <code>expired</code> (with <code>expired_reason</code>).</td></tr>
+      <tr><td><code>POST /partner/v1/vouchers/&lt;code&gt;/cancel</code></td><td>Takes back a voucher not used yet, when
+        the customer swaps it back for points. A used one answers 409.</td></tr>
+    </table>
+    <p><b>At checkout.</b> The checkout shows the voucher, what it pays and what's left for the card. A voucher is used
+    once, so when it's worth more than the price the checkout says how much would go unused, and the customer can remove
+    it and pay by card instead. A voucher that pays it all needs no card: the pass is issued at once. Sales tax is charged
+    on the full price, and the pass and its rescue card are the same however it was paid.</p>
+    <p><b>Used or ended.</b> We tell your webhook either way. <code>voucher.used</code> when its pass is bought (the pass
+    comes in <code>pass.issued</code> too, with <code>data.voucher</code>). <code>voucher.expired</code> when it ends
+    unused, with <code>expired_reason</code>: <code>expires_at</code> (its expiry passed), <code>bought_without_it</code>
+    (the customer bought the pass by card instead) or <code>offer_closed</code> (every quote for the booking closed
+    unbought). Give the points back, or the benefit, as your program does.</p>
+    <p><b>Refunds.</b> If the pass is refunded, only the part paid by card goes back. The voucher stays used and stays on
+    your invoice; give your customer a new one if you want to. You'll see <code>pass.ended</code> as usual. Points earned on a pass (<code>data.loyalty</code>) are earned only on the part paid by
+    card.</p>
+    <p><b>Settling.</b> Nothing is bought up front. GetThere collects the whole price of every pass for its Underwriter,
+    the voucher's part included, so after each month we invoice you for the vouchers your customers used, with the pass each
+    one paid for. You pay GetThere only; we pay the Underwriter.</p>
+    <p><b>Testing.</b> A test key makes test vouchers. They work only on test checkouts, and a real voucher never works on
+    one.</p>
 
     <h3 id="support">Getting help</h3>
     <p>Send us the <code>reference</code> from any response (<code>R-…</code>, <code>Q-…</code> or <code>P-…</code>) and
