@@ -63,15 +63,16 @@
       <li><a href="#widget">4. The widget (merchandising_url)</a></li>
       <li><a href="#checkouts">5. POST /checkouts</a></li>
       <li><a href="#lookups">6. Looking an offer up again</a></li>
-      <li><a href="#policies">7. POST /policies</a></li>
-      <li><a href="#changes">8. Changes, cancellations and refunds</a></li>
-      <li><a href="#events">9. Funnel events (POST /events)</a></li>
-      <li><a href="#forwarding">10. Your forwarding address</a></li>
-      <li><a href="#webhooks">11. Webhooks</a></li>
-      <li><a href="#merchant-ids">12. Your merchant IDs</a></li>
-      <li><a href="#rebook">13. Your rebook page</a></li>
-      <li><a href="#testing">14. Test cases</a></li>
-      <li><a href="#go-live">15. Go-live checklist</a></li>
+      <li><a href="#payments">7. POST /payments</a></li>
+      <li><a href="#policies">8. POST /policies</a></li>
+      <li><a href="#changes">9. Changes, cancellations and refunds</a></li>
+      <li><a href="#events">10. Funnel events (POST /events)</a></li>
+      <li><a href="#forwarding">11. Your forwarding address</a></li>
+      <li><a href="#webhooks">12. Webhooks</a></li>
+      <li><a href="#merchant-ids">13. Your merchant IDs</a></li>
+      <li><a href="#rebook">14. Your rebook page</a></li>
+      <li><a href="#testing">15. Test cases</a></li>
+      <li><a href="#go-live">16. Go-live checklist</a></li>
     </ul>
 
     <h2 id="choose">1. Choose your path</h2>
@@ -85,9 +86,11 @@
       on the page that confirms it. When the customer chooses a plan, GetThere's checkout opens, in your colours, and they
       pay there. You take no payment and settle nothing. This is the quickest to build.</p>
       <p><b><code>in-line</code>: in your own checkout, before payment.</b> The pass is an add-on in your flight checkout,
-      next to seats and bags. You quote the cart, the customer pays you once for both, and when the airline confirms the
-      booking you create the pass with <code>POST /policies</code>. You settle with the Underwriter monthly, from a statement GetThere prepares. More customers buy
-      when the offer comes before payment, but you build more.</p>
+      next to seats and bags. You quote the cart, and the customer pays for the flights and the pass in the same checkout,
+      as two payments: the flights to you, and the pass to the Underwriter's own Stripe account (a split payment). When the
+      airline confirms the booking you create the pass with <code>POST /policies</code>, and we issue it once we know the
+      pass was paid for. Nothing is owed between you and the Underwriter for the pass, so there's nothing to settle. More
+      customers buy when the offer comes before payment, but you build more.</p>
       <p><b><code>booking-email</code>: in your own booking confirmation email.</b> The plans go in the email you already
       send, like an ad. A plan's link always opens GetThere's checkout, as on the booking page. Email apps don't run
       frames or scripts, so here you link to the plans rather than embed them (<a href="#path-email">2c</a>).</p>
@@ -109,13 +112,13 @@
       <tr><td>Where the customer sees the plans</td><td>Your confirmation page</td><td>Your checkout, before payment</td><td>Your confirmation email</td></tr>
       <tr><td><code>booking_reference</code> at quote time</td><td>Required</td><td>Ignored: you quote the cart</td><td>Required</td></tr>
       <tr><td>What choosing a plan does</td><td>Opens GetThere's checkout</td><td>The widget tells your page, and you add it to your cart</td><td>Opens GetThere's checkout</td></tr>
-      <tr><td>Who takes the payment</td><td>GetThere's checkout, for the Underwriter</td><td>You, in your flight checkout</td><td>GetThere's checkout, for the Underwriter</td></tr>
+      <tr><td>Who takes the payment</td><td>GetThere's checkout, for the Underwriter</td><td>The Underwriter's Stripe, in your checkout (split payment)</td><td>GetThere's checkout, for the Underwriter</td></tr>
       <tr><td>Customer details you send</td><td>Email and country of residence, plus anything that fills in the checkout</td><td>Email and country of residence at quote. Name, date of birth and address when you create the pass</td><td>As for the booking page</td></tr>
       <tr><td>WhatsApp number</td><td>The customer confirms it at our checkout</td><td>The customer adds it after buying, from our confirmation email</td><td>The customer confirms it at our checkout</td></tr>
-      <tr><td>Calls with our widget</td><td><code>POST /quotes</code></td><td><code>POST /quotes</code>, <code>POST /policies</code></td><td><code>POST /quotes</code></td></tr>
-      <tr><td>Calls with your own design</td><td><code>POST /quotes</code>, <code>POST /checkouts</code>, <code>POST /events</code></td><td><code>POST /quotes</code>, <code>POST /events</code>, <code>POST /policies</code></td><td><code>POST /quotes</code>, <code>POST /checkouts</code></td></tr>
-      <tr><td>Changes and refunds</td><td>The customer asks us</td><td>You tell us: <code>/changes</code> and <code>/cancel</code></td><td>The customer asks us</td></tr>
-      <tr><td>Settlement</td><td>None</td><td>A monthly statement</td><td>None</td></tr>
+      <tr><td>Calls with our widget</td><td><code>POST /quotes</code></td><td><code>POST /quotes</code>, <code>POST /payments</code>, <code>POST /policies</code></td><td><code>POST /quotes</code></td></tr>
+      <tr><td>Calls with your own design</td><td><code>POST /quotes</code>, <code>POST /checkouts</code>, <code>POST /events</code></td><td><code>POST /quotes</code>, <code>POST /events</code>, <code>POST /payments</code>, <code>POST /policies</code></td><td><code>POST /quotes</code>, <code>POST /checkouts</code></td></tr>
+      <tr><td>Changes and refunds</td><td>The customer asks us</td><td>You tell us: <code>/changes</code> and <code>/cancel</code>. We refund the pass</td><td>The customer asks us</td></tr>
+      <tr><td>Settlement</td><td>None</td><td>None for passes (vouchers monthly)</td><td>None</td></tr>
     </table>
     <p>Add <code>placement_detail</code> to say where exactly, like <code>"cart"</code> or <code>"seat-selection"</code>.
     Your funnel is split by placement and by placement detail, so you can compare where the pass sells best.</p>
@@ -151,17 +154,34 @@
       ignored. Quote again whenever the flights, travellers or fare change: the session's earlier offers are withdrawn.</li>
       <li><b>Frame <code>merchandising_url</code></b> where your add-ons are. When the customer chooses a plan, the widget
       sends your page a <a href="#widget"><code>getthere:plan</code> message</a> with the <code>offer_id</code> and fee. Add
-      it to your cart at that fee.</li>
-      <li><b>At payment</b>, show the two consent boxes (<a href="#consents">wording</a>) next to the add-on and
-      record the time the customer paid (<code>accepted_at</code>). Collect the buyer's name, date of birth and address if you
-      don't already.</li>
+      it to your cart at that fee, as its own line.</li>
+      <li><b>Make the pass payment.</b> From your server, call <a href="#payments"><code>POST /partner/v1/payments</code></a>
+      with the <code>offer_id</code>. It makes a payment for the pass's price on the Underwriter's own Stripe account and
+      gives you its <code>client_secret</code> and <code>publishable_key</code>. If the customer picks another plan, make a
+      new payment for that offer.</li>
+      <li><b>At payment</b>, show the two consent boxes (<a href="#consents">wording</a>) next to the add-on, and collect
+      the buyer's name, date of birth and address if you don't already. Confirm the pass payment with Stripe.js, using its
+      <code>publishable_key</code> and <code>client_secret</code>, beside your own charge for the flights. This authorises
+      the customer's card for the pass; nothing is taken yet. Record the time the customer paid
+      (<code>accepted_at</code>).</li>
       <li><b>The airline confirms the booking.</b> Call <a href="#policies"><code>POST /partner/v1/policies</code></a> with the
-      <code>offer_id</code>, each flight's booking reference, your order id, the payment and the buyer. You get the pass back
-      straight away, and we email it to the customer.</li>
+      <code>offer_id</code>, the <code>payment_id</code>, each flight's booking reference, your order id and the buyer. We
+      check the payment with Stripe, take it, and give you the pass straight away. We email it to the customer.</li>
       <li><b>If the customer removes the pass from the cart</b>, send <code>removed</code> to <a href="#events"><code>POST /events</code></a>.</li>
-      <li><b>Later changes:</b> tell us with <a href="#changes"><code>/changes</code> or <code>/cancel</code></a>.</li>
-      <li><b>Each month</b>, pay the statement we send you.</li>
+      <li><b>Later changes:</b> tell us with <a href="#changes"><code>/changes</code> or <code>/cancel</code></a>. A refund
+      in the cooling-off period goes back to the customer's card from the Underwriter's Stripe: you don't refund the pass
+      yourself.</li>
     </ol>
+    <div class="callout"><b>The pass payment, step by step.</b> The pass is paid for apart from the flights, on the
+    Underwriter's own Stripe account, inside your checkout:
+      <ol>
+        <li>Quote the cart with <code>POST /quotes</code>.</li>
+        <li>When the customer picks a plan, call <code>POST /payments</code> with its <code>offer_id</code>.</li>
+        <li>In your checkout, confirm that payment with Stripe.js, together with your own payment for the flights.</li>
+        <li>Once the airline confirms the booking, call <code>POST /policies</code> with the <code>payment_id</code>.</li>
+      </ol>
+      We issue the pass only once Stripe tells us the payment was authorised. Nothing is owed between you and the
+      Underwriter for the pass, and there's no monthly settlement of pass fees.</div>
     <p><b>With your own design:</b> draw the plans from <code>offers</code> and send every funnel event yourself:
     <code>shown</code> when the plans are on screen, <code>selected</code> when one is added, <code>removed</code> when it's
     taken out, and <code>abandoned</code> when the cart is given up. <a href="#events">Here's why that matters.</a> Follow
@@ -380,8 +400,8 @@
         and whether it's the one to put first.</td><td class="why">Show <code>label</code> as is. The featured plan is the one
         most customers should pick.</td></tr>
       <tr><td><code>offers[].fee</code>, <code>currency</code></td><td>The price, tax included, in the booking's
-        currency.</td><td class="why">It's what the customer pays on GetThere's checkout. In-line, it's what you charge, and
-        <code>amount_paid</code> must match it when you create the pass.</td></tr>
+        currency.</td><td class="why">It's what the customer pays on GetThere's checkout. In-line, it's the amount of the
+        payment <code>POST /payments</code> makes on the Underwriter's Stripe.</td></tr>
       <tr><td><code>fees_include_tax</code>, <code>tax_country</code></td><td><code>fee</code> includes tax, 0% where none
         is added. <code>tax_country</code> is the <code>residence_country</code> you sent.</td><td class="why">The price you
         show is the price the customer pays. If you sent the wrong country, quote again with the right one.</td></tr>
@@ -392,7 +412,7 @@
         class="why">The value the customer is buying. Show it next to the fee.</td></tr>
       <tr><td><code>offers[].expires_at</code></td><td>Until when the offer can be bought: 12 hours by default, and never
         later than 48 hours before the first flight.</td><td class="why">Prices move as departure nears. Quote again after
-        this. In-line, a customer who paid before it expired still gets the pass (<a href="#policies">section 7</a>).</td></tr>
+        this. In-line, a customer who paid before it expired still gets the pass (<a href="#policies">section 8</a>).</td></tr>
       <tr><td><code>trigger_minutes</code></td><td>How late a flight must be: 180 is 3 hours. A cancellation counts too.</td>
         <td class="why">Required wording if you show the plans yourself.</td></tr>
       <tr><td><code>terms_url</code>, <code>underwriter</code></td><td>The terms these offers are sold under: those of the
@@ -471,8 +491,9 @@
       <tr><td><code>offer_id</code></td><td>The plan chosen.</td><td class="why">Keep it with the cart line. You create the
         pass with it.</td></tr>
       <tr><td><code>plan</code></td><td>Its code.</td><td class="why">For your own reporting.</td></tr>
-      <tr><td><code>fee</code>, <code>currency</code></td><td>The price shown, tax included.</td><td class="why">Charge exactly
-        this. It's the <code>amount_paid</code> <code>POST /policies</code> expects.</td></tr>
+      <tr><td><code>fee</code>, <code>currency</code></td><td>The price shown, tax included.</td><td class="why">Show it in
+        your cart. You don't charge it yourself: <code>POST /payments</code> makes a payment for exactly this, on the
+        Underwriter's Stripe.</td></tr>
     </table>
     <p><b>The widget records the funnel itself:</b> <code>shown</code> once it's in view and <code>selected</code> on each
     click. In-line, you only send <code>removed</code> and <code>abandoned</code>.</p>
@@ -541,18 +562,91 @@
         class="why">Compare with the cart. A pass is created only for these exact flights and travellers.</td></tr>
     </table>
 
-    <h2 id="policies">7. <code>POST /partner/v1/policies</code></h2>
+    <h2 id="payments">7. <code>POST /partner/v1/payments</code></h2>
+    <p class="meta"><b><code>in-line</code> only</b> · when the customer picks a plan, before they pay</p>
+    <p>Makes the payment for the pass, apart from the flights. It's a Stripe PaymentIntent on the Underwriter's own Stripe
+    account, for the pass's price: the fee plus the sales tax for the quote's <code>residence_country</code>. It's made
+    with manual capture, so confirming it in your checkout only authorises the customer's card. We take the payment when
+    you create the pass with <a href="#policies"><code>POST /policies</code></a>. Each call makes a new payment, and only
+    the one you name in <code>POST /policies</code> is ever taken. Call it from your server, with your key.</p>
+<pre><code>POST /partner/v1/payments
+{"offer_id": "de01b698-…"}
+
+201 {"payment_id": "a41f…", "offer_id": "de01b698-…", "status": "pending",
+     "amount": "48.32", "currency": "SGD", "tax_country": "SG", "sales_tax": "3.99",
+     "client_secret": "pi_3Q…_secret_…", "publishable_key": "pk_live_…",
+     "test_payment": false}</code></pre>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>offer_id</code> <span class="req">required</span></td><td>The plan the customer chose, from an
+        <code>in-line</code> quote.</td><td class="why">The payment is for that offer only.</td></tr>
+      <tr><td><code>payment_id</code></td><td>The payment.</td><td class="why">Keep it with the cart line. You send it to
+        <code>POST /policies</code> to create the pass.</td></tr>
+      <tr><td><code>amount</code>, <code>currency</code></td><td>What the customer pays for the pass, tax included.</td><td
+        class="why">The offer's <code>fee</code>. Show it in your cart as its own line.</td></tr>
+      <tr><td><code>tax_country</code>, <code>sales_tax</code></td><td>The country the tax is for (the quote's
+        <code>residence_country</code>) and the tax in <code>amount</code>.</td><td class="why">For your invoice and your
+        accounts.</td></tr>
+      <tr><td><code>client_secret</code>, <code>publishable_key</code></td><td>The PaymentIntent's client secret, and the
+        Underwriter's Stripe publishable key.</td><td class="why">Your checkout confirms the payment with them. They're
+        safe to send to the page.</td></tr>
+      <tr><td><code>status</code></td><td><code>pending</code>, <code>succeeded</code>, <code>failed</code> or
+        <code>refunded</code>.</td><td class="why"><code>pending</code> on a new payment.</td></tr>
+      <tr><td><code>test_payment</code></td><td><code>true</code> for a stub payment (see below).</td><td class="why">A
+        stub payment has no Stripe keys to confirm with.</td></tr>
+    </table>
+    <p><b>Confirm it in your checkout.</b> Use Stripe.js with the payment's <code>publishable_key</code>, not your own
+    Stripe key: the payment is on the Underwriter's account. The customer enters their card in Stripe's own fields, and
+    you confirm the pass payment beside your own charge for the flights, with <code>stripe.confirmPayment</code> (or
+    <code>stripe.confirmCardPayment</code>). Neither you nor GetThere sees the card number.</p>
+<pre><code>const pass = Stripe(payment.publishable_key);          // the Underwriter's Stripe account
+const passElements = pass.elements({clientSecret: payment.client_secret});
+passElements.create("payment").mount("#pass-payment");
+
+// When the customer pays, beside your own charge for the flights:
+const {error} = await pass.confirmPayment({elements: passElements, redirect: "if_required"});
+if (error) showPassPaymentError(error.message);       // the pass isn't paid for: don't create it</code></pre>
+    <table class="fields">
+      <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
+      <tr><td><code>404</code></td><td>Not one of your offers, or the other mode.</td><td class="why">Check the key and
+        <code>offer_id</code>.</td></tr>
+      <tr><td><code>409 not_in_line</code></td><td>The offer was quoted for <code>booking-page</code> or
+        <code>booking-email</code>.</td><td class="why">It's bought on GetThere's checkout.</td></tr>
+      <tr><td><code>409 expired</code></td><td>The offer is closed: its prices expired, or a newer quote withdrew it.</td><td
+        class="why">Quote again, and make a payment for the new offer.</td></tr>
+      <tr><td><code>409 departed</code></td><td>The first flight has already left.</td><td class="why">Take the pass out of
+        the cart.</td></tr>
+      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Take the pass out
+        of the cart.</td></tr>
+      <tr><td><code>409 paused</code></td><td>Your partner is paused.</td><td class="why">Take the pass out of the
+        cart.</td></tr>
+      <tr><td><code>409 residence_country_needed</code></td><td>The quote has no country of residence, so the sales tax
+        can't be worked out.</td><td class="why">Quote again with <code>residence_country</code>.</td></tr>
+      <tr><td><code>409 payments_unavailable</code></td><td>The Underwriter's Stripe account isn't ready to take
+        payments.</td><td class="why">Take the pass out of the cart, and tell us.</td></tr>
+    </table>
+    <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/payments/{payment_id}</h3></div>
+    <p>The same payment object, with its <code>status</code> now: <code>pending</code> (not paid yet),
+    <code>succeeded</code>, <code>failed</code> or <code>refunded</code>.</p>
+    <p><b>Test payments.</b> With your test key, the payment is on the Underwriter's Stripe sandbox, and you pay it with
+    Stripe's test card. If the Underwriter has no sandbox keys yet, you get a stub payment instead:
+    <code>client_secret</code> and <code>publishable_key</code> are <code>null</code> and <code>test_payment</code> is
+    <code>true</code>. Pay it, or make it fail, from your server:</p>
+<pre><code>POST /partner/v1/payments/{payment_id}/test-result
+{"result": "succeeded"}          // or "failed"</code></pre>
+    <p>Any other payment answers <code>409 not_a_test_payment</code>.</p>
+
+    <h2 id="policies">8. <code>POST /partner/v1/policies</code></h2>
     <p class="meta"><b><code>in-line</code> only</b> · once the airline confirms the booking the customer paid for</p>
     <p>Creates the pass for an offer from an <code>in-line</code> quote. An offer quoted for another placement is refused
-    (<code>409 not_in_line</code>): it's bought on GetThere's checkout. We email the customer their pass straight away, and
-    later ask them to add WhatsApp. Retry until you get an answer: it's safe, and a paying customer must never be left
-    without their pass.</p>
+    (<code>409 not_in_line</code>): it's bought on GetThere's checkout. First we ask Stripe about the
+    <code>payment_id</code>: if the customer's card is authorised for the pass's price, we take the payment and issue the
+    pass. We email the customer their pass straight away, and later ask them to add WhatsApp. Retry until you get an
+    answer: it's safe, and a paying customer must never be left without their pass.</p>
 <pre><code>{
   "offer_id": "de01b698-…",
   "ota_order_id": "TRV-5581203",
-  "payment_reference": "PAY-88123",
-  "amount_paid": 48.32,
-  "currency": "SGD",
+  "payment_id": "a41f…",
   "accepted_at": "2026-10-14T11:20:05+00:00",
   "terms_url": "https://&lt;you&gt;.getthere.now/terms/v7",
   "consents": {"terms": true, "card_issuer": true},
@@ -577,14 +671,10 @@
       <tr><td><code>ota_order_id</code> <span class="req">required</span></td><td>Your order id, up to 200 characters.</td><td
         class="why">Each line of your monthly statement and every webhook carries it, so you can reconcile without a
         lookup. The rescue card's link opens this booking on <a href="#rebook">your rebook page</a>.</td></tr>
-      <tr><td><code>payment_reference</code> <span class="req">required</span></td><td>Your id for the customer's payment,
-        unique per sale, up to 200 characters.</td><td class="why">Makes the call safe to retry: the same reference returns
-        the same pass. It's kept per mode, so a test sale never meets a live one. Reusing it for another offer is
-        refused.</td></tr>
-      <tr><td><code>amount_paid</code>, <code>currency</code> <span class="req">required</span></td><td>What the customer
-        paid for the pass, tax included.</td><td class="why">Must equal the offer's <code>fee</code>, to the cent: the tax
-        is for the <code>residence_country</code> you quoted with, whatever the buyer's address says. It's what you owe on
-        your statement.</td></tr>
+      <tr><td><code>payment_id</code> <span class="req">required</span></td><td>The pass payment from
+        <a href="#payments"><code>POST /payments</code></a>, for this offer, confirmed in your checkout.</td><td
+        class="why">We issue the pass only once Stripe says it's authorised, and then we take it. It also makes the call
+        safe to retry: the same <code>payment_id</code> returns the same pass.</td></tr>
       <tr><td><code>accepted_at</code> <span class="req">required</span></td><td>When the customer paid, with a time zone
         (<code>Z</code> or an offset like <code>+00:00</code>).</td><td class="why">We honour the offer as it was at that
         moment, even if it has since expired or sales were paused. You have 24 hours from it to create the pass.</td></tr>
@@ -629,7 +719,7 @@
       <tr><td><code>pass_url</code></td><td>The customer's pass page.</td><td class="why">Link it from your booking page and
         your own confirmation email.</td></tr>
     </table>
-    <p><code>200</code> instead of <code>201</code>: you'd already created it with this <code>payment_reference</code>, in
+    <p><code>200</code> instead of <code>201</code>: you'd already created it with this <code>payment_id</code>, in
     this mode.</p>
     <table class="fields">
       <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
@@ -640,16 +730,19 @@
       <tr><td><code>409 not_in_line</code></td><td>The offer was quoted for <code>booking-page</code> or
         <code>booking-email</code>.</td><td class="why">Quote the cart with <code>placement: "in-line"</code> and sell that
         offer.</td></tr>
-      <tr><td><code>409 payment_reference_reused</code></td><td>The reference was used for another offer.</td><td
-        class="why">Use a unique reference per sale.</td></tr>
-      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">Refund the
-        duplicate.</td></tr>
+      <tr><td><code>409 payment_not_received</code></td><td>The payment isn't authorised or paid yet, or it's for another
+        amount. We leave it as it is.</td><td class="why">The customer can still pay: confirm it in your checkout, then
+        send the call again. Check <a href="#payments"><code>GET /payments/{payment_id}</code></a>.</td></tr>
+      <tr><td><code>409 payment_mismatch</code></td><td>The payment was made for another offer.</td><td class="why">Send
+        the <code>payment_id</code> you made for this <code>offer_id</code>.</td></tr>
+      <tr><td><code>409 already_has_pass</code></td><td>The booking already has a pass.</td><td class="why">We cancel the
+        payment, so the customer isn't charged twice. Show them the pass they have.</td></tr>
       <tr><td><code>409 withdrawn</code></td><td>The cart was quoted again before the customer paid.</td><td class="why">Use
         an offer from the latest quote. Make sure your cart updates when you re-quote.</td></tr>
       <tr><td><code>409 expired</code></td><td>The customer paid after <code>expires_at</code>, or 24 hours have passed since
-        <code>accepted_at</code>.</td><td class="why">Refund the add-on. Quote again before payment next time.</td></tr>
-      <tr><td><code>409 departed</code></td><td>The first flight has already left.</td><td class="why">Refund the
-        add-on.</td></tr>
+        <code>accepted_at</code>.</td><td class="why">We cancel the payment. Quote again before payment next time.</td></tr>
+      <tr><td><code>409 departed</code></td><td>The first flight has already left.</td><td class="why">We cancel the
+        payment.</td></tr>
       <tr><td><code>409 terms_mismatch</code></td><td><code>terms_url</code> isn't the offer's.</td><td class="why">Send the
         quote's <code>terms_url</code> unchanged.</td></tr>
       <tr><td><code>409 flights_changed</code></td><td>The flights or dates aren't the ones quoted.</td><td class="why">Quote the
@@ -657,12 +750,17 @@
       <tr><td><code>409 travellers_changed</code></td><td>The travellers aren't the ones quoted.</td><td class="why">As
         above.</td></tr>
       <tr><td><code>409 not_on_sale</code></td><td>Live keys: no rescue card can be issued in the address's country.</td><td
-        class="why">Refund the add-on.</td></tr>
-      <tr><td><code>409 amount_mismatch</code></td><td>Wrong amount or currency. The <code>detail</code> gives the right
-        amount.</td><td class="why">Charge the offer's <code>fee</code>, in its currency.</td></tr>
+        class="why">We cancel the payment.</td></tr>
       <tr><td><code>409 booking_exists</code></td><td>That booking reference was quoted separately before.</td><td
         class="why">Contact us with the reference.</td></tr>
     </table>
+    <p><b>A refusal cancels the payment.</b> On <code>expired</code>, <code>withdrawn</code>, <code>departed</code>,
+    <code>flights_changed</code>, <code>travellers_changed</code>, <code>terms_mismatch</code>,
+    <code>booking_exists</code>, <code>not_on_sale</code> or <code>already_has_pass</code>, we cancel the payment at
+    Stripe, so the customer is never charged for a pass they don't get. You have nothing to refund. To sell the pass
+    after <code>flights_changed</code>, <code>travellers_changed</code> or <code>terms_mismatch</code>, quote again and
+    make a new payment. <code>payment_not_received</code> and <code>payment_mismatch</code> leave the payment as it
+    is.</p>
     <div class="callout must"><b>What the customer must see and tick at your checkout.</b> Two boxes, unticked, next to the
     add-on, both required to buy it:
       <ol>
@@ -677,15 +775,16 @@
     <p><b>Pausing doesn't stop this call.</b> A paused partner makes no new quotes, but a customer who has already paid
     still gets their pass.</p>
 
-    <h2 id="changes">8. Changes, cancellations and refunds</h2>
+    <h2 id="changes">9. Changes, cancellations and refunds</h2>
     <p class="meta"><b><code>in-line</code> passes only</b> · a pass doesn't move to new flights: a changed booking ends it,
     like a cancelled one</p>
     <p>A pass bought on GetThere's checkout (<code>booking-page</code> and <code>booking-email</code>) is the customer's to
     change or refund with us: these calls refuse it with <code>409 not_in_line</code>. A pass you created with
     <code>POST /policies</code> is changed through you, and you tell us.</p>
-    <p><b>Refund it the way it was paid.</b> Whatever your customer paid the add-on with, your statement owes us the pass
-    price, and a refund in the cooling-off period comes off it. If they paid with your points or miles, give the points
-    back, not cash, so the pass never turns points into money.</p>
+    <p><b>We refund the pass.</b> When an in-line pass is cancelled in its cooling-off period, by
+    <code>/cancel</code> or a change, GetThere refunds it to the customer's card on the Underwriter's Stripe, and its
+    payment shows <code>refunded</code>. You don't refund the add-on yourself. A pass sold in-line before 17 October 2026
+    was paid to you and keeps its old settlement: you refund the customer, and the refund comes off your statement.</p>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/changes</h3></div>
 <pre><code>{"type": "travellers", "passengers": ["Mia Tan", "Wei Lim", "Chloe Lim-Tan"]}</code></pre>
 <pre><code>{"type": "flights"}</code></pre>
@@ -700,11 +799,11 @@
         <code>/policies</code> as usual, under the same booking reference if the airline kept it.</td><td class="why">One
         rule for every change: a pass never moves, so there's no price difference to work out.</td></tr>
       <tr><td><code>cancelled</code></td><td>Ends the pass. Within its cooling-off period (24 hours after it was paid
-        for, unless the Underwriter sets its own), you refund the customer, and it's netted on your statement. After it,
+        for, unless the Underwriter sets its own), we refund the customer's card on the Underwriter's Stripe. After it,
         and once we've started watching the flights, the pass ends with no refund: the fee stays paid, and we email the
         customer that it was cancelled.</td>
-        <td class="why">A cancelled or changed booking can't have a rescue card, even on travel day. The Underwriter is
-        paid for the pass once cooling-off ends.</td></tr>
+        <td class="why">A cancelled or changed booking can't have a rescue card, even on travel day. The Underwriter keeps
+        the payment once cooling-off ends.</td></tr>
     </table>
 <pre><code>200 {"status": "cancelled", "policy_id": "0e5b…", "pass_status": "refunded", …}</code></pre>
     <table class="fields">
@@ -730,12 +829,23 @@
     example cancelled before, or a rescue card was issued).</p>
     <p><b>When the airline cancels the flight before we start watching</b>, we end the pass ourselves and send
     <code>pass.ended</code> with <code>reason: "flight_cancelled_before_watch"</code>. For an <code>in-line</code> pass,
-    refund the customer, and it's netted on your statement.</p>
-    <p><b>When a customer disputes a payment taken on GetThere's checkout</b> with their bank (a chargeback), an active
+    we refund the customer's card on the Underwriter's Stripe, as for a cancellation.</p>
+    <p><b>When a customer disputes a pass payment</b>, taken on GetThere's checkout or in-line on the Underwriter's
+    Stripe, with their bank (a chargeback), an active
     pass ends: we send <code>pass.ended</code> with <code>reason: "disputed"</code> and <code>refund: "0"</code>, and
     the customer is told. A pass that has already issued its rescue card keeps it, and GetThere contests the dispute.</p>
+    <h3 id="statement">Your monthly in-line statement</h3>
+    <p>We still send you a statement each month for your in-line passes, so you can reconcile them with your orders. Each
+    line carries the pass, your <code>ota_order_id</code> and <code>paid_to</code>:</p>
+    <table class="fields">
+      <tr><th><code>paid_to</code></th><th>Means</th><th>What you owe</th></tr>
+      <tr><td><code>underwriter</code></td><td>A pass sold from 17 October 2026, paid on the Underwriter's Stripe.</td><td
+        class="why">Nothing. Refunds were made on the Underwriter's Stripe too.</td></tr>
+      <tr><td><code>site</code></td><td>A pass sold before 17 October 2026, paid to you.</td><td class="why">Its fee, to the
+        Underwriter, less any refund in its cooling-off period, as before.</td></tr>
+    </table>
 
-    <h2 id="events">9. Funnel events: <code>POST /partner/v1/events</code></h2>
+    <h2 id="events">10. Funnel events: <code>POST /partner/v1/events</code></h2>
     <div class="callout must"><b>This is not optional if you draw the plans yourself on a page.</b> Funnel events are how
     you, we and the Underwriter learn what sells the pass on your site, and how we keep the price right for your customers:
       <ul>
@@ -772,7 +882,7 @@
     <code>offer_id</code> nor <code>session_id</code>. Send events from your server, or from the browser through your
     server: never put your key in the page.</p>
 
-    <h2 id="forwarding">10. Your forwarding address</h2>
+    <h2 id="forwarding">11. Your forwarding address</h2>
     <p>Every partner has a forwarding address, <code>quote@&lt;you&gt;.getthere.now</code>. A customer who forwards a booking
     confirmation email to it gets the plans back by email within minutes, and buys on GetThere's checkout. It's a way in for
     customers you haven't quoted through the API: someone who booked before you integrated, or who found the offer
@@ -790,7 +900,7 @@
       <code>test@&lt;you&gt;.getthere.now</code> still does.</li>
     </ul>
 
-    <h2 id="webhooks">11. Webhooks</h2>
+    <h2 id="webhooks">12. Webhooks</h2>
     <p>Set a test and a live address with us, and we'll tell your systems about every pass: issued, changed, ended, an email
     that bounced, WhatsApp added, a rescue card issued and used. That includes every placement, and passes from your forwarding
     address too. The format, retries, every event type and how to check the signature are on
@@ -801,19 +911,19 @@
       <li><code>rescue_card.used</code>: they've rebooked with you, using the rescue card.</li>
     </ul>
 
-    <h2 id="merchant-ids">12. Your merchant IDs</h2>
+    <h2 id="merchant-ids">13. Your merchant IDs</h2>
     <p>A rescue card from your site works on your site only, so the customer rebooks with you. We hold the card to that
     with the <b>merchant IDs</b> your card payments carry: the IDs your payment provider (acquirer) gives each of your
     merchant accounts. Once we have them, a charge is approved only if it carries one of them, whatever name the merchant
     trades under. <b>We can't switch you live without them.</b> Send us every merchant ID your flight bookings are charged
     under (each country, each acquirer). If you add an acquirer later, send us its IDs before it takes payments.</p>
 
-    <h2 id="rebook">13. Your rebook page</h2>
+    <h2 id="rebook">14. Your rebook page</h2>
     <p>When a flight is disrupted, the rescue card email and the rescue card page give the customer a
     <b>Rebook on &lt;your site&gt;</b> button. It's a GetThere link with its own random token,
     <code>https://&lt;you&gt;.getthere.now/rebook/&lt;token&gt;</code>, like every link we send. Opening it sends the
     customer straight on to your rebook page, with their booking and their trip from the disrupted flight onwards filled
-    in. They pay there with the rescue card, which works on your site only (<a href="#merchant-ids">section 12</a>).</p>
+    in. They pay there with the rescue card, which works on your site only (<a href="#merchant-ids">section 13</a>).</p>
     <p><b>This page is yours to build, and we can't switch you live without it.</b> Give us its address as a template,
     for example:</p>
 <pre><code>https://www.yoursite.com/trips/rebook?booking={booking_id}&amp;flights={flights}&amp;date={date}</code></pre>
@@ -880,7 +990,7 @@
     <p>The link works while the rescue card does. Once the card is used or expired, it opens the card page instead. If
     you move the page, send us the new address: links already sent follow it.</p>
 
-    <h2 id="testing">14. Test cases</h2>
+    <h2 id="testing">15. Test cases</h2>
     <p>Run these with your test key before asking to go live. Use a first flight at least 3 days ahead. Run the quote cases
     for each placement you use.</p>
     <table class="fields">
@@ -905,17 +1015,22 @@
         design, or the checkout you linked</td><td class="why">The links work in a real email app.</td></tr>
       <tr><td>In-line widget: choose a plan</td><td>Your page gets <code>getthere:plan</code></td><td class="why">The add-on
         reaches your cart.</td></tr>
-      <tr><td>In-line: create the pass</td><td><code>201</code>, <code>issued</code>, an email starting "[Test]"</td><td
+      <tr><td>In-line: make a payment with <code>POST /payments</code>, pay it (Stripe's test card, or
+        <code>test-result</code> <code>succeeded</code> for a stub payment), then create the pass</td><td><code>201</code>,
+        <code>issued</code>, an email starting "[Test]", and <code>GET /payments</code> shows <code>succeeded</code></td><td
         class="why">The happy path works end to end.</td></tr>
       <tr><td>Send the same call again</td><td><code>200</code>, same <code>policy_id</code></td><td class="why">Your retries are
         safe.</td></tr>
       <tr><td>Call <code>/policies</code> with an offer from a <code>booking-page</code> quote</td><td><code>409
         not_in_line</code></td><td class="why">Each offer is sold where it was quoted for.</td></tr>
-      <tr><td>Create a pass with <code>amount_paid</code> a cent too low</td><td><code>409 amount_mismatch</code> with the
-        right amount</td><td class="why">You charge exactly the quoted fee.</td></tr>
+      <tr><td>Create a pass before the payment is confirmed</td><td><code>409 payment_not_received</code>, and the payment
+        stays <code>pending</code></td><td class="why">A pass is issued only once its payment is in.</td></tr>
+      <tr><td>Create a pass with a payment made for another offer</td><td><code>409 payment_mismatch</code></td><td
+        class="why">Each payment pays for its own offer.</td></tr>
       <tr><td>In-line: correct a name, then move the outbound flight a day and sell a new pass for it, then cancel the
-        new pass</td><td><code>changed</code>, <code>cancelled</code> and <code>201</code>, <code>cancelled</code></td><td
-        class="why">Your changes flow works.</td></tr>
+        new pass</td><td><code>changed</code>, <code>cancelled</code> and <code>201</code>, <code>cancelled</code>, and the new pass's
+        payment shows <code>refunded</code></td><td class="why">Your changes flow works, and refunds go back on the
+        Underwriter's Stripe.</td></tr>
       <tr><td>Forward one of your own booking confirmation emails to your forwarding address, then an airline's</td><td>A
         "[Test]" price email for yours, a "can only quote bookings made on" reply for the airline's</td><td class="why">Your
         <code>booking_domains</code> are set right.</td></tr>
@@ -939,10 +1054,10 @@
         events arrive.</td></tr>
     </table>
 
-    <h2 id="go-live">15. Go-live checklist</h2>
+    <h2 id="go-live">16. Go-live checklist</h2>
     <ul>
-      <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 12</a>).</li>
-      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us, and it checks every <code>gt_rebook</code> code with us (<a href="#rebook">section 13</a>).</li>
+      <li>Your <b>merchant IDs</b> are with us (<a href="#merchant-ids">section 13</a>).</li>
+      <li>Your <b>rebook page</b> is built, live and on staging, and both addresses are with us, and it checks every <code>gt_rebook</code> code with us (<a href="#rebook">section 14</a>).</li>
       <li>The test cases above pass, for every placement you use.</li>
       <li>Every quote sends the right <code>placement</code> and the customer's real <code>residence_country</code>.</li>
       <li>The widget design for each placement you use is set in the admin.</li>
@@ -951,9 +1066,12 @@
       <li>Your live webhook address is set and checks signatures.</li>
       <li>Own design: funnel events arrive for <code>shown</code>, <code>selected</code>, <code>removed</code> and
       <code>abandoned</code>.</li>
-      <li>In-line: you create the pass from the airline's confirmation (not the payment), retry until answered, and
-      refund the add-on on any <code>409</code>.</li>
-      <li>In-line: someone on your side owns paying the monthly statement.</li>
+      <li>In-line: you make the pass payment with <code>POST /payments</code> and confirm it with Stripe.js in your
+      checkout, beside your flight payment.</li>
+      <li>In-line: you create the pass from the airline's confirmation (not the payment), with its
+      <code>payment_id</code>, and retry until answered.</li>
+      <li>In-line: if you sold passes in-line before 17 October 2026, someone on your side owns paying the statement for
+      those.</li>
       <li>We issue your live key and switch you live. Swap the key: the code stays the same.</li>
     </ul>
 

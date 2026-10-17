@@ -92,8 +92,8 @@
     <h2 id="vendors">2. Vendors we support</h2>
     <table class="fields">
       <tr><th>Vendor</th><th>Used for</th><th>Where it works</th></tr>
-      <tr><td><b>Stripe</b></td><td>Taking the payment for each pass and each top-up, on Stripe's own payment page. Refunds and
-        dispute evidence.</td><td class="why">Buyers living in any country, on a Stripe account in a country Stripe
+      <tr><td><b>Stripe</b></td><td>Taking the payment for each pass and each top-up, on Stripe's own payment page, or in a
+        travel site's own checkout for a pass sold in-line. Refunds and dispute evidence.</td><td class="why">Buyers living in any country, on a Stripe account in a country Stripe
         supports.</td></tr>
       <tr><td><b>Airwallex Issuing</b></td><td>The pre-loaded rescue card: a consumer virtual card in the traveller's name,
         with its number shown in Airwallex's own secure frame.</td><td class="why">Cardholders living in Singapore, Hong
@@ -108,11 +108,19 @@
       <tr><td><code>Secret key</code> <span class="req">required</span></td><td>Your <code>sk_test_…</code> or
         <code>sk_live_…</code> key, or a restricted <code>rk_…</code> key with the permissions below.</td><td class="why">Every
         call we make on your account uses it.</td></tr>
+      <tr><td><code>Publishable key</code></td><td>Your <code>pk_test_…</code> or <code>pk_live_…</code> key.</td><td
+        class="why">Needed to sell in-line: a travel site's checkout uses it to confirm the pass's payment on your
+        account. Without it, real passes can't be sold in-line.</td></tr>
       <tr><td><code>Webhook secret</code> <span class="req">required</span></td><td>The <code>whsec_…</code> signing secret of
         the endpoint you add for GetThere.</td><td class="why">We only act on events signed with it.</td></tr>
     </table>
-    <p><b>A restricted key</b> needs write access to Checkout Sessions, Refunds and Disputes, and read access to
-    PaymentIntents, Charges and Balance.</p>
+    <p><b>A restricted key</b> needs write access to Checkout Sessions, PaymentIntents, Refunds and Disputes, and read
+    access to Charges and Balance.</p>
+    <p><b>Passes sold in-line.</b> When a travel site sells the pass in its own checkout, the pass is paid for apart from
+    the flights, on your Stripe account: GetThere makes a PaymentIntent for the pass's price, with manual capture, and the
+    site's checkout confirms it with your publishable key. GetThere asks Stripe about the payment when the site creates
+    the pass, takes it and issues the pass, or cancels it if the pass can't be issued. Refunds in the cooling-off period
+    go back to the customer's card from your account. Nothing is owed between you and the site for these passes.</p>
     <p><b>The webhook.</b> In Stripe, add an endpoint at the payments address your admin page shows, which looks like
     <code>https://my.getthere.now/webhooks/underwriters/&lt;your id&gt;/payments/stripe</code>, and send it these
     events:</p>
@@ -154,7 +162,8 @@
     <p>Test passes use your sandbox keys, and real passes your live keys. Nothing real moves on a test pass.</p>
     <ul>
       <li><b>No sandbox payment keys yet?</b> Test passes are paid on GetThere's own Stripe sandbox, with Stripe's test card,
-        so your team can try the whole journey on day one.</li>
+        so your team can try the whole journey on day one. A travel site testing in-line gets a stub payment it marks
+        paid or failed itself.</li>
       <li><b>No sandbox card keys yet?</b> Test rescue cards are made by GetThere, with a button to simulate a purchase.</li>
       <li><b>Real passes never fall back.</b> A country sells real passes only once GetThere has activated your own live keys
         for both its vendors.</li>

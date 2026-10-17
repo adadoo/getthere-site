@@ -105,7 +105,7 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <h3 id="errors">Errors and what to do about them</h3>
     <p>Every error is JSON with a <code>detail</code> string. Where a call can be refused for a business reason, the
     <code>detail</code> starts with a machine-readable reason and a colon, like
-    <code>"amount_mismatch: amount_paid must be 34.08 SGD …"</code>. Every business <code>409</code> carries one. Branch on the part before the colon. The rest is
+    <code>"payment_not_received: the payment for this offer isn't authorised yet …"</code>. Every business <code>409</code> carries one. Branch on the part before the colon. The rest is
     for your logs and support team.</p>
     <table class="fields">
       <tr><th>Status</th><th>Means</th><th>What to do</th></tr>
@@ -132,11 +132,12 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <ul>
       <li><b>Reads are always safe to retry.</b></li>
       <li><b>Quotes:</b> quoting the same booking or cart again returns the same open offers rather than new ones.</li>
-      <li><b>Creating a pass</b> (travel sites selling in-line, in their own checkout) is keyed on your
-      <code>payment_reference</code>, per mode: a test sale and a live sale never share one. Sending it again in the same
-      mode returns the pass already made, with <code>200</code> instead of <code>201</code>. Retry until you get an answer,
-      so a paying customer is never left without their pass. A flight change sent again with the same
-      <code>payment_reference</code> returns the same answer too.</li>
+      <li><b>Creating a pass</b> (travel sites selling in-line, in their own checkout) is keyed on the
+      <code>payment_id</code> from <code>POST /payments</code>, per mode: a test sale and a live sale never share one.
+      Sending the same <code>payment_id</code> again returns the pass already made, with <code>200</code> instead of
+      <code>201</code>. Retry until you get an answer, so a paying customer is never left without their pass.</li>
+      <li><b>Making a pass payment</b> (<code>POST /payments</code>) makes a new payment on every call. Only the one you
+      name when you create the pass is ever taken, so a retry costs the customer nothing.</li>
       <li><b>Pushes and webhooks we send you</b> each carry a unique id. Use it to ignore a repeat.</li>
       <li>Back off between retries: 1s, 2s, 4s, 8s, then every minute. Stop on any <code>4xx</code>.</li>
     </ul>
@@ -144,8 +145,9 @@ Authorization: Bearer gt_live_…   (live key)</code></pre>
     <h3 id="test-mode">Test mode</h3>
     <p>Every partner starts in test mode. A test pass runs the whole journey with nothing real:</p>
     <ul>
-      <li>a test payment page instead of a card payment (GetThere's checkout), or no payment check at all (a travel site's
-      own checkout, in-line);</li>
+      <li>a test payment page instead of a card payment (GetThere's checkout), or, in a travel site's own checkout
+      (in-line), a payment on the Underwriter's Stripe sandbox, or a stub payment you mark paid or failed yourself when the
+      Underwriter has no sandbox keys yet;</li>
       <li>a test pre-loaded rescue card that can't be charged, with a "Simulate a purchase" button on its page;</li>
       <li>emails whose subject starts with "[Test]", and WhatsApp messages that are recorded rather than sent.</li>
     </ul>
