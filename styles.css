@@ -273,6 +273,12 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 
 /* API reference: who builds what, and the journey call by call */
 .api .who { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 8px; }
+.api .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 6px; }
+.api .shots figure { margin: 0; }
+.api .shots img { width: 100%; height: auto; display: block; border-radius: 18px; }
+.api .shots figcaption { font-size: 13px; line-height: 1.4; color: var(--muted); margin-top: 8px; }
+.api .shots figcaption b { display: block; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+@media (max-width: 720px) { .api .shots { grid-template-columns: 1fr 1fr; gap: 16px 12px; } }
 .api .who-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; }
 .api .who-card.you { border-top: 4px solid #7c3aed; }
 .api .who-card.gt { border-top: 4px solid var(--accent); }
@@ -342,7 +348,6 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 /* API docs, split per audience (Dadoo, 14 Oct 2026): the hub's two doors, the path chooser, field tables
    with a "why it matters" column, and the must-do callout. */
 .api .doors, .api .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 8px; }
-.api .paths.three { grid-template-columns: 1fr 1fr 1fr; }
 .api .door, .api .path { display: block; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; color: inherit; text-decoration: none; }
 .api a.door:hover, .api a.path:hover { border-color: var(--accent); }
 .api .door h3, .api .path h3 { margin: 4px 0 6px; font-size: 18px; }
@@ -362,7 +367,7 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .api .toc { columns: 2; font-size: 15px; padding-left: 18px; }
 .api .toc li { margin-bottom: 4px; break-inside: avoid; }
 @media (max-width: 720px) {
-  .api .doors, .api .paths, .api .paths.three { grid-template-columns: 1fr; }
+  .api .doors, .api .paths { grid-template-columns: 1fr; }
   .api .toc { columns: 1; }
   .api table.fields td:first-child { white-space: normal; }
   .api table.fields, .api table.fields tbody, .api table.fields tr, .api table.fields td, .api table.fields th { display: block; }
