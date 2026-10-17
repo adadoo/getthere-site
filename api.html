@@ -227,6 +227,9 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
       <tr><td><code>rescue_card.used</code></td><td>The customer booked a new flight with it. <code>amount</code>,
         <code>currency</code>, <code>merchant</code>.</td><td class="why">They've rebooked. Close any open contact, and
         for a travel site, expect the new booking on your own site.</td></tr>
+      <tr><td><code>voucher.expired</code></td><td>A <a href="#vouchers">pass voucher</a> you issued ended unused.
+        <code>data.voucher</code>, with <code>customer_ref</code> and <code>expired_reason</code>.</td><td class="why">Give
+        the customer back their points or benefit.</td></tr>
     </table>
     <p><b>Answer quickly with any 2xx</b> and do the work afterwards. We send events on a sweep that runs every few
     minutes, and wait 10 seconds for your answer. Anything else, or no answer, is tried again on a later sweep: after
@@ -261,8 +264,13 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
 
     <h3 id="vouchers">Pass vouchers: points and card benefits</h3>
     <p>Let your customers pay for a pass with your points, or give your top tier a pass as a benefit. You issue a voucher
-    with one call when the customer swaps points in your app, or when you hand out a benefit. The customer enters its code
-    at your own checkout. A voucher works only on your checkout, never another partner's.</p>
+    with one call when the customer swaps points in your app, or when you hand out a benefit. A voucher works only on your
+    checkout, never another partner's.</p>
+    <p><b>For one trip: two calls.</b> When your customer has booked a flight, call <code>GET /partner/v1/offer</code> with
+    their <code>customer_ref</code> as usual, then <code>POST /partner/v1/vouchers</code> with the offer's
+    <code>request_id</code>. The voucher then works only on the booking forwarded on that offer, and its checkout opens
+    with the voucher already applied: nothing to type. If the customer buys the pass without it, or every quote for that
+    booking closes unbought, the voucher ends and we tell you (<code>voucher.expired</code>, below).</p>
 <pre><code>POST /partner/v1/vouchers
 Authorization: Bearer gt_live_…
 
@@ -286,8 +294,11 @@ Authorization: Bearer gt_live_…
         its event and your invoice.</td></tr>
       <tr><td><code>note</code></td><td>Your own words, such as "4,000 KrisFlyer miles". Optional.</td><td class="why">It
         comes back on the voucher, so you know what it was for.</td></tr>
+      <tr><td><code>request_id</code></td><td>The <code>request_id</code> of an offer from <code>GET /offer</code>.
+        Optional.</td><td class="why">The voucher is for that offer's booking only, takes the offer's
+        <code>customer_ref</code>, and ends with it.</td></tr>
       <tr><td><code>expires_at</code></td><td>When it stops working, with a time zone. Optional.</td><td class="why">After
-        it, the checkout says it has expired.</td></tr>
+        it, the voucher ends and we tell you.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Call</th><th>What it does</th></tr>
@@ -299,15 +310,23 @@ Authorization: Bearer gt_live_…
       <tr><td><code>POST /partner/v1/vouchers/&lt;code&gt;/cancel</code></td><td>Takes back a voucher not used yet, when
         the customer swaps it back for points. A used one answers 409.</td></tr>
     </table>
-    <p><b>At checkout.</b> Once you've issued a voucher, your checkout shows a voucher box. The customer types the code, sees
-    what it pays and what's left for the card, and pays the rest. A voucher that pays it all needs no card: the pass is issued
+    <p><b>At checkout.</b> Once you've issued a voucher, your checkout shows a voucher box. A voucher issued for the
+    offer, or to the customer's <code>customer_ref</code>, is already applied when their checkout opens; anyone else types
+    the code. The checkout shows what it pays and what's left for the card. A voucher is used once, so when it's worth more
+    than the price the checkout says how much would go unused, and the customer can remove it to keep it for another
+    trip. A voucher that pays it all needs no card: the pass is issued
     at once. Sales tax is charged on the full price, and the pass and its rescue card are the same however it was paid.</p>
     <p><b>Refunds.</b> If the pass is refunded, only the part paid by card goes back. The voucher stays used and stays on
     your invoice; give your customer a new one if you want to. You'll see <code>pass.ended</code> as usual. Points earned on a pass (<code>data.loyalty</code>) are earned only on the part paid by
     card.</p>
     <p><b>Settling.</b> Nothing is bought up front. GetThere collects the whole price of every pass for its Underwriter,
-    the voucher's part included, so each month we invoice you for the vouchers your customers used, with the pass each
+    the voucher's part included, so after each month we invoice you for the vouchers your customers used, with the pass each
     one paid for. You pay GetThere only; we pay the Underwriter.</p>
+    <p><b>When a voucher ends unused.</b> We send <code>voucher.expired</code> to your webhook with the voucher, its
+    <code>customer_ref</code> and <code>expired_reason</code>: <code>expires_at</code> (its expiry passed),
+    <code>bought_without_it</code> (the customer bought the pass for its offer's booking without it) or
+    <code>offer_closed</code> (every quote for its offer's booking closed unbought). Give the points back, or the benefit,
+    as your program does.</p>
     <p><b>Testing.</b> A test key makes test vouchers. They work only on test checkouts, and a real voucher never works on
     one.</p>
 
