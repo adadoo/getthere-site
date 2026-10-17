@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations for underwriters · GetThere</title>
+<meta name="description" content="How an underwriter connects its own payment gateway and rescue card issuer to GetThere: the vendors supported, the keys and webhooks each needs, test mode and going live.">
+<link rel="canonical" href="https://getthere.now/api-underwriters.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GetThere">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://getthere.now/api-underwriters.html">
+<meta property="og:title" content="GetThere integrations for underwriters">
+<meta property="og:description" content="How an underwriter connects its own payment gateway and rescue card issuer to GetThere: the vendors supported, the keys and webhooks each needs, test mode and going live.">
+<meta property="og:image" content="https://getthere.now/images/og.png?v=2">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GetThere integrations for underwriters">
+<meta name="twitter:description" content="How an underwriter connects its own payment gateway and rescue card issuer to GetThere: the vendors supported, the keys and webhooks each needs, test mode and going live.">
+<meta name="twitter:image" content="https://getthere.now/images/og.png?v=2">
+<meta name="twitter:image:alt" content="Phone notification: your flight is 3h 50m late and your pre-loaded rescue card is ready">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M7 18l18-7-7 16-3-6z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="nav.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="./">Get<span>There</span></a>
+    <nav class="links">
+    <div class="menu" id="menu"><a href="./">Traveller</a><a href="issuers.html">Card Issuer</a><a href="loyalty-programs.html">Loyalty Program</a><a href="travel-sites.html">Travel Site</a><a href="travel-platforms.html">Travel Platform</a><a href="underwriters.html" aria-current="page">Underwriter</a></div>
+    <a class="pill" href="mailto:partner@getthere.now?subject=Underwriter%20integrations">Contact us</a>
+    <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg class="bars" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="close" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </nav>
+  </div>
+</header>
+<section>
+  <div class="wrap narrow legal-doc api">
+
+    <p class="eyebrow">For underwriters</p>
+    <h1>Integrations for underwriters</h1>
+    <p class="doc-meta">Version 1 · <span class="draft">Draft</span> · Written for the team that sets up your accounts.
+    The business side is on <a href="underwriters.html">the underwriter page</a>.</p>
+
+    <div class="callout key">
+      <b>The short version.</b> You bring your own payment gateway and your own rescue card issuer. Every pass sold under
+      your policy is paid into your gateway account, and every rescue card is issued and funded on your issuer account.
+      GetThere builds and runs the integration with each vendor, so you only open the accounts, enter the keys in the
+      GetThere admin and point each vendor's webhooks at the addresses it shows you.
+    </div>
+
+    <ul class="toc">
+      <li><a href="#model">1. How it fits together</a></li>
+      <li><a href="#vendors">2. Vendors we support</a></li>
+      <li><a href="#stripe">3. Stripe (payments)</a></li>
+      <li><a href="#airwallex">4. Airwallex Issuing (rescue cards)</a></li>
+      <li><a href="#testing">5. Test mode</a></li>
+      <li><a href="#go-live">6. Going live, country by country</a></li>
+      <li><a href="#keys">7. How your keys are kept</a></li>
+      <li><a href="#new">8. A vendor that isn't listed</a></li>
+    </ul>
+
+    <h2 id="model">1. How it fits together</h2>
+    <div class="who">
+      <div class="who-card you">
+        <p class="who-tag">You bring</p>
+        <ul>
+          <li><b>A payment gateway account</b>, in your name. The traveller pays you on it, and its refunds and disputes are yours.</li>
+          <li><b>A card issuer account</b>, in your name. Each rescue card is issued and funded on it.</li>
+          <li><b>Sandbox and live keys</b> for each, entered in the GetThere admin.</li>
+          <li><b>The countries you serve</b>, with your sales tax in each, and which of your vendors each one uses.</li>
+        </ul>
+      </div>
+      <div class="gt who-card">
+        <p class="who-tag">GetThere provides</p>
+        <ul>
+          <li><b>The integration with each vendor</b>: checkout on your gateway, refunds and dispute evidence, cardholders, cards, top-ups and real-time card approvals on your issuer.</li>
+          <li><b>A webhook address for each of your accounts</b>, checked against your own signing secret.</li>
+          <li><b>A check of your keys</b> before your policy is sold, in test mode and again for real passes.</li>
+          <li><b>A sandbox to start on</b> while your own test accounts are being set up.</li>
+        </ul>
+      </div>
+    </div>
+    <p>Each country you serve picks one payment gateway and one card issuer from the vendors that work there. Your
+    partners only distribute your policy: a buyer living in that country pays on your gateway and gets a rescue card from
+    your issuer, whichever partner they bought through. A change applies to the next payment and the next card; payments
+    and cards already made stay on the account they were made on, for refunds, top-ups and changes.</p>
+
+    <h2 id="vendors">2. Vendors we support</h2>
+    <table class="fields">
+      <tr><th>Vendor</th><th>Used for</th><th>Where it works</th></tr>
+      <tr><td><b>Stripe</b></td><td>Taking the payment for each pass and each top-up, on Stripe's own payment page. Refunds and
+        dispute evidence.</td><td class="why">Buyers living in any country, on a Stripe account in a country Stripe
+        supports.</td></tr>
+      <tr><td><b>Airwallex Issuing</b></td><td>The pre-loaded rescue card: a consumer virtual card in the traveller's name,
+        with its number shown in Airwallex's own secure frame.</td><td class="why">Cardholders living in Singapore, Hong
+        Kong, Australia, the UK, Israel and the European Economic Area.</td></tr>
+    </table>
+    <p>The admin shows which vendors work in each country, and only offers those.</p>
+
+    <h2 id="stripe">3. Stripe (payments)</h2>
+    <p class="meta"><b>You enter</b> · for test and live separately, on your Payments and cards page in the admin</p>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why</th></tr>
+      <tr><td><code>Secret key</code> <span class="req">required</span></td><td>Your <code>sk_test_…</code> or
+        <code>sk_live_…</code> key, or a restricted <code>rk_…</code> key with the permissions below.</td><td class="why">Every
+        call we make on your account uses it.</td></tr>
+      <tr><td><code>Webhook secret</code> <span class="req">required</span></td><td>The <code>whsec_…</code> signing secret of
+        the endpoint you add for GetThere.</td><td class="why">We only act on events signed with it.</td></tr>
+    </table>
+    <p><b>A restricted key</b> needs write access to Checkout Sessions, Refunds and Disputes, and read access to
+    PaymentIntents, Charges and Balance.</p>
+    <p><b>The webhook.</b> In Stripe, add an endpoint at the payments address your admin page shows, which looks like
+    <code>https://my.getthere.now/webhooks/underwriters/&lt;your id&gt;/payments/stripe</code>, and send it these
+    events:</p>
+    <table class="fields">
+      <tr><th>Event</th><th>What we do</th></tr>
+      <tr><td><code>checkout.session.completed</code><br><code>checkout.session.async_payment_succeeded</code></td><td>Issue the
+        pass, or add the top-up to the rescue card.</td></tr>
+      <tr><td><code>checkout.session.async_payment_failed</code><br><code>checkout.session.expired</code></td><td>Mark the
+        payment failed, so the buyer can try again.</td></tr>
+      <tr><td><code>charge.dispute.created</code><br><code>charge.dispute.updated</code><br><code>charge.dispute.closed</code></td><td>Record
+        the dispute, end the pass if no rescue card came from it yet, and send Stripe the evidence: the terms the buyer
+        accepted, the disrupted flight, and the card and what was spent on it.</td></tr>
+    </table>
+    <p>The buyer's card statement shows your Stripe account's name. Stripe's fees are charged on your account, as Stripe
+    prices it.</p>
+
+    <h2 id="airwallex">4. Airwallex Issuing (rescue cards)</h2>
+    <p class="meta"><b>You enter</b> · for test and live separately, on your Payments and cards page in the admin</p>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why</th></tr>
+      <tr><td><code>Client ID</code> <span class="req">required</span></td><td>Your Airwallex API client ID.</td><td class="why">Signs
+        in to your account.</td></tr>
+      <tr><td><code>API key</code> <span class="req">required</span></td><td>The API key that goes with it, with Issuing
+        enabled.</td><td class="why">The same.</td></tr>
+      <tr><td><code>Card authorisation webhook secret</code> <span class="req">set it</span></td><td>The secret
+        of the remote authorisation endpoint you add for GetThere.</td><td class="why">We only answer approval requests
+        signed with it, so without it no purchase on a rescue card is approved.</td></tr>
+    </table>
+    <p><b>Remote authorisation.</b> In Airwallex, turn on remote authorisation for the card program and point it at the
+    card authorisations address your admin page shows, which looks like
+    <code>https://my.getthere.now/webhooks/underwriters/&lt;your id&gt;/cards/authorization</code>. We approve a purchase
+    only while it fits the rescue card: an airline or travel agency charge, within what is on the card, before the card
+    expires. The first approved purchase closes the card.</p>
+    <p><b>The card program.</b> Rescue cards are consumer cards in the traveller's name. Each buyer becomes a cardholder
+    on your account when they pay, so the card can be issued the moment the delay is confirmed. The card number is only
+    ever shown in Airwallex's own frame and never reaches GetThere.</p>
+
+    <h2 id="testing">5. Test mode</h2>
+    <p>Test passes use your sandbox keys, and real passes your live keys. Nothing real moves on a test pass.</p>
+    <ul>
+      <li><b>No sandbox payment keys yet?</b> Test passes are paid on GetThere's own Stripe sandbox, with Stripe's test card,
+        so your team can try the whole journey on day one.</li>
+      <li><b>No sandbox card keys yet?</b> Test rescue cards are made by GetThere, with a button to simulate a purchase.</li>
+      <li><b>Real passes never fall back.</b> A country sells real passes only once your own live keys are in for both its
+        vendors.</li>
+    </ul>
+
+    <h2 id="go-live">6. Going live, country by country</h2>
+    <ul>
+      <li>Your live Stripe and Airwallex Issuing keys are entered, and both webhook endpoints are added with their secrets.</li>
+      <li>Each country you serve is ticked, with its vendors and sales tax.</li>
+      <li>GetThere activates you for real passes. Activating makes a signed-in call to each vendor with your keys, and lists
+        anything that doesn't work yet.</li>
+      <li>Your partners make your countries active. Each one sells real passes from then on.</li>
+    </ul>
+
+    <h2 id="keys">7. How your keys are kept</h2>
+    <p>Keys are stored encrypted, test and live apart, and are never shown again: the admin shows only their last four
+    characters. To change one, enter just that field. Keys that an active country uses can't be removed until the country
+    is made inactive. Refunds go back through the account the payment was taken on, so keep those keys in while refunds
+    may still come.</p>
+
+    <h2 id="new">8. A vendor that isn't listed</h2>
+    <p>Each gateway and each issuer is a separate integration behind the same interface, so adding one doesn't change how
+    the others work. If you use a different gateway or issuer in a country, <a href="mailto:partner@getthere.now?subject=A%20new%20vendor">tell
+    us which</a>, and we'll scope the integration with you.</p>
+
+  </div>
+</section>
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="logo" href="./">Get<span>There</span></a>
+      <p style="margin-top:10px;max-width:320px">The platform behind the Flight Delay Pass, for card issuers, loyalty programs, travel sites, travel platforms and underwriters.</p>
+    </div>
+    <div class="cols">
+      <div><b style="color:#fff">Traveller</b><a href="./#forward">Get a price</a><a href="./#how">How it works</a><a href="./#faq">FAQ</a></div>
+      <div><b style="color:#fff">Card Issuer</b><a href="issuers.html">The product</a><a href="issuers.html#numbers">The numbers</a><a href="api-issuers.html">API reference</a></div>
+      <div><b style="color:#fff">Loyalty Program</b><a href="loyalty-programs.html">The product</a><a href="loyalty-programs.html#award">Award bookings</a><a href="loyalty-programs.html#numbers">The numbers</a></div>
+      <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
+      <div><b style="color:#fff">Travel Platform</b><a href="travel-platforms.html#product">The product</a><a href="travel-platforms.html#company">Company cover</a><a href="travel-platforms.html#numbers">The numbers</a></div>
+      <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
+      <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
+    </div>
+    <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues, and the Underwriter funds the pre-loaded rescue cards. GetThere provides the platform.<br>© 2026 GetThere.</div>
+  </div>
+</footer>
+<script src="site.js"></script>
+</body>
+</html>
