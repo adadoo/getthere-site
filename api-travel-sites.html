@@ -683,6 +683,9 @@
     <p>A pass bought on GetThere's checkout (<code>booking-page</code> and <code>booking-email</code>) is the customer's to
     change or refund with us: these calls refuse it with <code>409 not_in_line</code>. A pass you created with
     <code>POST /policies</code> is changed through you, and you tell us.</p>
+    <p><b>Refund it the way it was paid.</b> Whatever your customer paid the add-on with, your statement owes us the pass
+    price, and a refund in the cooling-off period comes off it. If they paid with your points or miles, give the points
+    back, not cash, so the pass never turns points into money.</p>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/changes</h3></div>
 <pre><code>{"type": "travellers", "passengers": ["Mia Tan", "Wei Lim", "Chloe Lim-Tan"]}</code></pre>
 <pre><code>{"type": "flights", "offer_id": "&lt;offer for the new flights&gt;",
