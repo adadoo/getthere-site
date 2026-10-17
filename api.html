@@ -274,7 +274,9 @@ def verified(header: str, raw_body: bytes, secret: str) -> bool:
     <code>customer_ref</code> (they forward their booking), or for a travel site <code>POST /partner/v1/quotes</code>.
     Then <code>POST /partner/v1/vouchers</code> with that offer's <code>request_id</code>, or that quote's
     <code>quote_id</code>. The voucher works only on that booking, and its checkout opens with it applied. A quote sold
-    <code>in-line</code>, in your own checkout, needs no voucher: take the points there.</p>
+    <code>in-line</code>, in your own checkout, takes no voucher: its pass is paid by card on the Underwriter's own
+    Stripe, so points can't pay for it there. To let a customer pay for a pass with points, quote with placement
+    <code>booking-page</code> and let them buy it on GetThere's checkout, where the voucher applies.</p>
 <pre><code>POST /partner/v1/vouchers
 Authorization: Bearer gt_live_…
 
