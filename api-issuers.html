@@ -213,7 +213,8 @@
       <tr><td><code>request_id</code> <span class="req">required</span></td><td>The offer's, from <code>GET /offer</code>.</td>
         <td class="why">Ties the voucher to her booking. It takes the offer's <code>customer_ref</code> and ends with it.</td></tr>
       <tr><td><code>amount</code>, <code>currency</code> <span class="req">required</span></td><td>What the voucher pays,
-        tax included, in the currency the pass is priced in.</td><td class="why">The pass price is only known once her booking
+        tax included, in your own currency if you like. If the pass is priced in another, checkout converts it at the day's
+        rate and shows both.</td><td class="why">The pass price is only known once her booking
         is forwarded: about 7.5% of her fare. A fixed amount costs you exactly what you priced in points, and her card pays
         the rest.</td></tr>
       <tr><td><code>kind</code></td><td><code>points</code>.</td><td class="why">Shown on your monthly statement.</td></tr>
@@ -228,7 +229,8 @@
       <tr><td><code>voucher.expired</code></td><td>The offer ended and the voucher was never used.</td><td>Give them
         back.</td></tr>
     </table>
-    <p>Each month we invoice you only for the vouchers used. If a pass is refunded, the card part goes back and the voucher
+    <p>Each month we invoice you only for the vouchers used, in each pass's currency (a
+    voucher in another currency at the rate its checkout used). If a pass is refunded, the card part goes back and the voucher
     stays used, so don't return the points.</p>
 
     <h2 id="show">5. Showing the forwarding address</h2>
