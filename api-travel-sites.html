@@ -308,6 +308,10 @@
         <code>state</code>, <code>postcode</code> and <code>country</code>.</td><td class="why">On GetThere's checkout these
         are filled in, so the customer only checks them and pays: fewer fields, more sales. The response tells you which
         were used. The checkout's country is always <code>residence_country</code>.</td></tr>
+      <tr><td><code>customer_ref</code> <span class="optl">optional</span></td><td>Your own id for the customer, such
+        as their member number, 1 to 128 characters without spaces.</td><td class="why">It comes back on every event about
+        them, and a <a href="api.html#vouchers">pass voucher</a> you issued with the same <code>customer_ref</code> works
+        only on this customer's quotes, so a code passed on to someone else doesn't work.</td></tr>
       <tr><td><code>passengers</code> <span class="req">required</span></td><td>Everyone travelling, as
         <code>{"title", "first_name", "last_name"}</code> or a name.</td><td class="why">Every traveller on the booking is
         watched, and the price depends on how many there are.</td></tr>
@@ -844,7 +848,7 @@
     <div class="ep"><span class="verb get">GET</span><h3>/partner/v1/rebooks/{gt_rebook}</h3></div>
 <pre><code>200 {"status": "valid", "expires_at": "2026-11-20T08:02:00+00:00",
      "booking_id": "TRV-5581203", "ota_order_id": "TRV-5581203", "booking_reference": "K7QX2M",
-     "policy_id": "0e5b…", "user_reference": "cust-88412", "request_id": null,
+     "policy_id": "0e5b…", "customer_ref": "cust-88412", "request_id": null,
      "disruption": {"flight": "SQ232", "reason": "delay", "delay_minutes": 230},
      "flights": [{"flight": "SQ232", "from": "SIN", "to": "SYD", "date": "2026-11-20", "booking_reference": "K7QX2M"},
                  {"flight": "SQ231", "from": "SYD", "to": "SIN", "date": "2026-11-27", "booking_reference": "K7QX2M"}],

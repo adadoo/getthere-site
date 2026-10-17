@@ -166,7 +166,7 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
   "livemode": true,
   "data": {
     "policy_id": "0e5b…", "reference": "P-3F9A2C1B",
-    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "user_reference": "C-88213",
+    "ota_order_id": "TRV-5581203", "request_id": "k7f2q9xm", "customer_ref": "C-88213",
     "plan": "plus", "pass_status": "triggered", "fee_before_tax": "37.50",
     "amount": "984.96", "currency": "SGD",
     "expires_at": "2026-11-21T07:41:05.118902+00:00", "reason": "delay"
@@ -187,9 +187,9 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         agents can search for it.</td></tr>
       <tr><td><code>data.ota_order_id</code></td><td>Your order id, when you gave us one.</td><td class="why">Joins the
         event to your order without a lookup.</td></tr>
-      <tr><td><code>data.request_id</code>, <code>data.user_reference</code></td><td>The <code>GET /offer</code> the
+      <tr><td><code>data.request_id</code>, <code>data.customer_ref</code></td><td>The <code>GET /offer</code> the
         booking was forwarded on, and your own id for the customer, when you gave one. A booking forwarded without an
-        offer has no <code>request_id</code>, but keeps the latest <code>user_reference</code> you gave for that
+        offer has no <code>request_id</code>, but keeps the latest <code>customer_ref</code> you gave for that
         customer.</td><td class="why">Tells you which customer the pass is for in your own terms. A loyalty program credits
         miles to that member.</td></tr>
       <tr><td><code>data.fee_before_tax</code></td><td>The pass fee without sales tax.</td><td class="why">What miles or
@@ -280,9 +280,12 @@ Authorization: Bearer gt_live_…
       <tr><td><code>amount</code>, <code>currency</code></td><td>How much of the price it pays, tax included. Leave both
         out for a voucher that pays the whole pass, whichever plan.</td><td class="why">A card pays any rest. A voucher
         is used once: one worth more than the price pays all of it, and the rest is gone.</td></tr>
-      <tr><td><code>customer_ref</code>, <code>note</code></td><td>Your own id for the customer, and your own words,
-        such as "Welcome offer". Optional.</td><td class="why">They come back on the voucher, its event and your statement,
-        so you know whose points to give back.</td></tr>
+      <tr><td><code>customer_ref</code></td><td>Your own id for the customer, such as their member number. Optional,
+        but send it.</td><td class="why">The voucher then works only on that customer's bookings: ones forwarded on an offer request,
+        or quoted, with the same <code>customer_ref</code>. So a code passed on to someone else doesn't work. It comes back on the voucher,
+        its event and your invoice.</td></tr>
+      <tr><td><code>note</code></td><td>Your own words, such as "4,000 KrisFlyer miles". Optional.</td><td class="why">It
+        comes back on the voucher, so you know what it was for.</td></tr>
       <tr><td><code>expires_at</code></td><td>When it stops working, with a time zone. Optional.</td><td class="why">After
         it, the checkout says it has expired.</td></tr>
     </table>
