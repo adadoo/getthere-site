@@ -310,8 +310,8 @@
         were used. The checkout's country is always <code>residence_country</code>.</td></tr>
       <tr><td><code>customer_ref</code> <span class="optl">optional</span></td><td>Your own id for the customer, such
         as their member number, 1 to 128 characters without spaces.</td><td class="why">It comes back on every event about
-        them, and a <a href="api.html#vouchers">pass voucher</a> you issued with the same <code>customer_ref</code> works
-        only on this customer's quotes, so a code passed on to someone else doesn't work.</td></tr>
+        them. To let them pay with your points, issue a <a href="api.html#vouchers">pass voucher</a> with this quote's
+        <code>quote_id</code>: its checkout opens with the voucher applied.</td></tr>
       <tr><td><code>passengers</code> <span class="req">required</span></td><td>Everyone travelling, as
         <code>{"title", "first_name", "last_name"}</code> or a name.</td><td class="why">Every traveller on the booking is
         watched, and the price depends on how many there are.</td></tr>
