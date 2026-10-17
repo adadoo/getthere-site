@@ -311,8 +311,8 @@ Authorization: Bearer gt_live_…
         the customer swaps it back for points. A used one answers 409.</td></tr>
     </table>
     <p><b>At checkout.</b> Once you've issued a voucher, your checkout shows a voucher box. A voucher issued for the
-    offer, or to the customer's <code>customer_ref</code>, is already applied when their checkout opens; anyone else types
-    the code. The checkout shows what it pays and what's left for the card. A voucher is used once, so when it's worth more
+    offer (<code>request_id</code>) is already applied when that booking's checkout opens. One issued with only a
+    <code>customer_ref</code> stays open until the customer types its code, on any of their bookings. The checkout shows what it pays and what's left for the card. A voucher is used once, so when it's worth more
     than the price the checkout says how much would go unused, and the customer can remove it to keep it for another
     trip. A voucher that pays it all needs no card: the pass is issued
     at once. Sales tax is charged on the full price, and the pass and its rescue card are the same however it was paid.</p>
