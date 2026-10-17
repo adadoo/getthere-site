@@ -49,8 +49,9 @@
 
     <div class="callout key">
       <b>The short version.</b> You list the Flight Delay Pass as one of your points redemption partners. Your own
-      GetThere redemption page takes the points, posts a voucher to us and shows the cardholder where to forward their
-      booking email. That's two calls: <code>GET /offer</code> and <code>POST /vouchers</code>. GetThere builds the rest:
+      GetThere redemption page shows the cardholder where to forward their booking email, and lets them swap points for a
+      voucher. That's two calls: <code>GET /offer</code> when the page opens, and <code>POST /vouchers</code> if they
+      redeem. GetThere builds the rest:
       pricing, checkout with the voucher already applied, flight tracking, pre-loaded rescue cards, every message to the
       cardholder, and support.
     </div>
@@ -77,8 +78,8 @@
         <ul>
           <li><b>The "Just booked a flight?" push notification</b>, from your own card data, after an airline charge. It opens
           your redemption page.</li>
-          <li><b>Your GetThere redemption page</b>, in your app, beside your other redemption partners: it takes the points
-          and shows the forwarding address.</li>
+          <li><b>Your GetThere redemption page</b>, in your app, beside your other redemption partners: it shows the forwarding
+          address and takes the points if the cardholder redeems.</li>
           <li><b>A webhook endpoint</b>, to hear when a voucher is used or ends unused, so you can give the points back.</li>
           <li><b>A push endpoint, push receipts and a purchase-match endpoint</b> <span class="opt">optional</span>.</li>
         </ul>
@@ -101,10 +102,10 @@
     <div class="shots">
       <figure><img src="images/flow-1-nudge.webp?v=3" alt="Push notification after an airline payment: Just booked a flight?" loading="lazy">
         <figcaption><b>1. Your push</b>"Just booked a flight?" after an airline charge. It opens your redemption page.</figcaption></figure>
-      <figure><img src="images/flow-2-redeem.webp" alt="The issuer's redemption page: 5,000 points for A$50 off the Flight Delay Pass" loading="lazy">
-        <figcaption><b>2. Your redemption page</b>You call <code>GET /offer</code> as it opens. She redeems 5,000 points.</figcaption></figure>
-      <figure><img src="images/flow-2-forward.webp" alt="The issuer's confirmation screen with the forwarding address and a Copy button" loading="lazy">
-        <figcaption><b>3. Your confirmation</b>You take the points, <code>POST /vouchers</code>, and show her forwarding address.</figcaption></figure>
+      <figure><img src="images/flow-2-redeem.webp?v=2" alt="The issuer's redemption page: the forwarding address, and 5,000 points for A$50 off the Flight Delay Pass" loading="lazy">
+        <figcaption><b>2. Your redemption page</b>You call <code>GET /offer</code> as it opens and show her forwarding address. Redeeming is optional.</figcaption></figure>
+      <figure><img src="images/flow-2-forward.webp?v=2" alt="The same page after redeeming: the A$50 voucher will be applied at checkout" loading="lazy">
+        <figcaption><b>3. She redeems</b>You take the points and <code>POST /vouchers</code>. The page now says her voucher will be applied at checkout.</figcaption></figure>
       <figure><img src="images/flow-2-checkout.webp" alt="GetThere's checkout with the A$50 voucher applied and A$66.25 left to pay" loading="lazy">
         <figcaption><b>4. Our checkout</b>She forwards her booking, gets her price by email, and finds the voucher applied.</figcaption></figure>
     </div>
@@ -116,23 +117,27 @@
       </li>
       <li>
         <div class="lanes"><span class="lane you">Your server</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
-        <h3>Your redemption page opens: you ask for an offer</h3>
+        <h3>Your redemption page opens: you ask for an offer and show her address</h3>
+        <p>Show <code>forward_to</code> with a Copy button, following <a href="#show">the address rules</a>, and the
+        option to redeem points.</p>
         <p class="call"><code>GET /partner/v1/offer?residence_country=AU&amp;opened=true&amp;customer_ref=C-88213</code> · <a href="#offer">details</a></p>
       </li>
       <li>
         <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
-        <h3>She redeems: you take the points and post the voucher</h3>
+        <h3>If she redeems: you take the points and post the voucher</h3>
+        <p>Then change the page's copy: "Your A$50 voucher will be applied at checkout." The address stays the same.</p>
         <p class="call"><code>POST /partner/v1/vouchers</code> with the offer's <code>request_id</code> · <a href="#vouchers">details</a></p>
       </li>
       <li>
-        <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
-        <h3>You show her forwarding address</h3>
-        <p>With a Copy button, following <a href="#show">the address rules</a>. She forwards the airline's confirmation to it.</p>
+        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
+        <h3>She forwards her booking email</h3>
+        <p>To the address she copied, with or without a voucher. We read every flight and traveller on it.</p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>She gets a price and buys the pass</h3>
-        <p>We email her the plans within minutes. Checkout opens with the voucher applied, and her card pays the rest.</p>
+        <p>We email her the plans within minutes. Checkout opens with the voucher applied, and her card pays the rest.
+        Without a voucher, she pays by card.</p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your webhook</span></div>
@@ -195,7 +200,7 @@
     <a href="api.html#errors">errors</a>). If the call fails, don't take any points: show an error and let them try again.</p>
 
     <h2 id="vouchers">4. <code>POST /partner/v1/vouchers</code></h2>
-    <p class="meta"><b>You call GetThere</b> · from your server, once the cardholder redeems and you've taken the points</p>
+    <p class="meta"><b>You call GetThere</b> · from your server, if the cardholder redeems, once you've taken the points</p>
     <p>A pass voucher for the offer you just made. It works only on the booking forwarded to that offer's
     <code>forward_to</code>, and its checkout opens with it applied: the cardholder never types a code.</p>
 <pre><code>POST /partner/v1/vouchers
@@ -227,9 +232,9 @@
     stays used, so don't return the points.</p>
 
     <h2 id="show">5. Showing the forwarding address</h2>
-    <p>Your confirmation screen shows <code>forward_to</code> with a Copy button: "Forward your booking email to this
-    address. Your voucher is already applied at checkout." The cardholder copies it, switches to their email, and forwards
-    the airline's confirmation.</p>
+    <p>Your redemption page shows <code>forward_to</code> with a Copy button as soon as it opens, whether or not the
+    cardholder redeems. Once they do, add: "Your voucher will be applied at checkout." The cardholder copies the address,
+    switches to their email, and forwards the airline's confirmation.</p>
     <div class="callout must"><b>The address shown can't be copied on its own.</b> Only the full <code>forward_to</code>
       carries the offer's code, which is what finds the voucher. So:
       <ul>
