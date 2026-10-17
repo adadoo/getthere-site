@@ -48,18 +48,19 @@
     plus <a href="#miles">crediting miles</a>.</p>
 
     <div class="callout key">
-      <b>The short version.</b> All you must build is one push notification of your own, after an airline charge on your
-      card, that opens your offer. <b>Everything else is optional.</b> Without it, the cardholder still gets every message
-      on WhatsApp and by email. GetThere builds the rest: the offer page, pricing, checkout, flight tracking, pre-loaded
-      rescue cards, every message to the cardholder, and support.
+      <b>The short version.</b> You list the Flight Delay Pass as one of your points redemption partners. Your own
+      GetThere redemption page takes the points, posts a voucher to us and shows the cardholder where to forward their
+      booking email. That's two calls: <code>GET /offer</code> and <code>POST /vouchers</code>. GetThere builds the rest:
+      pricing, checkout with the voucher already applied, flight tracking, pre-loaded rescue cards, every message to the
+      cardholder, and support.
     </div>
 
     <ul class="toc">
       <li><a href="#who">1. Who builds what</a></li>
-      <li><a href="#journey">2. The journey, call by call</a></li>
-      <li><a href="#levels">3. How much to build</a></li>
-      <li><a href="#offer">4. GET /offer</a></li>
-      <li><a href="#show">5. Showing the offer in your app</a></li>
+      <li><a href="#journey">2. The journey, screen by screen</a></li>
+      <li><a href="#offer">3. GET /offer</a></li>
+      <li><a href="#vouchers">4. POST /vouchers</a></li>
+      <li><a href="#show">5. Showing the forwarding address</a></li>
       <li><a href="#push">6. Your push endpoint</a></li>
       <li><a href="#receipts">7. POST /push-receipts</a></li>
       <li><a href="#match">8. Your purchase-match endpoint</a></li>
@@ -75,100 +76,83 @@
         <p class="who-tag">You build</p>
         <ul>
           <li><b>The "Just booked a flight?" push notification</b>, from your own card data, after an airline charge. It opens
-          your offer.</li>
-          <li><b>A push endpoint</b> <span class="opt">optional</span> that shows GetThere's three messages in your app: pass
-          bought, rescue card ready, rescue card used.</li>
-          <li><b>A purchase-match endpoint</b> <span class="opt">optional</span> that answers yes or no: did this cardholder
-          pay this airline this amount?</li>
-          <li><b>Push receipts</b> <span class="opt">optional</span>: which of our pushes reached the cardholder.</li>
-          <li><b>A webhook endpoint</b> <span class="opt">optional</span> for your own systems and customer service.</li>
+          your redemption page.</li>
+          <li><b>Your GetThere redemption page</b>, in your app, beside your other redemption partners: it takes the points
+          and shows the forwarding address.</li>
+          <li><b>A webhook endpoint</b>, to hear when a voucher is used or ends unused, so you can give the points back.</li>
+          <li><b>A push endpoint, push receipts and a purchase-match endpoint</b> <span class="opt">optional</span>.</li>
         </ul>
       </div>
-      <div class="who-card gt">
+      <div class="gt who-card">
         <p class="who-tag">GetThere provides</p>
         <ul>
-          <li><b>Your offer pages</b> on <code>https://&lt;issuer&gt;.getthere.now</code>, in your colours: a full page and a
-          short one to embed in your app.</li>
           <li><b>Your forwarding address</b>, <code>quote@&lt;issuer&gt;.getthere.now</code>, where cardholders send their
           booking email.</li>
           <li><b>The partner API</b> at <code>https://api.getthere.now/partner/v1</code>.</li>
+          <li><b>Checkout</b> on <code>https://&lt;issuer&gt;.getthere.now</code>, in your colours, with the voucher already
+          applied.</li>
           <li><b>Every message to the cardholder:</b> the price, the pass, and the rescue card on WhatsApp and by email.</li>
         </ul>
       </div>
     </div>
 
-    <h2 id="journey">2. The journey, call by call</h2>
-    <p>One cardholder, Mia, from booking to rebooking.</p>
+    <h2 id="journey">2. The journey, screen by screen</h2>
+    <p>One cardholder, Mia, pays an airline A$1,550 with your card and redeems 5,000 points for A$50 off her pass.</p>
+    <div class="shots">
+      <figure><img src="images/flow-1-nudge.webp?v=3" alt="Push notification after an airline payment: Just booked a flight?" loading="lazy">
+        <figcaption><b>1. Your push</b>"Just booked a flight?" after an airline charge. It opens your redemption page.</figcaption></figure>
+      <figure><img src="images/flow-2-redeem.webp" alt="The issuer's redemption page: 5,000 points for A$50 off the Flight Delay Pass" loading="lazy">
+        <figcaption><b>2. Your redemption page</b>You call <code>GET /offer</code> as it opens. She redeems 5,000 points.</figcaption></figure>
+      <figure><img src="images/flow-2-forward.webp" alt="The issuer's confirmation screen with the forwarding address and a Copy button" loading="lazy">
+        <figcaption><b>3. Your confirmation</b>You take the points, <code>POST /vouchers</code>, and show her forwarding address.</figcaption></figure>
+      <figure><img src="images/flow-2-checkout.webp" alt="GetThere's checkout with the A$50 voucher applied and A$66.25 left to pay" loading="lazy">
+        <figcaption><b>4. Our checkout</b>She forwards her booking, gets her price by email, and finds the voucher applied.</figcaption></figure>
+    </div>
     <ol class="journey">
-      <li>
-        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane you">Your systems</span></div>
-        <h3>Mia pays an airline with your card</h3>
-        <p>Your systems see the charge. Nothing reaches GetThere: card data stays with you.</p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane you">Your server</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
-        <h3>You ask for an offer</h3>
-        <p>One call per push, with the country your cardholder lives in, so a booking forwarded from it is traced back to it
-        and priced with that country's tax.</p>
-        <p class="call"><code>GET /partner/v1/offer</code> · <span class="builder gt">GetThere provides it</span></p>
-      </li>
       <li>
         <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
         <h3>You send "Just booked a flight?"</h3>
-        <p>It opens the offer page (<code>merchandising_url</code>), inside your app or in a browser.</p>
+        <p>From your own card data, after an airline charge. Nothing reaches GetThere: card data stays with you.</p>
       </li>
       <li>
-        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
-        <h3>Mia forwards her booking email</h3>
-        <p>She copies her own address from the offer and forwards the airline's confirmation to it. We read every flight and
-        traveller on it.</p>
+        <div class="lanes"><span class="lane you">Your server</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
+        <h3>Your redemption page opens: you ask for an offer</h3>
+        <p class="call"><code>GET /partner/v1/offer?residence_country=AU&amp;opened=true&amp;customer_ref=C-88213</code> · <a href="#offer">details</a></p>
       </li>
       <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your API</span><span class="opt">optional</span></div>
-        <h3>We check the charge with you</h3>
-        <p class="call"><code>POST &lt;your API&gt;/v1/getthere/purchase-match</code> · <span class="builder you">you build it</span></p>
+        <div class="lanes"><span class="lane card">Mia</span><span class="arrow">→</span><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span></div>
+        <h3>She redeems: you take the points and post the voucher</h3>
+        <p class="call"><code>POST /partner/v1/vouchers</code> with the offer's <code>request_id</code> · <a href="#vouchers">details</a></p>
+      </li>
+      <li>
+        <div class="lanes"><span class="lane you">Your app</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
+        <h3>You show her forwarding address</h3>
+        <p>With a Copy button, following <a href="#show">the address rules</a>. She forwards the airline's confirmation to it.</p>
       </li>
       <li>
         <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane card">Mia</span></div>
-        <h3>Mia gets a price and buys a pass</h3>
-        <p>We email her the plans within minutes. She pays at checkout on <code>&lt;issuer&gt;.getthere.now</code>.</p>
+        <h3>She gets a price and buys the pass</h3>
+        <p>We email her the plans within minutes. Checkout opens with the voucher applied, and her card pays the rest.</p>
       </li>
       <li>
-        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your push endpoint</span><span class="arrow">→</span><span class="lane card">Mia</span><span class="opt">optional</span></div>
-        <h3>Pushes: pass bought, rescue card ready, rescue card used</h3>
-        <p class="call"><code>POST &lt;your push URL&gt;</code> · <span class="builder you">you build it</span></p>
-      </li>
-      <li>
-        <div class="lanes"><span class="lane you">Your systems</span><span class="arrow">→</span><span class="lane gt">GetThere</span><span class="opt">optional</span></div>
-        <h3>You report which pushes arrived</h3>
-        <p class="call"><code>POST /partner/v1/push-receipts</code> · <span class="builder gt">GetThere provides it</span></p>
+        <div class="lanes"><span class="lane gt">GetThere</span><span class="arrow">→</span><span class="lane you">Your webhook</span></div>
+        <h3>The voucher is used, or you give the points back</h3>
+        <p><code>voucher.used</code> when her pass is bought. <code>voucher.expired</code> if she never forwards a booking or
+        never buys: give her points back. <a href="#webhooks">Webhooks</a></p>
       </li>
     </ol>
 
-    <h2 id="levels">3. How much to build</h2>
-    <div class="paths">
-      <div class="path"><span class="tag">Smallest</span><h3>Traced offers in your app</h3>
-        <p>Call <code>GET /offer</code> per push and open its <code>merchandising_url</code> in your app.</p>
-        <ul><li>One API call</li><li>Prices in the quote email include your cardholder's tax</li><li>Each push traced to the passes it sells</li><li>The cardholder never leaves your
-        app</li></ul></div>
-      <div class="path"><span class="tag">Fullest</span><h3>Everything in your app</h3>
-        <p>Add your push endpoint, push receipts, purchase match and webhooks.</p>
-        <ul><li>GetThere's alerts appear in your app</li><li>More bookings accepted at a high fare</li><li>Your agents see
-        every pass event</li></ul></div>
-    </div>
-
-    <h2 id="offer">4. <code>GET /partner/v1/offer</code></h2>
-    <p class="meta"><b>You call GetThere</b> · from your server, once per push or banner you show</p>
+    <h2 id="offer">3. <code>GET /partner/v1/offer</code></h2>
+    <p class="meta"><b>You call GetThere</b> · from your server, each time your redemption page opens</p>
     <p>Makes a fresh offer: a code, carried in the offer's links and in the forwarding address, that ties a booking
-    forwarded from it back to this push. You'll see how many cardholders opened it, forwarded a booking, got a price and
+    forwarded from it back to this visit to your page. You'll see how many cardholders opened it, forwarded a booking, got a price and
     bought a pass. Tell us the country your cardholder lives in: the booking they forward is then quoted by the underwriter
     selling there, with that country's tax already in each price, so the price in their email is the price at checkout.</p>
-<pre><code>GET /partner/v1/offer?residence_country=SG&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;customer_ref=C-88213</code></pre>
+<pre><code>GET /partner/v1/offer?residence_country=AU&amp;opened=true&amp;utm_source=app&amp;utm_medium=push&amp;utm_campaign=just-booked&amp;customer_ref=C-88213</code></pre>
 <pre><code>200 {"status": "offered",
-     "residence_country": "SG",
+     "residence_country": "AU",
      "customer_ref": "C-88213",
      "request_id": "k7f2q9xm",
-     "merchandising_url": "https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm",
      "forward_to": "quote+k7f2q9xm@&lt;issuer&gt;.getthere.now",
      "product_name": "Flight Delay Pass",
      "reference": "R-K7F2Q9XM"}</code></pre>
@@ -177,16 +161,15 @@
       <tr><td><code>residence_country</code> <span class="req">required</span></td><td>The 2-letter ISO country your
         cardholder lives in, like <code>SG</code>: the country on their card account.</td><td class="why">Picks the
         underwriter and the tax, so their quote email shows the full price. With a live key, a country we don't sell in
-        yet answers <code>{"status": "declined", "reason": "not_on_sale"}</code>: don't send that push.</td></tr>
+        yet answers <code>{"status": "declined", "reason": "not_on_sale"}</code>: don't offer the redemption.</td></tr>
       <tr><td><code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code> <span class="optl">optional</span></td>
         <td>Where you show the offer. Up to 64 letters, digits, <code>.</code>, <code>-</code> or <code>_</code>, lowercased.
         <code>src</code> is short for <code>utm_source</code>.</td><td class="why">Your offer report splits by them, so you see
         which pushes, banners and campaigns sell passes.</td></tr>
       <tr><td><code>referrer_url</code> <span class="optl">optional</span></td><td>On a web page, the address the visitor came
         from.</td><td class="why">Counted by site.</td></tr>
-      <tr><td><code>opened</code> <span class="optl">optional</span></td><td><code>true</code> when you show
-        <code>forward_to</code> on your own screen at once instead of opening one of our pages.</td><td class="why">Counts the
-        offer as opened now, so your funnel doesn't show it as never seen.</td></tr>
+      <tr><td><code>opened</code> <span class="req">set it</span></td><td><code>true</code>: your own page shows the
+        offer.</td><td class="why">Counts the offer as opened now, so your funnel doesn't show it as never seen.</td></tr>
       <tr><td><code>customer_ref</code> <span class="optl">optional</span></td><td>Your own id for the customer: 1 to 128
         printable characters, no spaces. Never a card number. Echoed in the answer.</td><td class="why">It comes back on every
         webhook event, push and purchase check about this customer, even for a later booking they forward without an
@@ -195,15 +178,10 @@
     <table class="fields">
       <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
       <tr><td><code>status</code></td><td><code>offered</code>, or <code>declined</code> with <code>reason</code>
-        <code>not_on_sale</code> where we don't sell yet.</td><td class="why">Send the push only when it's
-        <code>offered</code>.</td></tr>
-      <tr><td><code>request_id</code></td><td>This push's code, the one in its page link and forwarding address. It isn't
-        a quote: quotes come once the cardholder forwards a booking, and are traced back to it.</td><td class="why">Store it with the push you sent, to join
-        our numbers to yours.</td></tr>
-      <tr><td><code>merchandising_url</code></td><td>The offer page, in your widget settings. It sits inside your app (a web
-        view or an iframe) and opens in a browser too.</td><td class="why">The one link for this offer: your push's
-        destination, and the link in an email or a banner. The cardholder reads the offer, copies their address and goes to
-        their email.</td></tr>
+        <code>not_on_sale</code> where we don't sell yet.</td><td class="why">Offer the redemption only when it's <code>offered</code>.</td></tr>
+      <tr><td><code>request_id</code></td><td>This offer's code, the one in its forwarding address. It isn't a quote: quotes
+        come once the cardholder forwards a booking, and are traced back to it.</td><td class="why">Post the voucher with it,
+        and keep it with the redemption in your points system.</td></tr>
       <tr><td><code>forward_to</code></td><td>The cardholder's forwarding address for this offer,
         <code>quote+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>. While your partner is in test mode, that address makes
         test passes. Once you're live, a test key gets <code>test+&lt;code&gt;@&lt;issuer&gt;.getthere.now</code>
@@ -214,29 +192,54 @@
         it to us and we can find the cardholder's journey.</td></tr>
     </table>
     <p>Errors: <code>401</code>, <code>403</code> and <code>503</code> while you're paused (see
-    <a href="api.html#errors">errors</a>). If the call fails, don't send the push: try again with the next one.</p>
+    <a href="api.html#errors">errors</a>). If the call fails, don't take any points: show an error and let them try again.</p>
 
-    <h2 id="show">5. Showing the offer in your app</h2>
-<pre><code>&lt;!-- In a web view, open merchandising_url full screen. Or in a page: --&gt;
-&lt;iframe src="https://&lt;issuer&gt;.getthere.now/offer/k7f2q9xm" title="Flight Delay Pass"
-        allow="clipboard-write"
-        style="width:100%;max-width:560px;border:0;height:640px"&gt;&lt;/iframe&gt;</code></pre>
-    <p>Keep <code>allow="clipboard-write"</code>: without it, browsers block the copy button inside a frame.</p>
-    <p>The page shows the offer, the cardholder's address with a copy button, and three steps. It needs no key. Opening it
-    counts the offer as opened. The cardholder copies the address, switches to their email, and forwards their booking.</p>
-    <div class="callout must"><b>The address shown can't be copied on its own.</b> The page shows the plain
-      <code>quote@&lt;issuer&gt;.getthere.now</code>, which is easier to read, but only the copy button (or a tap on the address)
-      copies the full <code>forward_to</code> with its code. If you show the address on your own screen instead, do the same:
+    <h2 id="vouchers">4. <code>POST /partner/v1/vouchers</code></h2>
+    <p class="meta"><b>You call GetThere</b> · from your server, once the cardholder redeems and you've taken the points</p>
+    <p>A pass voucher for the offer you just made. It works only on the booking forwarded to that offer's
+    <code>forward_to</code>, and its checkout opens with it applied: the cardholder never types a code.</p>
+<pre><code>POST /partner/v1/vouchers
+{"kind": "points",
+ "request_id": "k7f2q9xm",
+ "amount": 50, "currency": "AUD",
+ "note": "5,000 points"}</code></pre>
+    <table class="fields">
+      <tr><th>Field</th><th>What it is</th><th>Why it matters</th></tr>
+      <tr><td><code>request_id</code> <span class="req">required</span></td><td>The offer's, from <code>GET /offer</code>.</td>
+        <td class="why">Ties the voucher to her booking. It takes the offer's <code>customer_ref</code> and ends with it.</td></tr>
+      <tr><td><code>amount</code>, <code>currency</code> <span class="req">required</span></td><td>What the voucher pays,
+        tax included, in the currency the pass is priced in.</td><td class="why">The pass price is only known once her booking
+        is forwarded: about 7.5% of her fare. A fixed amount costs you exactly what you priced in points, and her card pays
+        the rest.</td></tr>
+      <tr><td><code>kind</code></td><td><code>points</code>.</td><td class="why">Shown on your monthly statement.</td></tr>
+      <tr><td><code>note</code> <span class="optl">optional</span></td><td>Up to 200 characters, such as the points
+        taken.</td><td class="why">Comes back on the voucher and its webhooks.</td></tr>
+    </table>
+    <p>The answer is the voucher, with its <code>code</code> and <code>status</code> <code>issued</code>. Every voucher field,
+    and how to look one up or cancel it, is on <a href="api.html#vouchers">the basics page</a>.</p>
+    <table class="fields">
+      <tr><th>Webhook</th><th>What happened</th><th>What to do with the points</th></tr>
+      <tr><td><code>voucher.used</code></td><td>Her pass was bought with it.</td><td>Nothing: they're spent.</td></tr>
+      <tr><td><code>voucher.expired</code></td><td>The offer ended and the voucher was never used.</td><td>Give them
+        back.</td></tr>
+    </table>
+    <p>Each month we invoice you only for the vouchers used. If a pass is refunded, the card part goes back and the voucher
+    stays used, so don't return the points.</p>
+
+    <h2 id="show">5. Showing the forwarding address</h2>
+    <p>Your confirmation screen shows <code>forward_to</code> with a Copy button: "Forward your booking email to this
+    address. Your voucher is already applied at checkout." The cardholder copies it, switches to their email, and forwards
+    the airline's confirmation.</p>
+    <div class="callout must"><b>The address shown can't be copied on its own.</b> Only the full <code>forward_to</code>
+      carries the offer's code, which is what finds the voucher. So:
       <ul>
-        <li>show the address without its <code>+code</code>;</li>
+        <li>show the address without its <code>+code</code>: <code>quote@&lt;issuer&gt;.getthere.now</code>, easier to read;</li>
         <li>make it unselectable, with no long-press menu and no automatic mail link (on the web:
         <code>user-select: none; -webkit-touch-callout: none</code> and
         <code>&lt;meta name="format-detection" content="email=no"&gt;</code>);</li>
-        <li>copy the whole <code>forward_to</code> when the address or a Copy button is tapped;</li>
-        <li>call <code>GET /offer</code> with <code>opened=true</code>.</li>
+        <li>copy the whole <code>forward_to</code> when the address or the Copy button is tapped.</li>
       </ul>
-      A booking forwarded to the plain address still gets a price, but it isn't traced to your push, so your numbers
-      undercount what your pushes sell.</div>
+      A booking forwarded to the plain address still gets a price, but not the voucher.</div>
     <p>Don't open a mail app with the address pre-filled. A cardholder can't forward an existing email from a new message,
     so it only gets in the way.</p>
 
@@ -321,8 +324,9 @@ Authorization: Bearer &lt;the token you gave us&gt;
     </table>
     <p>We wait up to 5 seconds. A timeout or error never blocks the cardholder: the booking goes through our other checks.</p>
 
-    <h2 id="webhooks">9. Webhooks <span class="opt">optional</span></h2>
-    <p>Give us a test and a live address, and we'll tell your systems about every pass your cardholders buy: issued, ended,
+    <h2 id="webhooks">9. Webhooks</h2>
+    <p>Give us a test and a live address. You need it for <code>voucher.used</code> and <code>voucher.expired</code>, to know
+    when to give points back. We also tell your systems about every pass your cardholders buy: issued, ended,
     an email that bounced, a rescue card issued and used. The format, retries, every event and how to check the signature
     are on <a href="api.html#webhooks">the basics page</a>. They're most useful for your customer service: when a cardholder
     calls, your agent sees what we sent and when.</p>
@@ -363,12 +367,12 @@ Authorization: Bearer &lt;the token you gave us&gt;
       <tr><th>Do this</th><th>Expect</th><th>Proves</th></tr>
       <tr><td><code>GET /ping</code> with your test key</td><td><code>"mode": "test"</code></td><td class="why">Your key and
         connection work.</td></tr>
-      <tr><td><code>GET /offer</code> and open <code>merchandising_url</code> in your app</td><td>The short page, in your
-        colours, with a test banner</td><td class="why">It fits your screen.</td></tr>
+      <tr><td><code>GET /offer</code>, then <code>POST /vouchers</code> with its <code>request_id</code></td><td>A voucher with
+        <code>status: issued</code></td><td class="why">Your redemption page's two calls work.</td></tr>
       <tr><td>Long-press and try to select the address shown</td><td>Nothing selects. Copy gives
         <code>quote+&lt;code&gt;@…</code> (<code>test+&lt;code&gt;@…</code> once you're live)</td><td class="why">The code can't be lost.</td></tr>
-      <tr><td>Forward a real booking email to the copied address</td><td>A "[Test]" price email within minutes</td><td
-        class="why">The journey works end to end.</td></tr>
+      <tr><td>Forward a real booking email to the copied address</td><td>A "[Test]" price email within minutes, and a
+        checkout with the voucher applied</td><td class="why">The journey works end to end.</td></tr>
       <tr><td>Buy a plan with the test payment page</td><td>A <code>pass_purchased</code> push, a <code>pass.issued</code>
         webhook</td><td class="why">Your push endpoint and webhooks work.</td></tr>
       <tr><td>Ask us to delay the test flight by 4 hours</td><td>A <code>card_issued</code> push, the test card on WhatsApp (recorded) and by
@@ -383,7 +387,7 @@ Authorization: Bearer &lt;the token you gave us&gt;
     <ul>
       <li>Your push wording, and our push wording if you use your push endpoint, is agreed with us and the Underwriter.</li>
       <li>The test cases above pass.</li>
-      <li>If you show the address yourself, it follows <a href="#show">the rules</a>.</li>
+      <li>Your redemption page shows the address following <a href="#show">the rules</a>, and gives points back on <code>voucher.expired</code>.</li>
       <li>Your live push URL, purchase-match URL and token are with us, if you use them.</li>
       <li>Your live webhook address is set and checks signatures, if you use one.</li>
       <li>We issue your live key and switch you live. Swap the key: the code stays the same.</li>

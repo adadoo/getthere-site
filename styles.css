@@ -273,6 +273,12 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 
 /* API reference: who builds what, and the journey call by call */
 .api .who { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 8px; }
+.api .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 6px; }
+.api .shots figure { margin: 0; }
+.api .shots img { width: 100%; height: auto; display: block; border-radius: 18px; }
+.api .shots figcaption { font-size: 13px; line-height: 1.4; color: var(--muted); margin-top: 8px; }
+.api .shots figcaption b { display: block; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+@media (max-width: 720px) { .api .shots { grid-template-columns: 1fr 1fr; gap: 16px 12px; } }
 .api .who-card { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; }
 .api .who-card.you { border-top: 4px solid #7c3aed; }
 .api .who-card.gt { border-top: 4px solid var(--accent); }
