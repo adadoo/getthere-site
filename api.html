@@ -299,11 +299,11 @@ Authorization: Bearer gt_live_…
     <p><b>At checkout.</b> Once you've issued a voucher, your checkout shows a voucher box. The customer types the code, sees
     what it pays and what's left for the card, and pays the rest. A voucher that pays it all needs no card: the pass is issued
     at once. Sales tax is charged on the full price, and the pass and its rescue card are the same however it was paid.</p>
-    <p><b>Refunds.</b> If the pass is refunded, the voucher comes back and can be used again until it expires. You'll see
-    <code>pass.ended</code> as usual. Points earned on a pass (<code>data.loyalty</code>) are earned only on the part paid by
+    <p><b>Refunds.</b> If the pass is refunded, only the part paid by card goes back. The voucher stays used and stays on
+    your statement; give your customer a new one if you want to. You'll see <code>pass.ended</code> as usual. Points earned on a pass (<code>data.loyalty</code>) are earned only on the part paid by
     card.</p>
-    <p><b>Settling.</b> Nothing is bought up front. Each month your statement lists the vouchers used, and any given back by a
-    refund, with the Underwriter that sold each pass. You settle each total with that Underwriter, taken off your share.</p>
+    <p><b>Settling.</b> Nothing is bought up front. Each month your statement lists the vouchers used, with the Underwriter
+    that sold each pass. You settle each total with that Underwriter, taken off your share.</p>
     <p><b>Testing.</b> A test key makes test vouchers. They work only on test checkouts, and a real voucher never works on
     one.</p>
 
