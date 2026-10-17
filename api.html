@@ -196,9 +196,9 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         points are earned on: <code>amount_paid</code> on <code>pass.issued</code> includes the tax.</td></tr>
       <tr><td><code>data.plan</code>, <code>data.pass_status</code></td><td>The plan bought and the pass's status when the
         event was made: <code>active</code>, <code>triggered</code> (rescue card sent), <code>expired_no_claim</code> (every
-        flight watched, no delay past the trigger), <code>refunded</code> (refunded, replaced by a new pass, or ended by an
-        early cancellation) or <code>voided</code> (no rescue card: the airline said the booking was cancelled or never
-        existed).</td><td class="why">Show your agents the current state without calling us.</td></tr>
+        flight watched, no delay past the trigger), <code>refunded</code> (refunded, or ended by an
+        early cancellation) or <code>voided</code> (ended with no refund: the booking was cancelled or changed after
+        cooling-off, or the airline said it was cancelled or never existed).</td><td class="why">Show your agents the current state without calling us.</td></tr>
     </table>
     <table class="fields">
       <tr><th>Type</th><th>Sent when, with</th><th>Why it matters</th></tr>
@@ -208,10 +208,9 @@ GetThere-Signature: t=1763624465,v1=5f0c…e91a
         <code>customer_ref</code> and <code>amount_used</code>.</td><td class="why">Your record of the sale, and the link to send a
         customer who asks "where's my pass?".</td></tr>
       <tr><td><code>pass.changed</code></td><td>Names corrected (<code>change: "travellers"</code>,
-        <code>passengers</code>) or the pass moved to new flights (<code>change: "flights"</code>, <code>replaces</code>:
-        the old pass).</td><td class="why">Keeps your booking and our pass in step after a change.</td></tr>
+        <code>passengers</code>). A pass doesn't move to new flights: a changed booking ends it.</td><td class="why">Keeps your booking and our pass in step after a change.</td></tr>
       <tr><td><code>pass.ended</code></td><td>The pass ended before travel. <code>reason</code>: <code>refunded</code>,
-        <code>replaced</code> (by a new pass), <code>flight_cancelled_before_watch</code> or <code>expired</code> (watching
+        <code>cancelled</code> (no refund), <code>flight_cancelled_before_watch</code> or <code>expired</code> (watching
         ended with no delay past the trigger), and <code>refund</code> (the amount) where one is due.</td><td class="why">Stops your agents promising a rescue card that won't
         come, and tells you a refund to reconcile.</td></tr>
       <tr><td><code>email.bounced</code></td><td>Our email to the customer bounced. <code>email_kind</code> says which,
