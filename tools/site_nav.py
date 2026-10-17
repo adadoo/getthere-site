@@ -25,12 +25,12 @@ COLUMNS = (("Traveller", (("Get a price", "./#forward"), ("How it works", "./#ho
                                 ("Company cover", "travel-platforms.html#company"),
                                 ("The numbers", "travel-platforms.html#numbers"))),
            ("Underwriter", (("Risk", "underwriters.html#risk"), ("Rollout", "underwriters.html#rollout"),
-                            ("Reports", "underwriters.html#reports"))))
+                            ("Reports", "underwriters.html#reports"), ("Integrations", "api-underwriters.html"))))
 # Which audience each page belongs to, for aria-current; and the last footer column, the page's own.
 CURRENT = {"index.html": "index.html", "issuers.html": "issuers.html", "api.html": "issuers.html", "api-issuers.html": "issuers.html",
            "api-travel-sites.html": "travel-sites.html", "loyalty-programs.html": "loyalty-programs.html",
            "travel-sites.html": "travel-sites.html", "travel-platforms.html": "travel-platforms.html",
-           "underwriters.html": "underwriters.html"}
+           "underwriters.html": "underwriters.html", "api-underwriters.html": "underwriters.html"}
 LAST = {"privacy.html": ("Legal", (("Terms", "https://my.getthere.now/terms.html"), ("Privacy", "privacy.html"))),
         "404.html": ("Help", (("help@getthere.now", "mailto:help@getthere.now"),))}
 CONTACT = ("Contact", (("partner@getthere.now", "mailto:partner@getthere.now"),))

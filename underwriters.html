@@ -44,7 +44,7 @@
     <div>
       <p class="eyebrow">For underwriters</p>
       <h1>GetThere is the insurtech platform for underwriters to distribute a new flight delay policy.</h1>
-      <p class="lede">It sells at booking and pays in minutes. You issue the Flight Delay Pass under your licence. GetThere is your authorized distribution and collection agent: it prices each flight, sells through Card Issuers, Loyalty Programs, Travel Sites and Travel Platforms, collects every pass fee on your behalf and transfers your share to your own Stripe account, watches every flight and pays claims from flight data, within limits you set.</p>
+      <p class="lede">It sells at booking and pays in minutes. You issue the Flight Delay Pass under your licence. GetThere is your authorized distribution agent: it prices each flight, sells through Card Issuers, Loyalty Programs, Travel Sites and Travel Platforms, takes every pass fee into your own payment gateway account, watches every flight and pays claims from flight data on your own card issuer, within limits you set.</p>
       <div class="btns">
         <a class="btn" href="mailto:partner@getthere.now?subject=Underwriting%20the%20Flight%20Delay%20Pass">Contact us</a>
         <a class="btn ghost light" href="#model">See how it works</a>
@@ -89,10 +89,10 @@
     <h2>Your policy and your money. GetThere runs the rest.</h2>
     <div class="grid3" style="margin-top:28px">
       <div class="tile"><span class="time">YOU</span><h3>Issue the policy</h3><p class="muted">The Flight Delay Pass is your policy, under your licence. You're named as its issuer on the offer, the checkout, the terms and every email.</p></div>
-      <div class="tile"><span class="time">YOU</span><h3>Are paid every fee</h3><p class="muted">GetThere collects each fee as your authorized collection agent, so paying GetThere counts as paying you. Your share reaches your own Stripe account as soon as the pass's 24-hour cooling-off period ends.</p></div>
-      <div class="tile"><span class="time">YOU</span><h3>Fund every rescue card</h3><p class="muted">Rescue cards are issued on your own card account, and only what the traveller spends on a new flight leaves it.</p></div>
+      <div class="tile"><span class="time">YOU</span><h3>Are paid every fee</h3><p class="muted">Every pass is paid straight into your own payment gateway account, with the gateway of your choice in each country.</p></div>
+      <div class="tile"><span class="time">YOU</span><h3>Fund every rescue card</h3><p class="muted">Rescue cards are issued on your own card issuer account, and only what the traveller spends on a new flight leaves it.</p></div>
       <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Prices every pass</h3><p class="muted">Flight by flight, from each flight's own track record, weather and airport news, within your limits.</p></div>
-      <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Distributes and collects</h3><p class="muted">As your authorized agent: offer pages, quote emails and checkout in each partner's colours, with every payment taken on GetThere's Stripe account for you. Reading each customer's booking email, or the booking a travel site sends.</p></div>
+      <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Distributes and integrates</h3><p class="muted">Offer pages, quote emails and checkout in each partner's colours, connected to your own payment gateway and card issuer. Reading each customer's booking email, or the booking a travel site sends.</p></div>
       <div class="tile"><span class="time" style="background:var(--accent)">GETTHERE</span><h3>Watches and pays</h3><p class="muted">Tracks every flight on an active pass, opens the claim from flight data, sends the rescue card by WhatsApp and email, and answers the traveller.</p></div>
     </div>
   </div>
@@ -154,14 +154,14 @@
       <p class="eyebrow">The business case · an example</p>
       <h2>About $7.5M of pass fees a year on one partner's $2B of airfare</h2>
       <div class="kpis">
-        <div><div class="big">$7.5M</div><p class="muted">of pass fees a year before tax, all collected for you by GetThere as your agent ($375K per $100M of airfare)</p></div>
+        <div><div class="big">$7.5M</div><p class="muted">of pass fees a year before tax, all paid into your own account ($375K per $100M of airfare)</p></div>
         <div><div class="big">200,000</div><p class="muted">passes a year: 5 in 100 of 4 million bookings</p></div>
         <div><div class="big">$3M</div><p class="muted">a year in the final profit pool, after rescue money, payment gateway costs and the platform fee. You and the partner share it</p></div>
       </div>
     </div>
     <div class="tile">
       <h3 style="margin-bottom:6px">Where each $37.50 pass fee goes</h3>
-      <p class="muted" style="margin:0 0 18px">Priced for a 60% gross margin: rescue card money is 40% of the fee. GetThere collects the whole fee for you, keeps its platform fee and transfers you the rest. It pays out in this order.</p>
+      <p class="muted" style="margin:0 0 18px">Priced for a 60% gross margin: rescue card money is 40% of the fee. The whole fee is paid into your own account, and GetThere's platform fee and the partner's share are settled as your contracts say. The fee goes out in this order.</p>
       <div class="split">
         <div class="bar-row"><span>1. Rescue card money (you fund it)</span><div class="bar"><i style="width:40%;background:#94a3b8"></i></div><b>$15.00 · 40%</b></div>
         <div class="bar-row"><span>2. Payment gateway and rescue card issuing</span><div class="bar"><i style="width:5%;background:#64748b"></i></div><b>$1.88 · 5%</b></div>
@@ -192,7 +192,7 @@
           <div class="amount small"><input type="text" inputmode="decimal" id="takeup" value="5" aria-label="Percent of bookings that buy a pass"><span>%</span></div>
           <div class="choices" id="takeupPresets"><button type="button" data-v="2">2%</button><button type="button" data-v="5" aria-pressed="true">5%</button><button type="button" data-v="10">10%</button></div>
         </div>
-        <div class="result"><span class="big" id="share">$7.5M</span><span class="muted">pass fees a year before tax, collected for you</span></div>
+        <div class="result"><span class="big" id="share">$7.5M</span><span class="muted">pass fees a year before tax, paid into your account</span></div>
         <div class="result-row">
           <div><b id="rescueMoney">$3M</b><span class="fine">expected rescue money</span></div>
           <div><b id="pool">$3M</b><span class="fine">final profit pool, shared with the partner</span></div>
@@ -279,10 +279,10 @@
 <section id="money" class="tint">
   <div class="wrap">
     <p class="eyebrow">Money and data</p>
-    <h2>GetThere collects your money as your agent, and never sees card data</h2>
+    <h2>Your money in your own accounts, and GetThere never sees card data</h2>
     <div class="grid2" style="margin-top:28px">
-      <div class="tile"><h3>Collected for you, then transferred</h3><p class="muted">Every pass fee is taken on GetThere's Stripe account as your authorized collection agent and transferred to your own Stripe account, less the platform fee, once its 24-hour cooling-off period ends. A pass refunded after that takes its share back. The spent part of each top-up follows when its card closes; unspent top-ups go back to the traveller. Rescue cards are issued on your own card account, with your keys stored encrypted.</p></div>
-      <div class="tile"><h3>No payment card data</h3><p class="muted">Payment card details are typed into Stripe's payment page. GetThere never sees them.</p></div>
+      <div class="tile"><h3>Your own gateway and card issuer</h3><p class="muted">You bring the vendors, GetThere brings the integrations. Every pass fee and top-up is paid into your own gateway account, refunds and disputes are handled there, and rescue cards are issued on your own card issuer account. Your keys are stored encrypted. <a href="api-underwriters.html">See the vendors we support and how to connect them</a>.</p></div>
+      <div class="tile"><h3>No payment card data</h3><p class="muted">Payment card details are typed into your gateway's own payment page. GetThere never sees them.</p></div>
       <div class="tile"><h3>Your wording, kept as sold</h3><p class="muted">Terms are built from your settings. Each version is stored when it goes live and never changed, and each pass records the version it was sold under.</p></div>
       <div class="tile"><h3>Watched every few minutes</h3><p class="muted">The travel-day sweep checks every active flight, and a daily reconciliation flags any delay without a claim, or any claim without a rescue card, to the operations team.</p></div>
     </div>
@@ -296,8 +296,8 @@
     <p class="eyebrow">Getting started</p>
     <h2>Test the whole journey on your own sandbox, then go live one country at a time</h2>
     <div class="grid3" style="margin-top:28px">
-      <div class="tile glass"><span class="time">TEST MODE</span><h3>Your sandbox</h3><p>Test payments on Stripe's sandbox, test rescue cards on your own sandbox keys, and simulated delays. Nothing real moves.</p></div>
-      <div class="tile glass"><span class="time">GO LIVE</span><h3>Country by country</h3><p>A country sells once your Stripe account is connected to GetThere's and your live rescue card account works there, with your tax for that country.</p></div>
+      <div class="tile glass"><span class="time">TEST MODE</span><h3>Your sandbox</h3><p>Test payments and rescue cards on your own sandbox keys, or GetThere's sandbox until yours are in, and simulated delays. Nothing real moves.</p></div>
+      <div class="tile glass"><span class="time">GO LIVE</span><h3>Country by country</h3><p>A country sells once your live payment gateway and rescue card keys work there, with your tax for that country.</p></div>
       <div class="tile glass"><span class="time">DAYS 1–180</span><h3>A pilot with one partner</h3><p>Monthly reports for you and the partner. At day 180 you decide together on a full launch and the next partners.</p></div>
     </div>
     <div style="margin-top:40px">
@@ -322,7 +322,7 @@
       <div><b style="color:#fff">Loyalty Program</b><a href="loyalty-programs.html">The product</a><a href="loyalty-programs.html#award">Award bookings</a><a href="loyalty-programs.html#numbers">The numbers</a></div>
       <div><b style="color:#fff">Travel Site</b><a href="travel-sites.html#product">The product</a><a href="travel-sites.html#numbers">The numbers</a><a href="api-travel-sites.html">API reference</a></div>
       <div><b style="color:#fff">Travel Platform</b><a href="travel-platforms.html#product">The product</a><a href="travel-platforms.html#company">Company cover</a><a href="travel-platforms.html#numbers">The numbers</a></div>
-      <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a></div>
+      <div><b style="color:#fff">Underwriter</b><a href="underwriters.html#risk">Risk</a><a href="underwriters.html#rollout">Rollout</a><a href="underwriters.html#reports">Reports</a><a href="api-underwriters.html">Integrations</a></div>
       <div><b style="color:#fff">Contact</b><a href="mailto:partner@getthere.now">partner@getthere.now</a></div>
     </div>
     <div class="legal"><a href="https://my.getthere.now/terms.html">Terms</a> · <a href="privacy.html">Privacy</a><br>The Flight Delay Pass is a policy the Underwriter issues, and the Underwriter funds the pre-loaded rescue cards. GetThere provides the platform.<br>© 2026 GetThere. Figures on this page are illustrative assumptions, not forecasts.</div>
