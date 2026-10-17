@@ -342,6 +342,7 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 /* API docs, split per audience (Dadoo, 14 Oct 2026): the hub's two doors, the path chooser, field tables
    with a "why it matters" column, and the must-do callout. */
 .api .doors, .api .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 8px; }
+.api .paths.three { grid-template-columns: 1fr 1fr 1fr; }
 .api .door, .api .path { display: block; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #fff; color: inherit; text-decoration: none; }
 .api a.door:hover, .api a.path:hover { border-color: var(--accent); }
 .api .door h3, .api .path h3 { margin: 4px 0 6px; font-size: 18px; }
@@ -361,7 +362,7 @@ footer.site .legal { flex-basis: 100%; border-top: 1px solid rgba(255,255,255,.1
 .api .toc { columns: 2; font-size: 15px; padding-left: 18px; }
 .api .toc li { margin-bottom: 4px; break-inside: avoid; }
 @media (max-width: 720px) {
-  .api .doors, .api .paths { grid-template-columns: 1fr; }
+  .api .doors, .api .paths, .api .paths.three { grid-template-columns: 1fr; }
   .api .toc { columns: 1; }
   .api table.fields td:first-child { white-space: normal; }
   .api table.fields, .api table.fields tbody, .api table.fields tr, .api table.fields td, .api table.fields th { display: block; }
