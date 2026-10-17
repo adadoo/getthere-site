@@ -678,8 +678,8 @@
     still gets their pass.</p>
 
     <h2 id="changes">8. Changes, cancellations and refunds</h2>
-    <p class="meta"><b><code>in-line</code> passes only</b> · until we start watching the first flight (24 hours before
-    departure)</p>
+    <p class="meta"><b><code>in-line</code> passes only</b> · a pass doesn't move to new flights: a changed booking ends it,
+    like a cancelled one</p>
     <p>A pass bought on GetThere's checkout (<code>booking-page</code> and <code>booking-email</code>) is the customer's to
     change or refund with us: these calls refuse it with <code>409 not_in_line</code>. A pass you created with
     <code>POST /policies</code> is changed through you, and you tell us.</p>
@@ -688,57 +688,46 @@
     back, not cash, so the pass never turns points into money.</p>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/changes</h3></div>
 <pre><code>{"type": "travellers", "passengers": ["Mia Tan", "Wei Lim", "Chloe Lim-Tan"]}</code></pre>
-<pre><code>{"type": "flights", "offer_id": "&lt;offer for the new flights&gt;",
- "payment_reference": "PAY-88124", "amount_paid": 52.10, "currency": "SGD",
- "accepted_at": "2026-10-20T09:02:11+00:00",
- "segments": [{"flight": "SQ222", "date": "2026-11-21", "booking_reference": "K7QX2M"},
-              {"flight": "SQ231", "date": "2026-11-27", "booking_reference": "K7QX2M"}]}</code></pre>
+<pre><code>{"type": "flights"}</code></pre>
 <pre><code>{"type": "cancelled"}</code></pre>
     <table class="fields">
       <tr><th>Type</th><th>What it does</th><th>Why it matters</th></tr>
-      <tr><td><code>travellers</code></td><td>Corrects names. Same number of travellers, in the same order.</td><td
-        class="why">The rescue card goes to the right people. Adding or removing someone needs a new quote and a
-        <code>flights</code> change.</td></tr>
-      <tr><td><code>flights</code></td><td>Quote the new flights first, with <code>placement: "in-line"</code>, then send the
-        new offer with the same fields as <code>/policies</code>. The buyer, order id, terms and consents carry over. A new
-        pass replaces the old one, and the old one's fee is netted on your statement. No refund email goes to the customer:
-        the new pass's confirmation says it all. Sending the same change again returns the same answer.</td><td
-        class="why">The pass always matches the flights the customer will take. <code>difference</code> in the answer is
-        what you charge (or refund, if negative) on top of what was paid. After the cooling-off period a cheaper pass
-        refunds nothing: <code>difference</code> is <code>0</code>, and the old fee pays for the new pass.</td></tr>
+      <tr><td><code>travellers</code></td><td>Corrects names, until we start watching the first flight (24 hours before
+        departure). Same number of travellers, in the same order.</td><td class="why">The rescue card goes to the right
+        people. Adding or removing someone is a changed booking: send <code>flights</code> and sell a new pass.</td></tr>
+      <tr><td><code>flights</code></td><td>The booking's flights changed. Ends the pass exactly as <code>cancelled</code>
+        does. For the new flights, quote them with <code>placement: "in-line"</code> and sell a new pass with
+        <code>/policies</code> as usual, under the same booking reference if the airline kept it.</td><td class="why">One
+        rule for every change: a pass never moves, so there's no price difference to work out.</td></tr>
       <tr><td><code>cancelled</code></td><td>Ends the pass. Within its cooling-off period (24 hours after it was paid
         for, unless the Underwriter sets its own), you refund the customer, and it's netted on your statement. After it,
-        the pass ends with no refund: the fee stays paid, and we email the customer that it was cancelled.</td>
-        <td class="why">A cancelled booking can't have a rescue card. The Underwriter is paid for the pass once
-        cooling-off ends.</td></tr>
+        and once we've started watching the flights, the pass ends with no refund: the fee stays paid, and we email the
+        customer that it was cancelled.</td>
+        <td class="why">A cancelled or changed booking can't have a rescue card, even on travel day. The Underwriter is
+        paid for the pass once cooling-off ends.</td></tr>
     </table>
-<pre><code>200 {"status": "changed", "policy_id": "&lt;new pass&gt;", "replaces": "0e5b…", "difference": 3.78, …}</code></pre>
+<pre><code>200 {"status": "cancelled", "policy_id": "0e5b…", "pass_status": "refunded", …}</code></pre>
     <table class="fields">
       <tr><th>Status and reason</th><th>Means</th><th>What to do</th></tr>
       <tr><td><code>404</code></td><td>Not one of your passes, or the other mode.</td><td class="why">Check the key and
         <code>policy_id</code>.</td></tr>
-      <tr><td><code>422</code></td><td>A missing or bad field, such as <code>type</code> or, for <code>flights</code>,
-        <code>offer_id</code>.</td><td class="why">Fix it and send again.</td></tr>
-      <tr><td><code>409 not_in_line</code></td><td>The pass was bought on GetThere's checkout, or the new offer for a
-        <code>flights</code> change wasn't quoted in-line.</td><td class="why">The customer changes a GetThere checkout pass
-        with us. For a flight change, quote with <code>placement: "in-line"</code>.</td></tr>
-      <tr><td><code>409 too_late</code></td><td>We've started watching the first flight, or the pass has ended.</td><td
-        class="why">It can't change any more.</td></tr>
+      <tr><td><code>422</code></td><td>A missing or bad field, such as <code>type</code>.</td><td class="why">Fix it and
+        send again.</td></tr>
+      <tr><td><code>409 not_in_line</code></td><td>The pass was bought on GetThere's checkout.</td><td class="why">The
+        customer changes a GetThere checkout pass with us.</td></tr>
+      <tr><td><code>409 too_late</code></td><td>The pass has ended, or <code>travellers</code> once we've started watching
+        the first flight.</td><td class="why">It can't change any more.</td></tr>
       <tr><td><code>409 travellers_changed</code></td><td><code>travellers</code>: a different number of travellers.</td><td
-        class="why">Quote the new booking and send a <code>flights</code> change.</td></tr>
-      <tr><td><code>409</code> with a <code>/policies</code> reason</td><td><code>flights</code>: the new offer is sold
-        like a new pass, so any of <a href="#policies">the <code>/policies</code> reasons</a> can come back, such as
-        <code>amount_mismatch</code>, <code>withdrawn</code> or <code>flights_changed</code>.</td><td class="why">As for
-        <code>/policies</code>. The old pass stays as it was.</td></tr>
+        class="why">Send a <code>flights</code> change and sell a new pass for the new booking.</td></tr>
     </table>
     <div class="ep"><span class="verb">POST</span><h3>/partner/v1/policies/{policy_id}/cancel</h3></div>
     <p>The same as <code>{"type": "cancelled"}</code>, for a booking that's been cancelled. Within the pass's
     cooling-off period it returns <code>"status": "cancelled"</code> and <code>"pass_status": "refunded"</code>, and
     <code>pass.ended</code> carries <code>reason: "refunded"</code>. After it, the pass ends with no refund: it returns
     <code>"pass_status": "voided"</code>, and <code>pass.ended</code> carries <code>reason: "cancelled"</code> and
-    <code>refund: "0"</code>. Its <code>409</code>s carry a reason:
-    <code>not_in_line</code> (bought on GetThere's checkout), <code>not_active</code> (the pass has already ended, for
-    example cancelled before) or <code>too_late</code> (we've started watching the first flight).</p>
+    <code>refund: "0"</code>. The same goes once we've started watching its flights. Its <code>409</code>s carry a reason:
+    <code>not_in_line</code> (bought on GetThere's checkout) or <code>not_active</code> (the pass has already ended, for
+    example cancelled before, or a rescue card was issued).</p>
     <p><b>When the airline cancels the flight before we start watching</b>, we end the pass ourselves and send
     <code>pass.ended</code> with <code>reason: "flight_cancelled_before_watch"</code>. For an <code>in-line</code> pass,
     refund the customer, and it's netted on your statement.</p>
@@ -924,9 +913,9 @@
         not_in_line</code></td><td class="why">Each offer is sold where it was quoted for.</td></tr>
       <tr><td>Create a pass with <code>amount_paid</code> a cent too low</td><td><code>409 amount_mismatch</code> with the
         right amount</td><td class="why">You charge exactly the quoted fee.</td></tr>
-      <tr><td>In-line: correct a name, then move the outbound flight a day, then cancel</td><td><code>changed</code>,
-        <code>changed</code> with <code>replaces</code>, <code>cancelled</code></td><td class="why">Your changes flow
-        works.</td></tr>
+      <tr><td>In-line: correct a name, then move the outbound flight a day and sell a new pass for it, then cancel the
+        new pass</td><td><code>changed</code>, <code>cancelled</code> and <code>201</code>, <code>cancelled</code></td><td
+        class="why">Your changes flow works.</td></tr>
       <tr><td>Forward one of your own booking confirmation emails to your forwarding address, then an airline's</td><td>A
         "[Test]" price email for yours, a "can only quote bookings made on" reply for the airline's</td><td class="why">Your
         <code>booking_domains</code> are set right.</td></tr>
